@@ -1,0 +1,7 @@
+name: multinterp-dev
+
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - git+https://github.com/alanlujan91/HARK@map_coordinates
