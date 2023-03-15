@@ -2,6 +2,18 @@ name: multinterp-dev
 
 dependencies:
   - python=3.10
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - numba
+  - cupy
+  - jupyterlab
+  - scikit-learn
+  - scikit-image
+  - pytorch
+  - gpytorch
+  - skorch
   - pip
   - pip:
       - git+https://github.com/alanlujan91/HARK@map_coordinates
