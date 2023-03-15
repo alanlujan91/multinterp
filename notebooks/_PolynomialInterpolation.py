@@ -20,7 +20,7 @@ from HARK.interpolation import RegularizedPolynomialInterp
 from scipy.ndimage import map_coordinates
 from sklearn.linear_model import RidgeCV
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, StandardScaler
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 # %%
 n = 50

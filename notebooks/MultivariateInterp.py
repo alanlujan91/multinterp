@@ -18,7 +18,6 @@
 #
 
 # %%
-import platform
 from itertools import product
 from time import time
 

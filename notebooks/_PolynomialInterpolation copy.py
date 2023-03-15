@@ -17,8 +17,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.linear_model import Ridge
-from sklearn.preprocessing import PolynomialFeatures, SplineTransformer
+from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
 from sklearn.kernel_ridge import KernelRidge

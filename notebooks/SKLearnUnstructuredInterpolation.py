@@ -25,7 +25,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from HARK.interpolation._sklearn import GeneralizedRegressionUnstructuredInterp
-from mpl_toolkits import mplot3d
 
 
 # %% [markdown]

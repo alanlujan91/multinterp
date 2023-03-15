@@ -7,10 +7,6 @@ DIM_MESSAGE = "Dimension mismatch."
 
 class PiecewiseAffineInterp(_CurvilinearGridInterp):
     def __init__(self, values, grids, **kwargs):
-        if not SKIMAGE_AVAILABLE:
-            raise ImportError(
-                "PiecewiseAffineTransform requires scikit-image installed."
-            )
 
         super().__init__(values, grids, target="cpu", **kwargs)
 

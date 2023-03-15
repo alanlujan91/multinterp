@@ -17,8 +17,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.linear_model import Ridge, LinearRegression, Lasso
-from sklearn.preprocessing import PolynomialFeatures, SplineTransformer
+from sklearn.linear_model import Lasso
+from sklearn.preprocessing import SplineTransformer
 from sklearn.pipeline import make_pipeline
 
 from scipy.ndimage import map_coordinates
