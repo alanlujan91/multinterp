@@ -1,3 +1,16 @@
 jupyter-book
 matplotlib
 numpy
+scipy
+matplotlib
+pandas
+numba
+cupy
+jupyterlab
+jupyter-book
+scikit-learn
+scikit-image
+pytorch
+gpytorch
+skorch
+git+https://github.com/alanlujan91/HARK@map_coordinates
