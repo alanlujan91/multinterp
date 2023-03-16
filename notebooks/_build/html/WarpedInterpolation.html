@@ -401,7 +401,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/30c630c80f3234c27d41d9e8e59f9266cf72186f40d2dcfa76e09f594c15479e.png" src="_images/30c630c80f3234c27d41d9e8e59f9266cf72186f40d2dcfa76e09f594c15479e.png" />
+<img alt="_images/622a00e9c166568b25b6ee67dcd20bd5d0dbffd7f47c1a868ec7c381955c2e1c.png" src="_images/622a00e9c166568b25b6ee67dcd20bd5d0dbffd7f47c1a868ec7c381955c2e1c.png" />
 </div>
 </div>
 <p>In the graph below, we can see the true function in 3D space, along with the points for which we actually know the value of the function.</p>
@@ -438,7 +438,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a0c13c7fee0de86297011d40897461f5331652dde17fc5c209f4549a77833682.png" src="_images/a0c13c7fee0de86297011d40897461f5331652dde17fc5c209f4549a77833682.png" />
+<img alt="_images/5cd1107e2848655ab8db02b509f9a73a4946f913da6e50cc8bdc267ecede280d.png" src="_images/5cd1107e2848655ab8db02b509f9a73a4946f913da6e50cc8bdc267ecede280d.png" />
 </div>
 </div>
 <p>The underlying regular structure comes from the points’ position in the matrix, the <span class="math notranslate nohighlight">\((i,j)\)</span> coordinates. If we join the points along every row and every column, we can see that the resulting grid is regular and piecewise affine (curvilinear).</p>
@@ -452,7 +452,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d84cadef79b92d6b4ebcaf9d3245357a9d26877c575b8644c5e65a0d3b348e4a.png" src="_images/d84cadef79b92d6b4ebcaf9d3245357a9d26877c575b8644c5e65a0d3b348e4a.png" />
+<img alt="_images/908854097db2fd7d44cf51eb0f9f52718ba71c58369f14959be86257e84c26e7.png" src="_images/908854097db2fd7d44cf51eb0f9f52718ba71c58369f14959be86257e84c26e7.png" />
 </div>
 </div>
 <p>As we can see, this curvilinear grid can be easily transformed into a rectilinear grid by using the coordinate values <span class="math notranslate nohighlight">\((i,j)\)</span> of the underlying matrix that contains the values. For interpolation, this rectilinear grid allows us to use the standard fast interpolation methods available in SciPy.</p>
@@ -467,7 +467,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a5d172645b5116391281d5a10f2d5d85425e8b0c413164212d2079c4d1edefd7.png" src="_images/a5d172645b5116391281d5a10f2d5d85425e8b0c413164212d2079c4d1edefd7.png" />
+<img alt="_images/af842ad7c31c76b1fe52a4a950359421dd4ed35b48aca3a0da3e1733cd579a1a.png" src="_images/af842ad7c31c76b1fe52a4a950359421dd4ed35b48aca3a0da3e1733cd579a1a.png" />
 </div>
 </div>
 <p>Below we graph values of the function at their index coordinate points in the matrix.</p>
@@ -482,10 +482,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;mpl_toolkits.mplot3d.art3d.Path3DCollection at 0x1800b68fd60&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;mpl_toolkits.mplot3d.art3d.Path3DCollection at 0x1e57f11cdf0&gt;
 </pre></div>
 </div>
-<img alt="_images/7ddbae62ec15abb19a8c6a75c05caed9190d40b5ccefb764b5e31e08ae4a3a63.png" src="_images/7ddbae62ec15abb19a8c6a75c05caed9190d40b5ccefb764b5e31e08ae4a3a63.png" />
+<img alt="_images/d2faa3f041e5e96d8b0ef022597096dd10ec07f5093bf05cc56cd0ffec74cf59.png" src="_images/d2faa3f041e5e96d8b0ef022597096dd10ec07f5093bf05cc56cd0ffec74cf59.png" />
 </div>
 </div>
 <p>The objective is to be able to interpolate the value of the function at any point off the grid, where presumably we are only interested in points internal to the curvilinear space and not outside the boundaries. For example, we can imagine that we want an approximation to the function at the point <span class="math notranslate nohighlight">\((x,y) = (3, 5)\)</span> pictured below. If we could find the correspoinding point in the coordinate grid, interpolation would be straightforward.</p>
@@ -500,7 +500,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9496873a614ea566424095c807abc6d92fd50b626e726a5257239edeab46e0ae.png" src="_images/9496873a614ea566424095c807abc6d92fd50b626e726a5257239edeab46e0ae.png" />
+<img alt="_images/d63fb141a0bc24cc73b508d32cdd5245d15904b5bd3bf7e0232aafba759b38e5.png" src="_images/d63fb141a0bc24cc73b508d32cdd5245d15904b5bd3bf7e0232aafba759b38e5.png" />
 </div>
 </div>
 <section id="method-1-quad-interpolation">
@@ -528,7 +528,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c0adf83ea8768dd9a7926678290878bd334dcbdb1cdf490d608823dd5dcff66f.png" src="_images/c0adf83ea8768dd9a7926678290878bd334dcbdb1cdf490d608823dd5dcff66f.png" />
+<img alt="_images/f57db18b673c4ead2ae5463a2cd2caf313740398a14e34cb0cbcad75b82de3db.png" src="_images/f57db18b673c4ead2ae5463a2cd2caf313740398a14e34cb0cbcad75b82de3db.png" />
 </div>
 </div>
 <p>This is similar to assuming that we have 3 linear interpolators formed by connecting the points on the green lines in the x-direction, and for each interpolator we can approximate the corresponding y and z values using the grid data.</p>
@@ -543,7 +543,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1ef7e63a1ae26927cb3bd57baf46bf69f5d1cb929f31bb2516504f364039dee0.png" src="_images/1ef7e63a1ae26927cb3bd57baf46bf69f5d1cb929f31bb2516504f364039dee0.png" />
+<img alt="_images/022dc895c6a426bc994ae278c3c1bbd27b97022aec0fd2af71613907232c1339.png" src="_images/022dc895c6a426bc994ae278c3c1bbd27b97022aec0fd2af71613907232c1339.png" />
 </div>
 </div>
 <p>Now, for each circle in the figure, we have a corresponding pair <span class="math notranslate nohighlight">\((y,z)\)</span>, and we can interpolate in the y-direction to find the corresponding z-value for the point’s y-coordinate.</p>
@@ -561,7 +561,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/634ac0e50a1e91b30ccee82cc38063e8369194b854c10911fd726bb94a3007b5.png" src="_images/634ac0e50a1e91b30ccee82cc38063e8369194b854c10911fd726bb94a3007b5.png" />
+<img alt="_images/49e49def83517e7506db6212abf24f3f61f01cffd6e7ced4309b31c01d2dc51f.png" src="_images/49e49def83517e7506db6212abf24f3f61f01cffd6e7ced4309b31c01d2dc51f.png" />
 </div>
 </div>
 <p>We can do the same by connecting the points on the red line, and interpolating <span class="math notranslate nohighlight">\((y, z)\)</span> values for the point’s x-coordinate.</p>
@@ -576,7 +576,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0b350b22f8a3324426d9d56bc9465114c3e80567f38813374e6d14f4932cb684.png" src="_images/0b350b22f8a3324426d9d56bc9465114c3e80567f38813374e6d14f4932cb684.png" />
+<img alt="_images/7b09fd8449291144e5289289e57a7d6217535ce2a1e3ae63d27ab9ac14a8c1eb.png" src="_images/7b09fd8449291144e5289289e57a7d6217535ce2a1e3ae63d27ab9ac14a8c1eb.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -593,7 +593,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e8f7da6a316138c4cb70e3bd554d921ad0d39fd4a78b11e2ead6cafd6d436307.png" src="_images/e8f7da6a316138c4cb70e3bd554d921ad0d39fd4a78b11e2ead6cafd6d436307.png" />
+<img alt="_images/52b74bfeae2669af5927a07ebb7993e2410530f0f28844e5a06729931e72fde8.png" src="_images/52b74bfeae2669af5927a07ebb7993e2410530f0f28844e5a06729931e72fde8.png" />
 </div>
 </div>
 <p>However, the two processes might provide different results. The differences in results arises from the values that are weighted in the interpolation. In the first case, interpolation uses the values that correspond to the quadrangle in which the point of interest lies. In the second case, the lowest cirle lies in an adjacent quadrangle, meaning that the <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(z\)</span> values corresponding to that point come from interpolation in the adjacent quadrangle. Because of this, the second result is weighing values that are further away from the point of interest, and the result is less accurate.</p>
@@ -613,7 +613,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c3bb64919db896284f73e71cf024692f45e6db595518d3061b3ad78a3487275d.png" src="_images/c3bb64919db896284f73e71cf024692f45e6db595518d3061b3ad78a3487275d.png" />
+<img alt="_images/255a6b78960f065985a637b5b731a29ce737116618e5b5c318ba2cedaedc78cf.png" src="_images/255a6b78960f065985a637b5b731a29ce737116618e5b5c318ba2cedaedc78cf.png" />
 </div>
 </div>
 </section>
@@ -632,7 +632,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/df4bb56d0cdbe57d6ed6b99f3edae11141bf74dbb5edded5c1301be947997d83.png" src="_images/df4bb56d0cdbe57d6ed6b99f3edae11141bf74dbb5edded5c1301be947997d83.png" />
+<img alt="_images/38cb3b4e3d60222a9dd1df2081090ad45111e774492682865e6b46884ff621df.png" src="_images/38cb3b4e3d60222a9dd1df2081090ad45111e774492682865e6b46884ff621df.png" />
 </div>
 </div>
 <p>As illustration, we can use <code class="docutils literal notranslate"><span class="pre">HARK.interpolation</span></code>’s <code class="docutils literal notranslate"><span class="pre">UnstructuredInterp</span></code> which wraps <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s unstructured interpolators (<code class="docutils literal notranslate"><span class="pre">griddata</span></code>). This method is not very fast, which is why we are looking for a faster alternative.</p>
@@ -651,7 +651,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a8a377b53a33cf184d267287b195f8799a5426f2146f9c5ae8439e3eb4107d3c.png" src="_images/a8a377b53a33cf184d267287b195f8799a5426f2146f9c5ae8439e3eb4107d3c.png" />
+<img alt="_images/93bbc44044c249b7a812b1db3e41343c2f118119939027aeac59dfbf0381969a.png" src="_images/93bbc44044c249b7a812b1db3e41343c2f118119939027aeac59dfbf0381969a.png" />
 </div>
 </div>
 </section>

@@ -378,25 +378,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">HARK.interpolation._sklearn</span> <span class="kn">import</span> <span class="n">GeneralizedRegressionUnstructuredInterp</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">mpl_toolkits</span> <span class="kn">import</span> <span class="n">mplot3d</span>
-
-<span class="n">File</span> <span class="o">~</span>\<span class="n">miniconda3</span>\<span class="n">envs</span>\<span class="n">multinterp</span><span class="o">-</span><span class="n">dev</span>\<span class="n">lib</span>\<span class="n">site</span><span class="o">-</span><span class="n">packages</span>\<span class="n">HARK</span>\<span class="n">interpolation</span>\<span class="n">_sklearn</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">sklearn.kernel_ridge</span> <span class="kn">import</span> <span class="n">KernelRidge</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ElasticNet</span><span class="p">,</span> <span class="n">ElasticNetCV</span><span class="p">,</span> <span class="n">SGDRegressor</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;sklearn&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <p>Suppose we have a collection of values for an unknown function along with their respective coordinate points. For illustration, assume the values come from the following function:</p>
 <div class="cell docutils container">
@@ -481,10 +462,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x169ccae8b80&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1d1c056b040&gt;
 </pre></div>
 </div>
-<img alt="_images/36d5cae021dba5df986667198b680a94b3a95e7f2030d770d93ef9f1e920fffd.png" src="_images/36d5cae021dba5df986667198b680a94b3a95e7f2030d770d93ef9f1e920fffd.png" />
+<img alt="_images/dc761a8caf01fd843b13e152272daadbf913ecc4db825b4fa2d056982dba2ff0.png" src="_images/dc761a8caf01fd843b13e152272daadbf913ecc4db825b4fa2d056982dba2ff0.png" />
 </div>
 </div>
 <p>Then, we can look at the result for each method of interpolation and compare it to the original function.</p>
@@ -518,7 +499,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ec6d3755fd567197f5131cad1ae66fcad4c471d0d5209f580ea2fdcce83181c6.png" src="_images/ec6d3755fd567197f5131cad1ae66fcad4c471d0d5209f580ea2fdcce83181c6.png" />
+<img alt="_images/9e7e02ffb16597138608f560ef02c63228395da34610b2436431853f8f5180e7.png" src="_images/9e7e02ffb16597138608f560ef02c63228395da34610b2436431853f8f5180e7.png" />
 </div>
 </div>
 </section>
@@ -583,10 +564,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x169ccd72ee0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1d1bf612ef0&gt;
 </pre></div>
 </div>
-<img alt="_images/3c14ffc41a77359d02fcaf104a270cd64e0cdc0a1f00bd3f4b44fafeb21befef.png" src="_images/3c14ffc41a77359d02fcaf104a270cd64e0cdc0a1f00bd3f4b44fafeb21befef.png" />
+<img alt="_images/6ee223f85f1a7be8e859475da8680e81bba5f2b32aee54dfe7bc56aec89026ff.png" src="_images/6ee223f85f1a7be8e859475da8680e81bba5f2b32aee54dfe7bc56aec89026ff.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -619,7 +600,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cbbd31b85d26a09c7d971e32307036924bae737aa6844b61ddf5627473bca29e.png" src="_images/cbbd31b85d26a09c7d971e32307036924bae737aa6844b61ddf5627473bca29e.png" />
+<img alt="_images/c66a1d3918738001515103f70ab2cfb77570a6fe42efa1e6a4509518cfce14b2.png" src="_images/c66a1d3918738001515103f70ab2cfb77570a6fe42efa1e6a4509518cfce14b2.png" />
 </div>
 </div>
 </section>
@@ -700,7 +681,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Original&#39;)
 </pre></div>
 </div>
-<img alt="_images/10a7580972eba2985955b4f33d4597135016bced391628c0ad81c2c71460ef19.png" src="_images/10a7580972eba2985955b4f33d4597135016bced391628c0ad81c2c71460ef19.png" />
+<img alt="_images/d59bff7c3cac7d036855a622122a9a0944d806ac4e01d9e4e0e9487e2efba8c2.png" src="_images/d59bff7c3cac7d036855a622122a9a0944d806ac4e01d9e4e0e9487e2efba8c2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -733,7 +714,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fea91b7bd75ffcb13572e319497b5cf76aca6ad7e5536c46483946c54855f9b8.png" src="_images/fea91b7bd75ffcb13572e319497b5cf76aca6ad7e5536c46483946c54855f9b8.png" />
+<img alt="_images/dc537570b1642623372d5361c359260d1466df13cf8d129c4a4b998bedd01a46.png" src="_images/dc537570b1642623372d5361c359260d1466df13cf8d129c4a4b998bedd01a46.png" />
 </div>
 </div>
 </section>
@@ -825,10 +806,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x169cca29e20&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1d1bff5ab30&gt;
 </pre></div>
 </div>
-<img alt="_images/efdfe3e600b6dda0a279df9837eee1fe62667dd0ceb7e889cd7783fd1197331a.png" src="_images/efdfe3e600b6dda0a279df9837eee1fe62667dd0ceb7e889cd7783fd1197331a.png" />
+<img alt="_images/33ec7b1a82ee833591768cc3a4ab9f007d464a2f70c6a03b048692cd1bd204f0.png" src="_images/33ec7b1a82ee833591768cc3a4ab9f007d464a2f70c6a03b048692cd1bd204f0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -863,7 +844,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c63d9ece176f14026d7a32d95dc479a7e0189333fff7e9bf4e1888a7d40ccfbc.png" src="_images/c63d9ece176f14026d7a32d95dc479a7e0189333fff7e9bf4e1888a7d40ccfbc.png" />
+<img alt="_images/aa3b74690d87213cf0666cf734233ef0870db47c363c258498195a2462cca05f.png" src="_images/aa3b74690d87213cf0666cf734233ef0870db47c363c258498195a2462cca05f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -949,10 +930,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x169ce039370&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1d1c2942b90&gt;
 </pre></div>
 </div>
-<img alt="_images/418c334cb668aa93a616bc7948579a20f96c2e6337d2d304a536df5caead37de.png" src="_images/418c334cb668aa93a616bc7948579a20f96c2e6337d2d304a536df5caead37de.png" />
+<img alt="_images/8843c25b7817690c7799e734d3cf0e42db8df37a64c608e8c1ca547252434f49.png" src="_images/8843c25b7817690c7799e734d3cf0e42db8df37a64c608e8c1ca547252434f49.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -988,7 +969,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8f43267d58bccac0d7b95243da9d9a3bf988661d530dbe20f1b35ee2134fac39.png" src="_images/8f43267d58bccac0d7b95243da9d9a3bf988661d530dbe20f1b35ee2134fac39.png" />
+<img alt="_images/551598e04a8f9819df70d19f176631a9200733cfd29497b59312e8ef4df962b7.png" src="_images/551598e04a8f9819df70d19f176631a9200733cfd29497b59312e8ef4df962b7.png" />
 </div>
 </div>
 </section>

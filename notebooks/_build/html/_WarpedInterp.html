@@ -384,19 +384,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">PiecewiseAffineTransform</span><span class="p">,</span> <span class="n">warp</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;skimage&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <p>We can download the astronaut image from <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code> to learn how a piecewise affine transformation can be applied to a function as well as an image.</p>
 <div class="cell docutils container">
@@ -408,10 +395,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ac4e72e490&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1f82d16d030&gt;
 </pre></div>
 </div>
-<img alt="_images/1733f2d3a923747f3c7fd126a576b6ace5d4b2956e768ceac22550933a6f18f4.png" src="_images/1733f2d3a923747f3c7fd126a576b6ace5d4b2956e768ceac22550933a6f18f4.png" />
+<img alt="_images/0344e9db49a539d3cfa3b925fa3da2adba027c966107bb18fb2d6e0d096c4844.png" src="_images/0344e9db49a539d3cfa3b925fa3da2adba027c966107bb18fb2d6e0d096c4844.png" />
 </div>
 </div>
 <p>It is clear that the image has a structured, regular, and rectilinear grid of pixels. For each x and y coordinate, the image has a corresponding color value (red, green, and blue). In this sense, the image is a function of x and y coordinates and returns an RGB triple. To see this, we can graph a sparser set of x and y values.</p>
@@ -426,10 +413,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac4fa8c8e0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82d28b940&gt;
 </pre></div>
 </div>
-<img alt="_images/f77ae24654a1178c846df635e9da42ab9d3f3f45a27af663a5d97ce16cfa602b.png" src="_images/f77ae24654a1178c846df635e9da42ab9d3f3f45a27af663a5d97ce16cfa602b.png" />
+<img alt="_images/a272df64cf9e22089a9e4956d04344c6975c86d7b518c4ee0997d7fd124d2656.png" src="_images/a272df64cf9e22089a9e4956d04344c6975c86d7b518c4ee0997d7fd124d2656.png" />
 </div>
 </div>
 <p>In this example, the coordinates are modified by adding a sinusoidal oscillation to the row coordinates, which result in a wavy effect. We can see this when we plot the modified coordinates.</p>
@@ -446,10 +433,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac4faff730&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82d3406d0&gt;
 </pre></div>
 </div>
-<img alt="_images/8d086b2665bf26f876d84c531e18c6d393e54dcb04d53e73d841f08dbc5a9457.png" src="_images/8d086b2665bf26f876d84c531e18c6d393e54dcb04d53e73d841f08dbc5a9457.png" />
+<img alt="_images/0c2a3a378988c8f4cd7c10e0f739352ef112d812508a1ffa6a5d7368025f79ad.png" src="_images/0c2a3a378988c8f4cd7c10e0f739352ef112d812508a1ffa6a5d7368025f79ad.png" />
 </div>
 </div>
 <p>Using <code class="docutils literal notranslate"><span class="pre">PiecewiseAffineTransform</span></code> from <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code>, we can estimate the transformation between the original and modified coordinates. Here, we find the best piecewise affine mapping that takes coordinates in the original image (source or src) to coordinates in the modified image (destination or dst).</p>
@@ -461,7 +448,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\3489493659.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\1507925922.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   tform.estimate(src, dst)
 </pre></div>
 </div>
@@ -486,11 +473,11 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\110943506.py:7: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\2898119629.py:7: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   ax.plot(tform.inverse(src)[:, 0], tform.inverse(src)[:, 1], &quot;.b&quot;)
 </pre></div>
 </div>
-<img alt="_images/1d5804b9c8dc7b5691d58ca89dcd5c24843efcecc88dc51458d98a1b31344c0b.png" src="_images/1d5804b9c8dc7b5691d58ca89dcd5c24843efcecc88dc51458d98a1b31344c0b.png" />
+<img alt="_images/7e6b262590683a88cee1bcca0fbe2c5eef12d972885a15d9aa5069e3ee0d919e.png" src="_images/7e6b262590683a88cee1bcca0fbe2c5eef12d972885a15d9aa5069e3ee0d919e.png" />
 </div>
 </div>
 <p>As we can see, the whole image is now transformed to have the same wavy effect as the subset of points. Using this example, we can see how a piecewise affine transformation can be applied to a function.</p>
@@ -542,7 +529,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 100.0)
 </pre></div>
 </div>
-<img alt="_images/567cfc38ffc55183d66fa0b3d87c40c6841e90aecf8dea980ce23f567325dbea.png" src="_images/567cfc38ffc55183d66fa0b3d87c40c6841e90aecf8dea980ce23f567325dbea.png" />
+<img alt="_images/0920bb775161dc164ca20e434c2db9357d5d7c87651a07b1b94ae3814c9d3c9b.png" src="_images/0920bb775161dc164ca20e434c2db9357d5d7c87651a07b1b94ae3814c9d3c9b.png" />
 </div>
 </div>
 <p>Now, let’s assume we want to regrid this data into a rectilinear grid. We are interested in the rectangular space <span class="math notranslate nohighlight">\(1 \le x \le 10\)</span> and <span class="math notranslate nohighlight">\(1 \le y \le 10\)</span>. In the plot below, I higlihight the points that lie in this space in blue.</p>
@@ -559,7 +546,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 100.0)
 </pre></div>
 </div>
-<img alt="_images/b3f677bbd65d2a71db693a46bce8c7a478a21d79f26519e2e2ad611d5eddc8a1.png" src="_images/b3f677bbd65d2a71db693a46bce8c7a478a21d79f26519e2e2ad611d5eddc8a1.png" />
+<img alt="_images/06ba07a194600f85009e6baf680c7b17bd5be941deedac735744dd917abea5d5.png" src="_images/06ba07a194600f85009e6baf680c7b17bd5be941deedac735744dd917abea5d5.png" />
 </div>
 </div>
 <p>If we “zoom in” on this space, we can clearly see that the points do not lie on a rectangluar grid, making interpolation difficult unless we use an unstructured interpolation method. However, we do not want to use an unstructured interpolation method because we indeed have a structured grid! This is where the piecewise affine transformation comes in.</p>
@@ -575,7 +562,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2.0, 10.0)
 </pre></div>
 </div>
-<img alt="_images/12231f50972d566fc5bf289c455c27df4b5d38f08b03a699927337932e0f29fb.png" src="_images/12231f50972d566fc5bf289c455c27df4b5d38f08b03a699927337932e0f29fb.png" />
+<img alt="_images/471097f34a3e0dd122090448fedc712c39a56b2d9c200d4ad2cef3a38645eaec.png" src="_images/471097f34a3e0dd122090448fedc712c39a56b2d9c200d4ad2cef3a38645eaec.png" />
 </div>
 </div>
 </section>
@@ -595,10 +582,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac4fb653a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82e294c70&gt;
 </pre></div>
 </div>
-<img alt="_images/713f7d8ce1e5541776d5089c37d43d4b73df77b12db79a88279e3c0b52057dc8.png" src="_images/713f7d8ce1e5541776d5089c37d43d4b73df77b12db79a88279e3c0b52057dc8.png" />
+<img alt="_images/b0a0360de3475c4c7b42a8aa5ca8f9efa6fc34bec0ea2465061007d15c95db6c.png" src="_images/b0a0360de3475c4c7b42a8aa5ca8f9efa6fc34bec0ea2465061007d15c95db6c.png" />
 </div>
 </div>
 <p>We can focus on the area of interest by only plotting the points that lie in the rectangular space in the source image, but become a warped triangle in the destination image. We can see that the points in the source image are not on a rectilinear grid, but the points in the destination image are. It is much easier to interpolate on the destination image than the source image, but we need a way to translate the source points onto the destination points.</p>
@@ -613,10 +600,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac48758df0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82dafb3a0&gt;
 </pre></div>
 </div>
-<img alt="_images/c10db3a68fa0dab31be4b2f640933f055894f8e24a01ecee6112baac50ab16d5.png" src="_images/c10db3a68fa0dab31be4b2f640933f055894f8e24a01ecee6112baac50ab16d5.png" />
+<img alt="_images/fc03df02869c5569b4569bc8766b5db8d0f46a14792fd4422a580c7e99a27819.png" src="_images/fc03df02869c5569b4569bc8766b5db8d0f46a14792fd4422a580c7e99a27819.png" />
 </div>
 </div>
 <p>This transformation is exactly what we accomplish by using <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code>’s <code class="docutils literal notranslate"><span class="pre">PiecewiseAffineTransform</span></code>.</p>
@@ -632,7 +619,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\3140363046.py:6: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\706274548.py:6: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   tform.estimate(src, dst)
 </pre></div>
 </div>
@@ -651,14 +638,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\2719855974.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\2826385149.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform(src)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac47fed250&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82e437610&gt;
 </pre></div>
 </div>
-<img alt="_images/6e2403932e82233e93f1ec1a8c30f79e74474d60d5614b82790ae6ece4c8acca.png" src="_images/6e2403932e82233e93f1ec1a8c30f79e74474d60d5614b82790ae6ece4c8acca.png" />
+<img alt="_images/0024226cf03a979b2b92787e57d4ccb6e05ef2935a979a933a48e71bc5f669c3.png" src="_images/0024226cf03a979b2b92787e57d4ccb6e05ef2935a979a933a48e71bc5f669c3.png" />
 </div>
 </div>
 <p>Similarly, we can see how the estimated inverse transformation maps the destination points to the source points, turning our regular rectangular grid into a curvilinear grid.</p>
@@ -672,14 +659,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\3543758526.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\2765811850.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform.inverse(dst)
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 100.0)
 </pre></div>
 </div>
-<img alt="_images/0180cb2f8dc09e2e3105ea2452e1a2fdc098380e07fda7395d5fd425591fb324.png" src="_images/0180cb2f8dc09e2e3105ea2452e1a2fdc098380e07fda7395d5fd425591fb324.png" />
+<img alt="_images/74ebbfa03154d3aec345660bbf6f9220c8189e9be534844766c670e1a7327d9d.png" src="_images/74ebbfa03154d3aec345660bbf6f9220c8189e9be534844766c670e1a7327d9d.png" />
 </div>
 </div>
 </section>
@@ -711,14 +698,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_4644\344353277.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_88344\692895072.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform(src_new)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ac480307f0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1f82e49f6a0&gt;
 </pre></div>
 </div>
-<img alt="_images/704b27fbd46070b4495685f7a813c81cb119668c554b677b275c39728b861b96.png" src="_images/704b27fbd46070b4495685f7a813c81cb119668c554b677b275c39728b861b96.png" />
+<img alt="_images/1520a5574be731fb4762a04205a6816d5ad406af1b68bd80808d62edf4c24e3d.png" src="_images/1520a5574be731fb4762a04205a6816d5ad406af1b68bd80808d62edf4c24e3d.png" />
 </div>
 </div>
 <p>We can now very easily interpolate the utility values on the destination image, which is a rectilinear grid. For this, we use <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s <code class="docutils literal notranslate"><span class="pre">map_coordinates</span></code> function, which takes values on a coordinate grid and a set of new coordinates and returns the interpolated values at the new coordinates.</p>
@@ -732,10 +719,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ac4808ad60&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1f82e620f40&gt;
 </pre></div>
 </div>
-<img alt="_images/56d72f2e23bf13370ed4556803708569adac5264b55019d24c8856847f97b68f.png" src="_images/56d72f2e23bf13370ed4556803708569adac5264b55019d24c8856847f97b68f.png" />
+<img alt="_images/297a451a2bc527bac504bc08c72751c049b15b1393d88f4cea5457bee97c480a.png" src="_images/297a451a2bc527bac504bc08c72751c049b15b1393d88f4cea5457bee97c480a.png" />
 </div>
 </div>
 </section>
@@ -753,10 +740,16 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ac483dc2b0&gt;
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">SKImagePiecewiseAffineInterp</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">pa_interp</span> <span class="o">=</span> <span class="n">SKImagePiecewiseAffineInterp</span><span class="p">(</span><span class="n">u_mat</span><span class="p">,</span> <span class="p">[</span><span class="n">x_mat</span><span class="p">,</span> <span class="n">y_mat</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">pa_out</span> <span class="o">=</span> <span class="n">pa_interp</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span>
+
+<span class="ne">ImportError</span>: cannot import name &#39;SKImagePiecewiseAffineInterp&#39; from &#39;HARK.interpolation&#39; (C:\Users\alujan\miniconda3\envs\multinterp-dev\lib\site-packages\HARK\interpolation\__init__.py)
 </pre></div>
 </div>
-<img alt="_images/c5e28fbfeb88485c7d469721003e55993ec8a54fe7e429b0a5c8cdc01117992f.png" src="_images/c5e28fbfeb88485c7d469721003e55993ec8a54fe7e429b0a5c8cdc01117992f.png" />
 </div>
 </div>
 <p>For comparison, we can see how HARK’s <code class="docutils literal notranslate"><span class="pre">UnstructuredInterp</span></code> class performs on the same data.</p>

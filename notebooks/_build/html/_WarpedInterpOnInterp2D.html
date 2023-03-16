@@ -380,19 +380,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">PiecewiseAffineTransform</span><span class="p">,</span> <span class="n">warp</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;skimage&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <p>We can download the astronaut image from <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code> to learn how a piecewise affine transformation can be applied to a function as well as an image.</p>
 <div class="cell docutils container">
@@ -404,10 +391,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ecc18de0a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x2a46b82d030&gt;
 </pre></div>
 </div>
-<img alt="_images/1733f2d3a923747f3c7fd126a576b6ace5d4b2956e768ceac22550933a6f18f4.png" src="_images/1733f2d3a923747f3c7fd126a576b6ace5d4b2956e768ceac22550933a6f18f4.png" />
+<img alt="_images/0344e9db49a539d3cfa3b925fa3da2adba027c966107bb18fb2d6e0d096c4844.png" src="_images/0344e9db49a539d3cfa3b925fa3da2adba027c966107bb18fb2d6e0d096c4844.png" />
 </div>
 </div>
 <p>It is clear that the image has a structured, regular, and rectilinear grid of pixels. For each x and y coordinate, the image has a corresponding color value (red, green, and blue). In this sense, the image is a function of x and y coordinates and returns an rgb triple. To see this, we can graph a sparser set of x and y values.</p>
@@ -422,10 +409,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc191f370&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46b94f940&gt;
 </pre></div>
 </div>
-<img alt="_images/f77ae24654a1178c846df635e9da42ab9d3f3f45a27af663a5d97ce16cfa602b.png" src="_images/f77ae24654a1178c846df635e9da42ab9d3f3f45a27af663a5d97ce16cfa602b.png" />
+<img alt="_images/a272df64cf9e22089a9e4956d04344c6975c86d7b518c4ee0997d7fd124d2656.png" src="_images/a272df64cf9e22089a9e4956d04344c6975c86d7b518c4ee0997d7fd124d2656.png" />
 </div>
 </div>
 <p>In this example, the coordinates are modified by adding a sinusoidal oscillation to the row coordinates, which result in a wavy effect. We can see this when we plot the modified coordinates.</p>
@@ -442,10 +429,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc19a84f0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46ba00580&gt;
 </pre></div>
 </div>
-<img alt="_images/8d086b2665bf26f876d84c531e18c6d393e54dcb04d53e73d841f08dbc5a9457.png" src="_images/8d086b2665bf26f876d84c531e18c6d393e54dcb04d53e73d841f08dbc5a9457.png" />
+<img alt="_images/0c2a3a378988c8f4cd7c10e0f739352ef112d812508a1ffa6a5d7368025f79ad.png" src="_images/0c2a3a378988c8f4cd7c10e0f739352ef112d812508a1ffa6a5d7368025f79ad.png" />
 </div>
 </div>
 <p>Using <code class="docutils literal notranslate"><span class="pre">PiecewiseAffineTransform</span></code> from <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code>, we can estimate the transformation between the original and modified coordinates. Here, we find the best piecewise affine mapping that takes coordinates in the original image (source or src) to coordinates in the modified image (destination or dst).</p>
@@ -457,7 +444,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\1507925922.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\1507925922.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   tform.estimate(src, dst)
 </pre></div>
 </div>
@@ -482,11 +469,11 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\2898119629.py:7: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\2898119629.py:7: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   ax.plot(tform.inverse(src)[:, 0], tform.inverse(src)[:, 1], &quot;.b&quot;)
 </pre></div>
 </div>
-<img alt="_images/1d5804b9c8dc7b5691d58ca89dcd5c24843efcecc88dc51458d98a1b31344c0b.png" src="_images/1d5804b9c8dc7b5691d58ca89dcd5c24843efcecc88dc51458d98a1b31344c0b.png" />
+<img alt="_images/7e6b262590683a88cee1bcca0fbe2c5eef12d972885a15d9aa5069e3ee0d919e.png" src="_images/7e6b262590683a88cee1bcca0fbe2c5eef12d972885a15d9aa5069e3ee0d919e.png" />
 </div>
 </div>
 <p>As we can see, the whole image is now transformed to have the same wavy effect as the subset of points. Using this example, we can see how a piecewise affine transformation can be applied to a function.</p>
@@ -508,7 +495,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(50, 60)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(50, 50)
 </pre></div>
 </div>
 </div>
@@ -531,10 +518,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc21be340&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a466c02ec0&gt;
 </pre></div>
 </div>
-<img alt="_images/af9302a44eb399914ef78cc369d31ab6ebcbab4854dd0d9ecda8d27dfdc81e0b.png" src="_images/af9302a44eb399914ef78cc369d31ab6ebcbab4854dd0d9ecda8d27dfdc81e0b.png" />
+<img alt="_images/dffff6a78cd9944071b6295f684af31e759ff2a7c1758ba6941656f288320308.png" src="_images/dffff6a78cd9944071b6295f684af31e759ff2a7c1758ba6941656f288320308.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -553,10 +540,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2158760&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46c8c4910&gt;
 </pre></div>
 </div>
-<img alt="_images/d77ef8c4b12f248daa1a754e688207eef6f49b19b1cca255ca73634428f9ea2f.png" src="_images/d77ef8c4b12f248daa1a754e688207eef6f49b19b1cca255ca73634428f9ea2f.png" />
+<img alt="_images/e0fe4135ca0066697f1402716f276df9386a3d1fb4f261f19b10ceec5bfbd6e7.png" src="_images/e0fe4135ca0066697f1402716f276df9386a3d1fb4f261f19b10ceec5bfbd6e7.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -571,7 +558,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1.0, 10.0)
 </pre></div>
 </div>
-<img alt="_images/456d611c3ff7eb4aaec98e9c7eedd783fba6c917e25e0ad5c6eb7e366f8a391f.png" src="_images/456d611c3ff7eb4aaec98e9c7eedd783fba6c917e25e0ad5c6eb7e366f8a391f.png" />
+<img alt="_images/67428a6ea9d43fd85610b275de6c89ed1f64462f6cfc5a2bc0c466a501221f55.png" src="_images/67428a6ea9d43fd85610b275de6c89ed1f64462f6cfc5a2bc0c466a501221f55.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -583,7 +570,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(3000, 2)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2500, 2)
 </pre></div>
 </div>
 </div>
@@ -610,10 +597,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2889a00&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46c9c9060&gt;
 </pre></div>
 </div>
-<img alt="_images/4f650b67dedec78d83433744e1ea430eb35701b918da607343523bde5341ef19.png" src="_images/4f650b67dedec78d83433744e1ea430eb35701b918da607343523bde5341ef19.png" />
+<img alt="_images/7e8723b2a188940c288f8c59b77b2dd1fd391878f1269bc83960291b9f60227c.png" src="_images/7e8723b2a188940c288f8c59b77b2dd1fd391878f1269bc83960291b9f60227c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -627,10 +614,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc1a646a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46c9158d0&gt;
 </pre></div>
 </div>
-<img alt="_images/3860e72ea61055dd50b882f7ffdab1ebe79472a6c295aca106eecbe7be1fe037.png" src="_images/3860e72ea61055dd50b882f7ffdab1ebe79472a6c295aca106eecbe7be1fe037.png" />
+<img alt="_images/3828abf821ef019d168bd6e01d5ca22570bd6a112574d880456d55b0d95078c9.png" src="_images/3828abf821ef019d168bd6e01d5ca22570bd6a112574d880456d55b0d95078c9.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -641,7 +628,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(3000, 2)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2500, 2)
 </pre></div>
 </div>
 </div>
@@ -654,7 +641,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\1507925922.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\1507925922.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   tform.estimate(src, dst)
 </pre></div>
 </div>
@@ -672,14 +659,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\2826385149.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\2826385149.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform(src)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2c5e910&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46cb9a8f0&gt;
 </pre></div>
 </div>
-<img alt="_images/cde32362993152742f557a7b22932f2ec781d7d2503517fef412f51b7d1b7692.png" src="_images/cde32362993152742f557a7b22932f2ec781d7d2503517fef412f51b7d1b7692.png" />
+<img alt="_images/0024226cf03a979b2b92787e57d4ccb6e05ef2935a979a933a48e71bc5f669c3.png" src="_images/0024226cf03a979b2b92787e57d4ccb6e05ef2935a979a933a48e71bc5f669c3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -691,14 +678,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\2596321521.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\2596321521.py:1: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform.inverse(dst)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2c9e550&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46cbffdf0&gt;
 </pre></div>
 </div>
-<img alt="_images/5bb110eb16cdd6221606d5a7990d3d45081cc320a4f9c864660e7bb5710a6306.png" src="_images/5bb110eb16cdd6221606d5a7990d3d45081cc320a4f9c864660e7bb5710a6306.png" />
+<img alt="_images/e1c92c4130a167543e8a61d819893305b241d2409dd08bcfaff9aa6bc112b880.png" src="_images/e1c92c4130a167543e8a61d819893305b241d2409dd08bcfaff9aa6bc112b880.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -719,7 +706,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9a5e7727dcca46ee909875c8e374ad766e74c3a9ca14566e5c712528530eb18e.png" src="_images/9a5e7727dcca46ee909875c8e374ad766e74c3a9ca14566e5c712528530eb18e.png" />
+<img alt="_images/42237290dbcfb289c320728e147bc5b000240e2a17c63148d08a0057ecc78dfc.png" src="_images/42237290dbcfb289c320728e147bc5b000240e2a17c63148d08a0057ecc78dfc.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -745,14 +732,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_7076\692895072.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alujan\AppData\Local\Temp\ipykernel_94120\692895072.py:2: DeprecationWarning: Delaunay attribute &#39;vertices&#39; is deprecated in favour of &#39;simplices&#39; and will be removed in Scipy 1.11.0.
   out = tform(src_new)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2d7fa90&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46ccdff70&gt;
 </pre></div>
 </div>
-<img alt="_images/d9fba5bb8daf36c50dffb053794b3d77a902f67512fda560fdf0e6bc902b1c75.png" src="_images/d9fba5bb8daf36c50dffb053794b3d77a902f67512fda560fdf0e6bc902b1c75.png" />
+<img alt="_images/0a32feef2a226c82e566387a881457e0ace578a064ef7f2b56c0304e65071b32.png" src="_images/0a32feef2a226c82e566387a881457e0ace578a064ef7f2b56c0304e65071b32.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -771,10 +758,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x1ecc2d13be0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2a46cb9ac80&gt;
 </pre></div>
 </div>
-<img alt="_images/c7cde1c4f2d938757f228de216cf3744c9b0a89be7df63ba1fc625d2e9134105.png" src="_images/c7cde1c4f2d938757f228de216cf3744c9b0a89be7df63ba1fc625d2e9134105.png" />
+<img alt="_images/800ae13161535c71f3820df18724335cde8e702c86ccd4153661bb0852a749d7.png" src="_images/800ae13161535c71f3820df18724335cde8e702c86ccd4153661bb0852a749d7.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -784,10 +771,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ecc2e78be0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x2a46cda8d90&gt;
 </pre></div>
 </div>
-<img alt="_images/cb2b8a26240ade7e68441849c41f8cb123a3772af1d8f131305f45a361323f81.png" src="_images/cb2b8a26240ade7e68441849c41f8cb123a3772af1d8f131305f45a361323f81.png" />
+<img alt="_images/9a2f9cad802346cb45d5d4bad3dfd4fe49b18211f85479cd4620f08317845d29.png" src="_images/9a2f9cad802346cb45d5d4bad3dfd4fe49b18211f85479cd4620f08317845d29.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -818,10 +805,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ecc9587400&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x2a471d7cf10&gt;
 </pre></div>
 </div>
-<img alt="_images/cb2b8a26240ade7e68441849c41f8cb123a3772af1d8f131305f45a361323f81.png" src="_images/cb2b8a26240ade7e68441849c41f8cb123a3772af1d8f131305f45a361323f81.png" />
+<img alt="_images/caf5ec27d183a373e9c018b2d01ad3e03786eddf0763a72a31013401562e7f17.png" src="_images/caf5ec27d183a373e9c018b2d01ad3e03786eddf0763a72a31013401562e7f17.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -852,10 +839,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1ecc95bd1c0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x2a471e04070&gt;
 </pre></div>
 </div>
-<img alt="_images/35cbf9a42c18f7ee4ec41efb49bd22640fb81fd05fbbeb5b137bb1b44344aa4a.png" src="_images/35cbf9a42c18f7ee4ec41efb49bd22640fb81fd05fbbeb5b137bb1b44344aa4a.png" />
+<img alt="_images/f3c3a82c61aa32fccb1330602eabf0c20f2f3de226405c413116c4f059ba0207.png" src="_images/f3c3a82c61aa32fccb1330602eabf0c20f2f3de226405c413116c4f059ba0207.png" />
 </div>
 </div>
 </section>

@@ -13,6 +13,7 @@ dependencies:
   - numba
   - cupy
   - jupyterlab
+  - jupyter-book
   - scikit-learn
   - scikit-image
   - pytorch
