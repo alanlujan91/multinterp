@@ -7,7 +7,6 @@ DIM_MESSAGE = "Dimension mismatch."
 
 class PiecewiseAffineInterp(_CurvilinearGridInterp):
     def __init__(self, values, grids, **kwargs):
-
         super().__init__(values, grids, target="cpu", **kwargs)
 
         source = np.reshape(self.grids, (self.ndim, -1)).T
