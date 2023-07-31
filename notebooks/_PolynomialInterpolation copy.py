@@ -75,7 +75,7 @@ u_interp = map_coordinates(u_mat, [x_idx, y_idx], order=1)
 plt.imshow(u_interp.reshape(x_new.shape), origin="lower")
 
 # %%
-from HARK.interpolation import RegularizedPolynomialInterp
+from multinterp import RegularizedPolynomialInterp
 
 # %%
 poly_interp = RegularizedPolynomialInterp(u_mat, [x_mat, y_mat], degree=3)

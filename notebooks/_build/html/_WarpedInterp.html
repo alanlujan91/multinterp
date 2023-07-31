@@ -731,7 +731,7 @@ document.write(`
 <p>The <code class="docutils literal notranslate"><span class="pre">SKImagePiecewiseAffineInterp</span></code> class is a wrapper around <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code>’s <code class="docutils literal notranslate"><span class="pre">PiecewiseAffineTransform</span></code> and <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s <code class="docutils literal notranslate"><span class="pre">map_coordinate</span></code> function. It is designed to take a set of source points on a regular curvilinear grid and can be called on any set of query points for interpolation</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">SKImagePiecewiseAffineInterp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multinterp</span> <span class="kn">import</span> <span class="n">SKImagePiecewiseAffineInterp</span>
 
 <span class="n">pa_interp</span> <span class="o">=</span> <span class="n">SKImagePiecewiseAffineInterp</span><span class="p">(</span><span class="n">u_mat</span><span class="p">,</span> <span class="p">[</span><span class="n">x_mat</span><span class="p">,</span> <span class="n">y_mat</span><span class="p">])</span>
 <span class="n">pa_out</span> <span class="o">=</span> <span class="n">pa_interp</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span>
@@ -743,11 +743,11 @@ document.write(`
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">SKImagePiecewiseAffineInterp</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">multinterp</span> <span class="kn">import</span> <span class="n">SKImagePiecewiseAffineInterp</span>
 <span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">pa_interp</span> <span class="o">=</span> <span class="n">SKImagePiecewiseAffineInterp</span><span class="p">(</span><span class="n">u_mat</span><span class="p">,</span> <span class="p">[</span><span class="n">x_mat</span><span class="p">,</span> <span class="n">y_mat</span><span class="p">])</span>
 <span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">pa_out</span> <span class="o">=</span> <span class="n">pa_interp</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span>
 
-<span class="ne">ImportError</span>: cannot import name &#39;SKImagePiecewiseAffineInterp&#39; from &#39;HARK.interpolation&#39; (C:\Users\alujan\miniconda3\envs\multinterp-dev\lib\site-packages\HARK\interpolation\__init__.py)
+<span class="ne">ImportError</span>: cannot import name &#39;SKImagePiecewiseAffineInterp&#39; from &#39;multinterp&#39; (C:\Users\alujan\miniconda3\envs\multinterp-dev\lib\site-packages\HARK\interpolation\__init__.py)
 </pre></div>
 </div>
 </div>
@@ -755,7 +755,7 @@ document.write(`
 <p>For comparison, we can see how HARK’s <code class="docutils literal notranslate"><span class="pre">UnstructuredInterp</span></code> class performs on the same data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">UnstructuredInterp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multinterp</span> <span class="kn">import</span> <span class="n">UnstructuredInterp</span>
 
 <span class="n">unstructured_interp</span> <span class="o">=</span> <span class="n">UnstructuredInterp</span><span class="p">(</span><span class="n">u_mat</span><span class="p">,</span> <span class="p">[</span><span class="n">x_mat</span><span class="p">,</span> <span class="n">y_mat</span><span class="p">])</span>
 <span class="n">unstruc_out</span> <span class="o">=</span> <span class="n">unstructured_interp</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">)</span>

@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from HARK.interpolation import UnstructuredInterp
+from multinterp import UnstructuredInterp
 
 
 def function(*args):

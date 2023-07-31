@@ -691,10 +691,10 @@ document.write(`
 <img alt="_images/38cb3b4e3d60222a9dd1df2081090ad45111e774492682865e6b46884ff621df.png" src="_images/38cb3b4e3d60222a9dd1df2081090ad45111e774492682865e6b46884ff621df.png" />
 </div>
 </div>
-<p>As illustration, we can use <code class="docutils literal notranslate"><span class="pre">HARK.interpolation</span></code>’s <code class="docutils literal notranslate"><span class="pre">UnstructuredInterp</span></code> which wraps <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s unstructured interpolators (<code class="docutils literal notranslate"><span class="pre">griddata</span></code>). This method is not very fast, which is why we are looking for a faster alternative.</p>
+<p>As illustration, we can use <code class="docutils literal notranslate"><span class="pre">multinterp</span></code>’s <code class="docutils literal notranslate"><span class="pre">UnstructuredInterp</span></code> which wraps <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s unstructured interpolators (<code class="docutils literal notranslate"><span class="pre">griddata</span></code>). This method is not very fast, which is why we are looking for a faster alternative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">UnstructuredInterp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multinterp</span> <span class="kn">import</span> <span class="n">UnstructuredInterp</span>
 
 <span class="n">z_interp</span> <span class="o">=</span> <span class="n">UnstructuredInterp</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
 <span class="n">z_vals</span> <span class="o">=</span> <span class="n">z_interp</span><span class="p">(</span><span class="n">all_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">all_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>

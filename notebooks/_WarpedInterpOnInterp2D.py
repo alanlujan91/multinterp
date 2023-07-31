@@ -211,7 +211,7 @@ plt.scatter(x_new, y_new, c=u_out)
 plt.imshow(u_out, origin="lower")
 
 # %%
-from HARK.interpolation import UnstructuredInterp
+from multinterp import UnstructuredInterp
 
 # %%
 unstructured_interp = UnstructuredInterp(u_mat, [x_mat, y_mat])
@@ -223,7 +223,7 @@ unstruc_out = unstructured_interp(x_new, y_new)
 plt.imshow(unstruc_out, origin="lower")
 
 # %%
-from HARK.interpolation import WarpedInterpOnInterp2D
+from multinterp import WarpedInterpOnInterp2D
 
 # %%
 painterp = WarpedInterpOnInterp2D(u_mat, [x_mat, y_mat])

@@ -23,8 +23,8 @@ from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-from HARK.interpolation import LinearFast
-from HARK.interpolation import MultivariateInterp
+from multinterp import LinearFast
+from multinterp import MultivariateInterp
 from matplotlib import colors
 from scipy.interpolate import RegularGridInterpolator
 

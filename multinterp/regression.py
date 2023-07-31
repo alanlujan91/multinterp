@@ -6,7 +6,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, StandardScaler
 from sklearn.svm import SVR
 
-from HARK.interpolation._multi import _CurvilinearGridInterp, _UnstructuredGridInterp
+from multinterp.core import _CurvilinearGridInterp, _UnstructuredGridInterp
 
 
 class PipelineCurvilinearInterp(_CurvilinearGridInterp):

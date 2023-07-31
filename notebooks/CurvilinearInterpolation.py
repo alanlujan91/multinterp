@@ -24,7 +24,7 @@
 # %%
 import numpy as np
 import matplotlib.pyplot as plt
-from HARK.interpolation import WarpedInterpOnInterp2D, Curvilinear2DInterp
+from multinterp import WarpedInterpOnInterp2D, Curvilinear2DInterp
 from time import time
 
 

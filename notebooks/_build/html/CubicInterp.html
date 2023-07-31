@@ -371,14 +371,14 @@ document.write(`
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">CubicHermiteSpline</span>
 
-<span class="kn">from</span> <span class="nn">HARK.interpolation</span> <span class="kn">import</span> <span class="n">CubicInterp</span><span class="p">,</span> <span class="n">CubicHermiteInterp</span>
+<span class="kn">from</span> <span class="nn">multinterp</span> <span class="kn">import</span> <span class="n">CubicInterp</span><span class="p">,</span> <span class="n">CubicHermiteInterp</span>
 </pre></div>
 </div>
 </div>
 </div>
 <section id="creating-a-hark-wrapper-for-scipy-s-cubichermitespline">
 <h2>Creating a HARK wrapper for scipy’s CubicHermiteSpline<a class="headerlink" href="#creating-a-hark-wrapper-for-scipy-s-cubichermitespline" title="Permalink to this headline">#</a></h2>
-<p>The class CubicHermiteInterp in HARK.interpolation implements a HARK wrapper for scipy’s CubicHermiteSpline. A HARK wrapper is needed due to the way interpolators are used in solution methods accross HARK, and in particular due to the <code class="docutils literal notranslate"><span class="pre">distance_criteria</span></code> attribute used for VFI convergence.</p>
+<p>The class CubicHermiteInterp in multinterp implements a HARK wrapper for scipy’s CubicHermiteSpline. A HARK wrapper is needed due to the way interpolators are used in solution methods accross HARK, and in particular due to the <code class="docutils literal notranslate"><span class="pre">distance_criteria</span></code> attribute used for VFI convergence.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -394,9 +394,9 @@ document.write(`
 </div>
 <p>Above are 3 interpolators, which are:</p>
 <ol class="arabic simple">
-<li><p><strong>CubicInterp</strong> from HARK.interpolation</p></li>
+<li><p><strong>CubicInterp</strong> from multinterp</p></li>
 <li><p><strong>CubicHermiteSpline</strong> from scipy.interpolate</p></li>
-<li><p><strong>CubicHermiteInterp</strong> hybrid newly implemented in HARK.interpolation</p></li>
+<li><p><strong>CubicHermiteInterp</strong> hybrid newly implemented in multinterp</p></li>
 </ol>
 <p>Below we see that they behave in much the same way.</p>
 <div class="cell docutils container">
@@ -431,7 +431,7 @@ document.write(`
 </section>
 <section id="timings">
 <h2>Timings<a class="headerlink" href="#timings" title="Permalink to this headline">#</a></h2>
-<p>Below we can compare timings for interpolation and extrapolation among the 3 interpolators. As expected, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s CubicHermiteInterpolator (<code class="docutils literal notranslate"><span class="pre">f2</span></code> below) is the fastest, but it’s not HARK compatible. <code class="docutils literal notranslate"><span class="pre">HARK.interpolation</span></code>’s CubicInterp (<code class="docutils literal notranslate"><span class="pre">f</span></code>) is the slowest, and <code class="docutils literal notranslate"><span class="pre">HARK.interpolation</span></code>’s new CubicHermiteInterp (<code class="docutils literal notranslate"><span class="pre">f3</span></code>) is somewhere in between.</p>
+<p>Below we can compare timings for interpolation and extrapolation among the 3 interpolators. As expected, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>’s CubicHermiteInterpolator (<code class="docutils literal notranslate"><span class="pre">f2</span></code> below) is the fastest, but it’s not HARK compatible. <code class="docutils literal notranslate"><span class="pre">multinterp</span></code>’s CubicInterp (<code class="docutils literal notranslate"><span class="pre">f</span></code>) is the slowest, and <code class="docutils literal notranslate"><span class="pre">multinterp</span></code>’s new CubicHermiteInterp (<code class="docutils literal notranslate"><span class="pre">f3</span></code>) is somewhere in between.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">timeit</span> f(xnew)

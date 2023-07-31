@@ -16,7 +16,7 @@
 # %%
 import matplotlib.pyplot as plt
 import numpy as np
-from HARK.interpolation import RegularizedPolynomialInterp
+from multinterp import RegularizedPolynomialInterp
 from scipy.ndimage import map_coordinates
 from sklearn.linear_model import RidgeCV
 from sklearn.pipeline import make_pipeline

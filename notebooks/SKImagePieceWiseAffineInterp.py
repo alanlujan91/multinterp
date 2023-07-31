@@ -247,7 +247,7 @@ plt.imshow(u_out, origin="lower")
 
 
 # %%
-from HARK.interpolation import UnstructuredInterp
+from multinterp import UnstructuredInterp
 
 
 # %%
@@ -263,7 +263,7 @@ plt.imshow(unstruc_out, origin="lower")
 
 
 # %%
-from HARK.interpolation._skimage import PiecewiseAffineInterp
+from multinterp._skimage import PiecewiseAffineInterp
 
 
 # %%

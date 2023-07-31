@@ -21,12 +21,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import CubicHermiteSpline
 
-from HARK.interpolation import CubicInterp, CubicHermiteInterp
+from multinterp import CubicInterp, CubicHermiteInterp
 
 # %% [markdown]
 # ### Creating a HARK wrapper for scipy's CubicHermiteSpline
 #
-# The class CubicHermiteInterp in HARK.interpolation implements a HARK wrapper for scipy's CubicHermiteSpline. A HARK wrapper is needed due to the way interpolators are used in solution methods accross HARK, and in particular due to the `distance_criteria` attribute used for VFI convergence.
+# The class CubicHermiteInterp in multinterp implements a HARK wrapper for scipy's CubicHermiteSpline. A HARK wrapper is needed due to the way interpolators are used in solution methods accross HARK, and in particular due to the `distance_criteria` attribute used for VFI convergence.
 
 # %% pycharm={"name": "#%%\n"}
 x = np.linspace(0, 10, num=11, endpoint=True)
@@ -39,9 +39,9 @@ f3 = CubicHermiteInterp(x, y, dydx, lower_extrap=True)
 
 # %% [markdown]
 # Above are 3 interpolators, which are:
-# 1. **CubicInterp** from HARK.interpolation
+# 1. **CubicInterp** from multinterp
 # 2. **CubicHermiteSpline** from scipy.interpolate
-# 3. **CubicHermiteInterp** hybrid newly implemented in HARK.interpolation
+# 3. **CubicHermiteInterp** hybrid newly implemented in multinterp
 #
 # Below we see that they behave in much the same way.
 
@@ -65,7 +65,7 @@ plt.show()
 # %% [markdown]
 # ### Timings
 #
-# Below we can compare timings for interpolation and extrapolation among the 3 interpolators. As expected, `scipy`'s CubicHermiteInterpolator (`f2` below) is the fastest, but it's not HARK compatible. `HARK.interpolation`'s CubicInterp (`f`) is the slowest, and `HARK.interpolation`'s new CubicHermiteInterp (`f3`) is somewhere in between.
+# Below we can compare timings for interpolation and extrapolation among the 3 interpolators. As expected, `scipy`'s CubicHermiteInterpolator (`f2` below) is the fastest, but it's not HARK compatible. `multinterp`'s CubicInterp (`f`) is the slowest, and `multinterp`'s new CubicHermiteInterp (`f3`) is somewhere in between.
 
 # %% pycharm={"name": "#%%\n"}
 # %timeit f(xnew)

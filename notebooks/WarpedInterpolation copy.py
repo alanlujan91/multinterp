@@ -267,10 +267,10 @@ plt.scatter(points[0], points[1], c="b")
 plt.grid()
 
 # %% [markdown]
-# As illustration, we can use `HARK.interpolation`'s `UnstructuredInterp` which wraps `scipy`'s unstructured interpolators (`griddata`). This method is not very fast, which is why we are looking for a faster alternative.
+# As illustration, we can use `multinterp`'s `UnstructuredInterp` which wraps `scipy`'s unstructured interpolators (`griddata`). This method is not very fast, which is why we are looking for a faster alternative.
 
 # %%
-from HARK.interpolation import UnstructuredInterp
+from multinterp import UnstructuredInterp
 
 z_interp = UnstructuredInterp(values, [points[0], points[1]])
 z_vals = z_interp(all_coords[0], all_coords[1])

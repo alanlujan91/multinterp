@@ -6,7 +6,7 @@ from scipy.interpolate import (
     RBFInterpolator,
 )
 
-from HARK.interpolation._multi import _UnstructuredGridInterp
+from multinterp._multi import _UnstructuredGridInterp
 
 LNDI_KWARGS = {"fill_value": np.nan, "rescale": False}  # linear
 NNDI_KWARGS = {"rescale": False, "tree_options": None}  # nearest

@@ -1,5 +1,5 @@
 import numpy as np
-from HARK.interpolation._multi import _CurvilinearGridInterp
+from multinterp._multi import _CurvilinearGridInterp
 from skimage.transform import PiecewiseAffineTransform
 
 DIM_MESSAGE = "Dimension mismatch."

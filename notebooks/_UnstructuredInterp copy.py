@@ -14,7 +14,7 @@
 # ---
 
 # %%
-from HARK.interpolation import UnstructuredInterp, RegularizedMultivariateInterp
+from multinterp import UnstructuredInterp, RegularizedMultivariateInterp
 import matplotlib.pyplot as plt
 import numpy as np
 

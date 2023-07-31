@@ -245,7 +245,7 @@ plt.imshow(u_out, origin="lower")
 #
 
 # %%
-from HARK.interpolation import SKImagePiecewiseAffineInterp
+from multinterp import SKImagePiecewiseAffineInterp
 
 pa_interp = SKImagePiecewiseAffineInterp(u_mat, [x_mat, y_mat])
 pa_out = pa_interp(x_new, y_new)
@@ -256,7 +256,7 @@ plt.imshow(pa_out, origin="lower")
 #
 
 # %%
-from HARK.interpolation import UnstructuredInterp
+from multinterp import UnstructuredInterp
 
 unstructured_interp = UnstructuredInterp(u_mat, [x_mat, y_mat])
 unstruc_out = unstructured_interp(x_new, y_new)
