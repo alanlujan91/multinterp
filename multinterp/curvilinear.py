@@ -3,14 +3,14 @@ from numba import njit, prange
 from multinterp.core import _CurvilinearGridInterp
 
 
-AVAILABLE_TARGETS = ["cpu", "parallel"]
+AVAILABLE_BACKENDS = ["cpu", "parallel"]
 
 try:
     import cupy as cp
     from cupyx.scipy.ndimage import map_coordinates as cupy_map_coordinates
 
     CUPY_AVAILABLE = True
-    AVAILABLE_TARGETS.append("gpu")
+    AVAILABLE_BACKENDS.append("gpu")
 except ImportError:
     CUPY_AVAILABLE = False
 

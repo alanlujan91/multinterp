@@ -2,19 +2,46 @@ import numpy as np
 from numba import typed
 
 
-AVAILABLE_TARGETS = ["cpu", "parallel"]
+def import_backends():
+    AVAILABLE_BACKENDS = ["scipy", "numba"]
+    BACKEND_MODULES = {"scipy": np, "numba": np}
 
-try:
-    import cupy as cp
+    try:
+        import cupy as cp
 
-    CUPY_AVAILABLE = True
-    AVAILABLE_TARGETS.append("gpu")
-except ImportError:
-    CUPY_AVAILABLE = False
+        AVAILABLE_BACKENDS.append("cupy")
+        BACKEND_MODULES["cupy"] = cp
+    except ImportError:
+        pass
+
+    try:
+        import jax.numpy as jnp
+
+        AVAILABLE_BACKENDS.append("jax")
+        BACKEND_MODULES["jax"] = jnp
+    except ImportError:
+        pass
+
+    return AVAILABLE_BACKENDS, BACKEND_MODULES
+
+
+AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
+
+JAX_MC_KWARGS = {
+    "order": 1,  # order of interpolation, default to linear
+    "mode": "nearest",  # how to handle extrapolation
+    "cval": 0.0,  # value to use for extrapolation
+}
+
+MC_KWARGS = {
+    **JAX_MC_KWARGS,
+    "output": None,  # output array or dtype
+    "prefilter": False,  # whether to prefilter input
+}
 
 
 class _AbstractMultInterp:
-    def __init__(self, values, target="cpu"):
+    def __init__(self, values, backend="scipy"):
         """
         Initialize a regular grid interpolator.
 
@@ -22,26 +49,24 @@ class _AbstractMultInterp:
         ----------
         values : np.ndarray
             Functional values on a regular grid.
-        target : str, optional
-            Determines which target to use for interpolation.
-            Options are "cpu", "parallel", and "gpu".
-            If "cpu", uses numpy and scipy.
-            If "parallel", uses numba and scipy.
-            If "gpu", uses cupy.
+        backend : str, optional
+            Determines which backend to use for interpolation.
+            Options are "scipy", "numba", and "cupy".
+            If "scipy", uses numpy and scipy.
+            If "numba", uses numba and scipy.
+            If "cupy", uses cupy.
+            If "jax", uses jax.
 
         Raises
         ------
         ValueError
-            Target is invalid.
+            Backend is invalid.
         """
-        if target not in AVAILABLE_TARGETS:
-            raise ValueError("Invalid target.")
-        self.target = target
+        if backend not in AVAILABLE_BACKENDS:
+            raise ValueError("Invalid backend.")
+        self.backend = backend
 
-        if target in ["cpu", "parallel"]:
-            self.values = np.asarray(values)
-        elif target == "gpu":
-            self.values = cp.asarray(values)
+        self.values = BACKEND_MODULES[backend].asarray(values)
 
         self.ndim = self.values.ndim  # should match number of grids
         self.shape = self.values.shape  # should match points in each grid
@@ -60,10 +85,8 @@ class _AbstractMultInterp:
         ValueError
             Number of argumets does not match number of dimensions.
         """
-        if self.target in ["cpu", "parallel"]:
-            args = np.asarray(args)
-        elif self.target == "gpu":
-            args = cp.asarray(args)
+
+        args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
             raise ValueError("Number of arguments must match number of dimensions.")
@@ -90,7 +113,7 @@ class _AbstractMultInterp:
     def _map_coordinates(self, coords):
         """
         Uses coordinates to interpolate on the regular grid with
-        `map_coordinates` from scipy or cupy, depending on target.
+        `map_coordinates` from scipy or cupy, depending on backend.
 
         Parameters
         ----------
@@ -108,11 +131,11 @@ class _AbstractMultInterp:
 class _RegularGridInterp(_AbstractMultInterp):
     """
     Abstract class for interpolating on a regular grid. Sets up
-    structure for using different targets (cpu, parallel, gpu).
+    structure for using different backends (cpu, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 
-    def __init__(self, values, grids, target="cpu"):
+    def __init__(self, values, grids, backend="scipy"):
         """
         Initialize a multivariate interpolator.
 
@@ -122,19 +145,17 @@ class _RegularGridInterp(_AbstractMultInterp):
             Functional values on a regular grid.
         grids : _type_
             1D grids for each dimension.
-        target : str, optional
-            One of "cpu", "parallel", or "gpu". Determines
+        backend : str, optional
+            One of "scipy", "numba", or "cupy". Determines
             hardware to use for interpolation.
         """
 
-        super().__init__(values, target=target)
+        super().__init__(values, backend=backend)
 
-        if target == "cpu":
-            self.grids = [np.asarray(grid) for grid in grids]
-        elif target == "parallel":
-            self.grids = typed.List(grids)
-        elif target == "gpu":
-            self.grids = [cp.asarray(grid) for grid in grids]
+        if backend == "numba":
+            self.grids = typed.List([np.asarray(grid) for grid in grids])
+        else:
+            self.grids = [BACKEND_MODULES[backend].asarray(grid) for grid in grids]
 
         if not (self.ndim == len(self.grids)):
             raise ValueError("Number of grids must match number of dimensions.")
@@ -148,7 +169,7 @@ class _CurvilinearGridInterp(_AbstractMultInterp):
     Abstract class for interpolating on a curvilinear grid.
     """
 
-    def __init__(self, values, grids, target="cpu"):
+    def __init__(self, values, grids, backend="scipy"):
         """
         Initialize a curvilinear grid interpolator.
 
@@ -158,16 +179,13 @@ class _CurvilinearGridInterp(_AbstractMultInterp):
             Functional values on a curvilinear grid.
         grids : np.ndarray
             ND curvilinear grids for each dimension
-        target : str, optional
-            One of "cpu", "parallel", or "gpu".
+        backend : str, optional
+            One of "scipy", "numba", or "cupy".
         """
 
-        super().__init__(values, target=target)
+        super().__init__(values, backend=backend)
 
-        if target in ["cpu", "parallel"]:
-            self.grids = np.asarray(grids)
-        elif target == "gpu":
-            self.grids = cp.asarray(grids)
+        self.grids = BACKEND_MODULES[backend].asarray(grids)
 
         if not self.ndim == self.grids[0].ndim:
             raise ValueError("Number of grids must match number of dimensions.")
@@ -180,7 +198,7 @@ class _UnstructuredGridInterp(_CurvilinearGridInterp):
     Abstract class for interpolation on unstructured grids.
     """
 
-    def __init__(self, values, grids, target="cpu"):
+    def __init__(self, values, grids, backend="scipy"):
         """
         Initialize interpolation on unstructured grids.
 
@@ -190,11 +208,11 @@ class _UnstructuredGridInterp(_CurvilinearGridInterp):
             Functional values on an unstructured grid.
         grids : np.ndarray
             ND unstructured grids for each dimension.
-        target : str, optional
-            One of "cpu", "parallel", or "gpu".
+        backend : str, optional
+            One of "scipy", "numba", or "cupy".
         """
 
-        super().__init__(values, grids, target=target)
+        super().__init__(values, grids, backend=backend)
         # remove non finite values that might result from
         # sequential endogenous grid method
         condition = np.logical_and.reduce([np.isfinite(grid) for grid in self.grids])
