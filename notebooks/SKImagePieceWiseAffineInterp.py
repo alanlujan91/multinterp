@@ -263,7 +263,7 @@ plt.imshow(unstruc_out, origin="lower")
 
 
 # %%
-from multinterp._skimage import PiecewiseAffineInterp
+from multinterp.tests._skimage import PiecewiseAffineInterp
 
 
 # %%

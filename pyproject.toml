@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.2", "setuptools_scm[toml]>=6.2", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+target-version = "py310"
+fix = true
+
+[project]
+name = "multinterp"
+version = "0.13.0"
+authors = [{ name = "Alan Lujan", email = "alanlujan91@gmail.com" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Other/Nonlisted Topic",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+description = "Multivariate Interpolation"
+keywords = ["economics", "interpolation", "modeling", "heterogeneity"]
+requires-python = ">=3.10"
+dynamic = ["dependencies", "optional-dependencies"]
+
+
+[tool.setuptools.dynamic.dependencies]
+file = "environment.yml"
+
+
+[project.urls]
+Homepage = "https://github.com/alanlujan91/multinterp"
+"Bug Reports" = "https://github.com/alanlujan91/multinterp/issues"
+
+[project.license]
+file = "LICENSE"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+# All the following settings are optional:
+exclude = ["binder", "Documentation", "examples"]
+namespaces = false
+
+[tool.setuptools.package-data]
+"*" = ["*.csv", "*.txt"]
+
+[tool.distutils.bdist_wheel]
+universal = 1
