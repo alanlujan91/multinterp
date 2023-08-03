@@ -1,6 +1,5 @@
 name: multinterp-dev
 channels:
-  - pytorch
   - nvidia
   - conda-forge
   - defaults
@@ -8,17 +7,14 @@ dependencies:
   - python=3.10
   - numpy
   - scipy
-  - matplotlib
-  - pandas
   - numba
   - cupy
+  - matplotlib
+  - jupyter
   - jupyterlab
-  - jupyter-book
   - scikit-learn
   - scikit-image
-  - pytorch
-  - gpytorch
-  - skorch
+  - pytest
   - pip
   - pip:
       - git+https://github.com/alanlujan91/HARK@map_coordinates
