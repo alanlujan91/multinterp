@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.15.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -18,15 +18,16 @@
 #
 
 # %%
+import platform
 from itertools import product
 from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-from multinterp import LinearFast
 from multinterp import MultivariateInterp
 from matplotlib import colors
 from scipy.interpolate import RegularGridInterpolator
+from HARK.interpolation import LinearFast
 
 
 # %% [markdown]
@@ -98,7 +99,7 @@ z_interp = interp(np.stack([x_new.flat, y_new.flat]).T).reshape(x_new.shape)
 z_fast_interp = fast_interp(x_new, y_new)
 
 # %% [markdown]
-# This notebook introduces a new class called `MultivariateInterp` which brings additional features and speed improvements. The key feature of `MultivariateInterp`, which we'll see later in this notebook, is its `target` parameter, which can be set to `cpu`, `parallel`, or `gpu`. This allows the user to specify the target device for the interpolation. Using `MultivariateInterp` mirrors the use of `LinearFast` and `RegularGridInterpolator` very closely.
+# This notebook introduces a new class called `MultivariateInterp` which brings additional features and speed improvements. The key feature of `MultivariateInterp`, which we'll see later in this notebook, is its `backend` parameter, which can be set to `cpu`, `parallel`, or `gpu`. This allows the user to specify the backend device for the interpolation. Using `MultivariateInterp` mirrors the use of `LinearFast` and `RegularGridInterpolator` very closely.
 #
 
 # %%
@@ -115,11 +116,11 @@ plt.show()
 z_mult_interp = mult_interp(x_new, y_new)
 
 # %% [markdown]
-# As we see above, `MultivariateInterp` is not at first glance faster than `LinearInterp`, and in some cases it can be significantly slower. However, the speed of `MultivariateInterp` is highly dependent on the number of points in the grid and the target device. For example, for a large number of points, `MultivariateInterp` with `target='gpu'` can be shown to be significantly faster than `LinearFast`.
+# As we see above, `MultivariateInterp` is not at first glance faster than `LinearInterp`, and in some cases it can be significantly slower. However, the speed of `MultivariateInterp` is highly dependent on the number of points in the grid and the backend device. For example, for a large number of points, `MultivariateInterp` with `backend='gpu'` can be shown to be significantly faster than `LinearFast`.
 #
 
 # %%
-gpu_interp = MultivariateInterp(z_mat, [x_grid, y_grid], target="gpu")
+gpu_interp = MultivariateInterp(z_mat, [x_grid, y_grid], backend="cupy")
 z_gpu_interp = gpu_interp(x_new, y_new).get()  # Get the result from GPU
 
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -134,12 +135,12 @@ plt.show()
 np.allclose(z_fast_interp - z_gpu_interp, z_mult_interp - z_gpu_interp)
 
 # %% [markdown]
-# To experiment with `MultivariateInterp` and evaluate the conditions which make it faster than `LinearFast`, we can create a grid of data points and interpolation points and then time the interpolation on different targets.
+# To experiment with `MultivariateInterp` and evaluate the conditions which make it faster than `LinearFast`, we can create a grid of data points and interpolation points and then time the interpolation on different backends.
 #
 
 # %%
 n = 35
-grid_max = 2500
+grid_max = 1000
 grid = np.linspace(10, grid_max, n, dtype=int)
 fast = np.empty((n, n))
 cpu = np.empty_like(fast)
@@ -161,7 +162,7 @@ def timeit(interp, x, y, min=1e-6):
 
 
 # %% [markdown]
-# For different number of data points and approximation points, we can time the interpolation on different targets and use the results of `LinearFast` to normalize the results. This will give us a direct comparison of the speed of `MultivariateInterp` and `LinearFast`.
+# For different number of data points and approximation points, we can time the interpolation on different backends and use the results of `LinearFast` to normalize the results. This will give us a direct comparison of the speed of `MultivariateInterp` and `LinearFast`.
 #
 
 # %%
@@ -177,17 +178,20 @@ for i, j in product(range(n), repeat=2):
     time_norm = timeit(fast_interp, x_approx, y_approx)
     fast[i, j] = time_norm
 
-    cpu_interp = MultivariateInterp(z_cross, [data_grid, data_grid], target="cpu")
+    cpu_interp = MultivariateInterp(z_cross, [data_grid, data_grid], backend="scipy")
     cpu[i, j] = timeit(cpu_interp, x_approx, y_approx) / time_norm
 
-    par_interp = MultivariateInterp(z_cross, [data_grid, data_grid], target="parallel")
+    par_interp = MultivariateInterp(z_cross, [data_grid, data_grid], backend="numba")
     parallel[i, j] = timeit(par_interp, x_approx, y_approx) / time_norm
 
-    gpu_interp = MultivariateInterp(z_cross, [data_grid, data_grid], target="gpu")
+    gpu_interp = MultivariateInterp(z_cross, [data_grid, data_grid], backend="cupy")
     gpu[i, j] = timeit(gpu_interp, x_approx, y_approx) / time_norm
 
+    jax_interp = MultivariateInterp(z_cross, [data_grid, data_grid], backend="jax")
+    jax[i, j] = timeit(jax_interp, x_approx, y_approx) / time_norm
+
 # %%
-fig, ax = plt.subplots(1, 3, sharey=True)
+fig, ax = plt.subplots(1, 4, sharey=True)
 
 
 ax[0].imshow(
@@ -211,7 +215,7 @@ ax[1].imshow(
 )
 ax[1].set_title("Parallel")
 
-cbar = ax[2].imshow(
+ax[2].imshow(
     gpu,
     cmap="RdBu",
     origin="lower",
@@ -220,6 +224,16 @@ cbar = ax[2].imshow(
     extent=[0, grid_max, 0, grid_max],
 )
 ax[2].set_title("GPU")
+
+cbar = ax[3].imshow(
+    jax,
+    cmap="RdBu",
+    origin="lower",
+    norm=colors.SymLogNorm(1, vmin=0, vmax=10),
+    interpolation="bicubic",
+    extent=[0, grid_max, 0, grid_max],
+)
+ax[3].set_title("JAX")
 
 
 cbar = fig.colorbar(
@@ -234,19 +248,19 @@ ax[1].set_xlabel("Approximation grid size (squared)")
 # fig.savefig(platform.system() + ".pdf")
 
 # %% [markdown]
-# As we can see from the results, `MultivariateInterp` is faster than `LinearFast` depending on the number of points and the target device. A value of 1 represents the same speed as `LinearFast`, while a value less than 1 is faster (in red) and a value greater than 1 is slower (in blue).
+# As we can see from the results, `MultivariateInterp` is faster than `LinearFast` depending on the number of points and the backend device. A value of 1 represents the same speed as `LinearFast`, while a value less than 1 is faster (in red) and a value greater than 1 is slower (in blue).
 #
 # [Windows]
 #
 # For CPU, `MultivariateInterp` is (much) slower when the number of approximation points that need to be interpolated is very small, as seen by the deep blue areas. When the number of approximation points is moderate to large, however, `MultivariateInterp` is about as fast as `LinearFast`.
 #
-# For Parallel, `MultivariateInterp` is slightly faster when the number of data points with known function value are greater than the number of approximation points that need to be interpolated. However, `target='parallel'` still suffers from the high overhead when the number of approximation points is small.
+# For Parallel, `MultivariateInterp` is slightly faster when the number of data points with known function value are greater than the number of approximation points that need to be interpolated. However, `backend='parallel'` still suffers from the high overhead when the number of approximation points is small.
 #
-# For GPU, `MultivariateInterp` is much slower when the number of data points with known function value are small. This is because of the overhead of copying the data to the GPU. However, `target='gpu'` is significantly faster for any other case when the number of approximation points is large regardless of the number of data points.
+# For GPU, `MultivariateInterp` is much slower when the number of data points with known function value are small. This is because of the overhead of copying the data to the GPU. However, `backend='gpu'` is significantly faster for any other case when the number of approximation points is large regardless of the number of data points.
 #
 # [Linux]
 #
-# For CPU and Parallel, `MultivariateInterp` is faster when the number of data points with known function value are greater than the number of approximation points that need to be interpolated. Surprisingly, `target='parallel'` is not faster than `target='cpu'` which was the expected result. This is probably because the `target='cpu'` code uses highly specialized `numpy` and `scipy` code, so there may be few benefits to `just-in-time` compilation and parallelization.
+# For CPU and Parallel, `MultivariateInterp` is faster when the number of data points with known function value are greater than the number of approximation points that need to be interpolated. Surprisingly, `backend='parallel'` is not faster than `backend='cpu'` which was the expected result. This is probably because the `backend='cpu'` code uses highly specialized `numpy` and `scipy` code, so there may be few benefits to `just-in-time` compilation and parallelization.
 #
-# For GPU, `MultivariateInterp` is slower when the number of approximation points that need to be interpolated is very small. This is because of the overhead of copying the data to the GPU. However, `target='gpu'` is significantly faster for any other case when the number of approximation points is large regardless of the number of data points.
+# For GPU, `MultivariateInterp` is slower when the number of approximation points that need to be interpolated is very small. This is because of the overhead of copying the data to the GPU. However, `backend='gpu'` is significantly faster for any other case when the number of approximation points is large regardless of the number of data points.
 #
