@@ -98,7 +98,5 @@ class MultivariateInterp(_RegularGridInterp):
         np.ndarray
             Interpolated functional values for each coordinate.
         """
-        shape = coords[0].shape
-        coords = coords.reshape(len(self.grids), -1)
-        output = MAP_COORDS[self.backend](self.values, coords, **self.mc_kwargs)
-        return output.reshape(shape)
+
+        return MAP_COORDS[self.backend](self.values, coords, **self.mc_kwargs)
