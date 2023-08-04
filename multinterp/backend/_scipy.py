@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.ndimage import map_coordinates as scipy_map_coordinates
+from scipy.ndimage import map_coordinates
 from multinterp.core import MC_KWARGS
 
 
@@ -15,9 +15,8 @@ def scipy_multinterp(grids, values, args, options=None):
     grids = [np.asarray(grid) for grid in grids]
 
     coords = scipy_get_coordinates(grids, args)
-    coords = coords.reshape(len(grids), -1)
     output = scipy_map_coordinates(values, coords, **mc_kwargs)
-    return output.reshape(args[0].shape)
+    return output
 
 
 def scipy_get_coordinates(grids, args):
@@ -27,3 +26,10 @@ def scipy_get_coordinates(grids, args):
         coords[dim] = np.interp(args[dim], grid, grid_size)
 
     return coords
+
+
+def scipy_map_coordinates(values, coords, **kwargs):
+    original_shape = coords[0].shape
+    coords = coords.reshape(len(values.shape), -1)
+    output = map_coordinates(values, coords, **kwargs)
+    return output.reshape(original_shape)
