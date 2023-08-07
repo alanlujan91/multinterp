@@ -131,7 +131,7 @@ class _AbstractMultInterp:
 class _RegularGridInterp(_AbstractMultInterp):
     """
     Abstract class for interpolating on a regular grid. Sets up
-    structure for using different backends (cpu, parallel, gpu).
+    structure for using different backends (scipy, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 

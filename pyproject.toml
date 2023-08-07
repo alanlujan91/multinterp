@@ -8,7 +8,7 @@ fix = true
 
 [project]
 name = "multinterp"
-version = "0.13.0"
+version = "0.0.1"
 authors = [{ name = "Alan Lujan", email = "alanlujan91@gmail.com" }]
 classifiers = [
     "Development Status :: 3 - Alpha",

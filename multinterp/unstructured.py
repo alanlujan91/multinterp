@@ -37,14 +37,12 @@ class UnstructuredInterp(_UnstructuredGridInterp):
     HARK.
     """
 
-    distance_criteria = ["values", "grids"]
-
     def __init__(
         self,
         values,
         grids,
         method="linear",
-        **kwargs,
+        options=None,
     ):
         """
         Initialize an Unstructured Grid Interpolator.
@@ -68,8 +66,7 @@ class UnstructuredInterp(_UnstructuredGridInterp):
             The interpolation method is not valid.
         """
 
-        # scipy can only do target = cpu
-        super().__init__(values, grids, target="cpu")
+        super().__init__(values, grids, backend="scipy")
 
         # Check for valid interpolation method
         if method not in AVAILABLE_METHODS:
@@ -95,10 +92,12 @@ class UnstructuredInterp(_UnstructuredGridInterp):
                 f"Unknown interpolation method {method} for {self.ndim} dimensional data."
             )
 
-        self.interp_kwargs = interp_kwargs.copy()
-        self.interp_kwargs.update(
-            (k, v) for k, v in kwargs.items() if k in interp_kwargs
-        )
+        self.interp_kwargs = interp_kwargs
+        if options:
+            self.interp_kwargs.copy()
+            intersection = interp_kwargs.keys() & options.keys()
+            self.interp_kwargs.update({key: options[key] for key in intersection})
+
         self.interpolator = interpolator_class(
             np.moveaxis(self.grids, -1, 0), self.values, **self.interp_kwargs
         )

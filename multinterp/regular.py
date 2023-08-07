@@ -62,7 +62,7 @@ class MultivariateInterp(_RegularGridInterp):
 
         self.mc_kwargs = MC_KWARGS if backend != "jax" else JAX_MC_KWARGS
         if options:
-            self.mc_kwargs = MC_KWARGS.copy()
+            self.mc_kwargs = self.mc_kwargs.copy()
             intersection = self.mc_kwargs.keys() & options.keys()
             self.mc_kwargs.update({key: options[key] for key in intersection})
 

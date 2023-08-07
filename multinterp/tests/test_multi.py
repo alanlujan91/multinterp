@@ -30,29 +30,29 @@ class TestMultivariateInterp(unittest.TestCase):
     def test_interpolation_values(self):
         # check that interpolation values match expected values
 
-        interpolator2D_cpu = MultivariateInterp(
-            function(*self.grids[0:2]), self.grids[0:2], target="cpu"
+        interpolator2D_scipy = MultivariateInterp(
+            function(*self.grids[0:2]), self.grids[0:2], backend="scipy"
         )
         interpolator2D_parallel = MultivariateInterp(
-            function(*self.grids[0:2]), self.grids[0:2], target="parallel"
+            function(*self.grids[0:2]), self.grids[0:2], backend="parallel"
         )
-        interpolator3D_cpu = MultivariateInterp(
-            function(*self.grids), self.grids, target="cpu"
+        interpolator3D_scipy = MultivariateInterp(
+            function(*self.grids), self.grids, backend="scipy"
         )
         interpolator3D_parallel = MultivariateInterp(
-            function(*self.grids), self.grids, target="parallel"
+            function(*self.grids), self.grids, backend="parallel"
         )
 
-        val2D_cpu = interpolator2D_cpu(*np.meshgrid(*self.args[0:2], indexing="ij"))
+        val2D_scipy = interpolator2D_scipy(*np.meshgrid(*self.args[0:2], indexing="ij"))
         val2D_parallel = interpolator2D_parallel(
             *np.meshgrid(*self.args[0:2], indexing="ij")
         )
-        val3D_cpu = interpolator3D_cpu(*np.meshgrid(*self.args, indexing="ij"))
+        val3D_scipy = interpolator3D_scipy(*np.meshgrid(*self.args, indexing="ij"))
         val3D_parallel = interpolator3D_parallel(
             *np.meshgrid(*self.args, indexing="ij")
         )
 
-        self.assertTrue(np.allclose(val2D_cpu, function(*self.args[0:2])))
+        self.assertTrue(np.allclose(val2D_scipy, function(*self.args[0:2])))
         self.assertTrue(np.allclose(val2D_parallel, function(*self.args[0:2])))
-        self.assertTrue(np.allclose(val3D_cpu, function(*self.args)))
+        self.assertTrue(np.allclose(val3D_scipy, function(*self.args)))
         self.assertTrue(np.allclose(val3D_parallel, function(*self.args)))

@@ -1,29 +1,18 @@
 import numpy as np
 from numba import njit, prange
-from multinterp.core import _CurvilinearGridInterp
+from skimage.transform import PiecewiseAffineTransform
+
+from multinterp.core import _CurvilinearGridInterp, import_backends, MC_KWARGS
+from multinterp.backend._scipy import scipy_map_coordinates
+from multinterp.backend._numba import nb_interp_piecewise
+
+AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
 
-AVAILABLE_BACKENDS = ["cpu", "parallel"]
-
-try:
-    import cupy as cp
-    from cupyx.scipy.ndimage import map_coordinates as cupy_map_coordinates
-
-    CUPY_AVAILABLE = True
-    AVAILABLE_BACKENDS.append("gpu")
-except ImportError:
-    CUPY_AVAILABLE = False
+DIM_MESSAGE = "Dimension mismatch."
 
 
-MC_KWARGS = {
-    "order": 1,  # order of interpolation
-    "mode": "nearest",  # how to handle extrapolation
-    "cval": 0.0,  # value to use for extrapolation
-    "prefilter": False,  # whether to prefilter input
-}
-
-
-class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
+class WarpedInterp2D(_CurvilinearGridInterp):
     """
     Warped Grid Interpolation on a 2D grid.
     """
@@ -50,24 +39,19 @@ class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
             Number of arguments doesn't match number of dimensions.
         """
 
-        if self.target in ["cpu", "parallel"]:
-            args = np.asarray(args)
-        elif self.target == "gpu":
-            args = cp.asarray(args)
+        args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
             raise ValueError("Number of arguments must match number of dimensions.")
 
-        if self.target == "cpu":
-            output = self._target_cpu(args, axis)
-        elif self.target == "parallel":
-            output = self._target_parallel(args, axis)
-        elif self.target == "gpu":
-            output = self._target_gpu(args, axis)
+        if self.backend in ["scipy", "cupy"]:
+            output = self._interp_piecewise(args, axis)
+        elif self.backend == "numba":
+            output = self._backend_numba(args, axis)
 
         return output
 
-    def _target_cpu(self, args, axis):
+    def _interp_piecewise(self, args, axis):
         """
         Uses numpy to interpolate on a warped grid.
 
@@ -91,18 +75,22 @@ class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
         # flatten arguments by dimension
         args = args.reshape((self.ndim, -1))
 
-        y_intermed = np.empty((shape_axis, size))
-        z_intermed = np.empty((shape_axis, size))
+        y_intermed = BACKEND_MODULES[self.backend].empty((shape_axis, size))
+        z_intermed = BACKEND_MODULES[self.backend].empty((shape_axis, size))
 
         for i in range(shape_axis):
             # for each dimension, interpolate the first argument
-            grids0 = np.take(self.grids[0], i, axis=axis)
-            grids1 = np.take(self.grids[1], i, axis=axis)
-            values = np.take(self.values, i, axis=axis)
-            y_intermed[i] = np.interp(args[0], grids0, grids1)
-            z_intermed[i] = np.interp(args[0], grids0, values)
+            grids0 = BACKEND_MODULES[self.backend].take(self.grids[0], i, axis=axis)
+            grids1 = BACKEND_MODULES[self.backend].take(self.grids[1], i, axis=axis)
+            values = BACKEND_MODULES[self.backend].take(self.values, i, axis=axis)
+            y_intermed[i] = BACKEND_MODULES[self.backend].interp(
+                args[0], grids0, grids1
+            )
+            z_intermed[i] = BACKEND_MODULES[self.backend].interp(
+                args[0], grids0, values
+            )
 
-        output = np.empty_like(args[0])
+        output = BACKEND_MODULES[self.backend].empty_like(args[0])
 
         for j in range(size):
             y_temp = y_intermed[:, j]
@@ -113,11 +101,11 @@ class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
                 y_temp = y_temp[::-1]
                 z_temp = z_temp[::-1]
 
-            output[j] = np.interp(args[1][j], y_temp, z_temp)
+            output[j] = BACKEND_MODULES[self.backend].interp(args[1][j], y_temp, z_temp)
 
         return output.reshape(shape)
 
-    def _target_parallel(self, args, axis):
+    def _backend_numba(self, args, axis):
         """
         Uses numba to interpolate on a warped grid.
 
@@ -136,55 +124,6 @@ class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
 
         return nb_interp_piecewise(args, self.grids, self.values, axis)
 
-    def _target_gpu(self, args, axis):
-        """
-        Uses cupy to interpolate on a warped grid.
-
-        Parameters
-        ----------
-        args : np.ndarray
-            Coordinates to be interpolated.
-        axis : int, 0 or 1
-            See `WarpedInterpOnInterp2D.__call__`.
-
-        Returns
-        -------
-        np.ndarray
-            Interpolated values on arguments.
-        """
-
-        shape = args[0].shape  # original shape of arguments
-        size = args[0].size  # number of points in arguments
-        shape_axis = self.shape[axis]  # number of points in axis
-
-        args = args.reshape((self.ndim, -1))
-
-        y_intermed = cp.empty((shape_axis, size))
-        z_intermed = cp.empty((shape_axis, size))
-
-        for i in range(shape_axis):
-            # for each dimension, interpolate the first argument
-            grids0 = cp.take(self.grids[0], i, axis=axis)
-            grids1 = cp.take(self.grids[1], i, axis=axis)
-            values = cp.take(self.values, i, axis=axis)
-            y_intermed[i] = cp.interp(args[0], grids0, grids1)
-            z_intermed[i] = cp.interp(args[0], grids0, values)
-
-        output = cp.empty_like(args[0])
-
-        for j in range(size):
-            y_temp = y_intermed[:, j]
-            z_temp = z_intermed[:, j]
-
-            if y_temp[0] > y_temp[-1]:
-                # reverse
-                y_temp = y_temp[::-1]
-                z_temp = z_temp[::-1]
-
-            output[j] = cp.interp(args[1][j], y_temp, z_temp)
-
-        return output.reshape(shape)
-
     def warmup(self):
         """
         Warms up the JIT compiler.
@@ -194,58 +133,31 @@ class WarpedInterpOnInterp2D(_CurvilinearGridInterp):
         return None
 
 
-@njit(parallel=True, cache=True, fastmath=True)
-def nb_interp_piecewise(args, grids, values, axis):
-    """
-    Just-in-time compiled function to interpolate on a warped grid.
+class PiecewiseAffineInterp(_CurvilinearGridInterp):
+    def __init__(self, values, grids, options=None):
+        super().__init__(values, grids, backend="scipy")
 
-    Parameters
-    ----------
-    args : np.ndarray
-        Arguments to be interpolated.
-    grids : np.ndarray
-        Curvilinear grids for each dimension.
-    values : np.ndarray
-        Functional values on a curvilinear grid.
-    axis : int, 0 or 1
-        See `WarpedInterpOnInterp2D.__call__`.
+        self.mc_kwargs = MC_KWARGS
+        if options:
+            self.mc_kwargs = MC_KWARGS.copy()
+            intersection = self.mc_kwargs.keys() & options.keys()
+            self.mc_kwargs.update({key: options[key] for key in intersection})
 
+        source = self.grids.reshape((self.ndim, -1)).T
+        coordinates = BACKEND_MODULES[self.backend].mgrid[
+            tuple(slice(0, dim) for dim in self.shape)
+        ]
+        destination = coordinates.reshape((self.ndim, -1)).T
 
-    Returns
-    -------
-    np.ndarray
-        Interpolated values on arguments.
-    """
+        interpolator = PiecewiseAffineTransform()
+        interpolator.estimate(source, destination)
 
-    shape = args[0].shape  # original shape of arguments
-    size = args[0].size  # number of points in arguments
-    shape_axis = values.shape[axis]  # number of points in axis
+        self.interpolator = interpolator
 
-    # flatten arguments by dimension
-    args = args.reshape((values.ndim, -1))
+    def _get_coordinates(self, args):
+        input = args.reshape((self.ndim, -1)).T
+        output = self.interpolator(input).T.copy()
+        return output.reshape(args.shape)
 
-    y_intermed = np.empty((shape_axis, size))
-    z_intermed = np.empty((shape_axis, size))
-
-    for i in prange(shape_axis):
-        # for each dimension, interpolate the first argument
-        grids0 = grids[0][i] if axis == 0 else grids[0][:, i]
-        grids1 = grids[1][i] if axis == 0 else grids[1][:, i]
-        vals = values[i] if axis == 0 else values[:, i]
-        y_intermed[i] = np.interp(args[0], grids0, grids1)
-        z_intermed[i] = np.interp(args[0], grids0, vals)
-
-    output = np.empty_like(args[0])
-
-    for j in prange(size):
-        y_temp = y_intermed[:, j]
-        z_temp = z_intermed[:, j]
-
-        if y_temp[0] > y_temp[-1]:
-            # reverse
-            y_temp = y_temp[::-1]
-            z_temp = z_temp[::-1]
-
-        output[j] = np.interp(args[1][j], y_temp, z_temp)
-
-    return output.reshape(shape)
+    def _map_coordinates(self, coords):
+        return scipy_map_coordinates(self.values, coords, **self.mc_kwargs)

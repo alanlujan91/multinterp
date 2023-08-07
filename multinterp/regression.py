@@ -14,7 +14,7 @@ class PipelineCurvilinearInterp(_CurvilinearGridInterp):
     Curvilinear Interpolator using a pipeline of sklearn models.
     """
 
-    def __init__(self, values, grids, pipeline, **kwargs):
+    def __init__(self, values, grids, pipeline, options=None):
         """
         Initialize a PipelineCurvilinearInterp object.
 
@@ -27,8 +27,8 @@ class PipelineCurvilinearInterp(_CurvilinearGridInterp):
         pipeline : sklearn.pipeline.Pipeline
             Pipeline of sklearn models.
         """
-        # for now, only support cpu
-        super().__init__(values, grids, target="cpu", **kwargs)
+        # for now, only support scipy
+        super().__init__(values, grids, backend="scipy")
 
         self.pipeline = pipeline
 
@@ -200,8 +200,8 @@ class PipelineUnstructuredInterp(_UnstructuredGridInterp):
         pipeline : sklearn.pipeline.Pipeline
             Pipeline of sklearn models.
         """
-        # for now, only support cpu
-        super().__init__(values, grids, target="cpu")
+        # for now, only support scipy
+        super().__init__(values, grids, backend="scipy")
         X_train = np.moveaxis(self.grids, -1, 0)
         y_train = self.values
         self.pipeline = pipeline
