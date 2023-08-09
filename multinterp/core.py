@@ -40,7 +40,7 @@ MC_KWARGS = {
 }
 
 
-class _AbstractMultInterp:
+class _AbstractInterp:
     def __init__(self, values, backend="scipy"):
         """
         Initialize a regular grid interpolator.
@@ -71,64 +71,8 @@ class _AbstractMultInterp:
         self.ndim = self.values.ndim  # should match number of grids
         self.shape = self.values.shape  # should match points in each grid
 
-    def __call__(self, *args):
-        """
-        Interpolates arguments on the regular grid.
 
-        Returns
-        -------
-        np.ndarray
-            Interpolated functional values for each argument.
-
-        Raises
-        ------
-        ValueError
-            Number of argumets does not match number of dimensions.
-        """
-
-        args = BACKEND_MODULES[self.backend].asarray(args)
-
-        if args.shape[0] != self.ndim:
-            raise ValueError("Number of arguments must match number of dimensions.")
-
-        coords = self._get_coordinates(args)
-        return self._map_coordinates(coords)
-
-    def _get_coordinates(self, args):
-        """
-        Abstract method for getting coordinates for interpolation.
-
-        Parameters
-        ----------
-        args : np.ndarray
-            Arguments to be interpolated.
-
-        Raises
-        ------
-        NotImplementedError
-            Must be implemented by subclass.
-        """
-        raise NotImplementedError("Must be implemented by subclass.")
-
-    def _map_coordinates(self, coords):
-        """
-        Uses coordinates to interpolate on the regular grid with
-        `map_coordinates` from scipy or cupy, depending on backend.
-
-        Parameters
-        ----------
-        coordinates : np.ndarray
-            Index coordinates for interpolation.
-
-        Returns
-        -------
-        np.ndarray
-            Interpolated functional values for each coordinate.
-        """
-        raise NotImplementedError("Must be implemented by subclass.")
-
-
-class _RegularGridInterp(_AbstractMultInterp):
+class _RegularGridInterp(_AbstractInterp):
     """
     Abstract class for interpolating on a regular grid. Sets up
     structure for using different backends (scipy, parallel, gpu).
@@ -164,7 +108,7 @@ class _RegularGridInterp(_AbstractMultInterp):
             raise ValueError("Values shape must match points in each grid.")
 
 
-class _CurvilinearGridInterp(_AbstractMultInterp):
+class _CurvilinearGridInterp(_AbstractInterp):
     """
     Abstract class for interpolating on a curvilinear grid.
     """

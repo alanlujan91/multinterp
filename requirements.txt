@@ -1,9 +1,7 @@
 matplotlib
 numpy
 scipy
-pandas
 numba
-cupy
 scikit-learn
 scikit-image
 git+https://github.com/alanlujan91/HARK@map_coordinates

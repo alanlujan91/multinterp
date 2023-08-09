@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from multinterp import MultivariateInterp
+from multinterp import RegularMultInterp
 
 
 def function(*args):
@@ -30,16 +30,16 @@ class TestMultivariateInterp(unittest.TestCase):
     def test_interpolation_values(self):
         # check that interpolation values match expected values
 
-        interpolator2D_scipy = MultivariateInterp(
+        interpolator2D_scipy = RegularMultInterp(
             function(*self.grids[0:2]), self.grids[0:2], backend="scipy"
         )
-        interpolator2D_parallel = MultivariateInterp(
+        interpolator2D_parallel = RegularMultInterp(
             function(*self.grids[0:2]), self.grids[0:2], backend="parallel"
         )
-        interpolator3D_scipy = MultivariateInterp(
+        interpolator3D_scipy = RegularMultInterp(
             function(*self.grids), self.grids, backend="scipy"
         )
-        interpolator3D_parallel = MultivariateInterp(
+        interpolator3D_parallel = RegularMultInterp(
             function(*self.grids), self.grids, backend="parallel"
         )
 

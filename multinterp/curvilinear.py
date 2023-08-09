@@ -1,15 +1,10 @@
-import numpy as np
-from numba import njit, prange
 from skimage.transform import PiecewiseAffineTransform
 
-from multinterp.core import _CurvilinearGridInterp, import_backends, MC_KWARGS
-from multinterp.backend._scipy import scipy_map_coordinates
+from multinterp.core import _CurvilinearGridInterp, import_backends
 from multinterp.backend._numba import nb_interp_piecewise
+from multinterp.regular import MultivariateInterp
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
-
-
-DIM_MESSAGE = "Dimension mismatch."
 
 
 class WarpedInterp2D(_CurvilinearGridInterp):
@@ -133,15 +128,11 @@ class WarpedInterp2D(_CurvilinearGridInterp):
         return None
 
 
-class PiecewiseAffineInterp(_CurvilinearGridInterp):
+class PiecewiseAffineInterp(_CurvilinearGridInterp, MultivariateInterp):
     def __init__(self, values, grids, options=None):
         super().__init__(values, grids, backend="scipy")
 
-        self.mc_kwargs = MC_KWARGS
-        if options:
-            self.mc_kwargs = MC_KWARGS.copy()
-            intersection = self.mc_kwargs.keys() & options.keys()
-            self.mc_kwargs.update({key: options[key] for key in intersection})
+        self._parse_mc_options(options)
 
         source = self.grids.reshape((self.ndim, -1)).T
         coordinates = BACKEND_MODULES[self.backend].mgrid[
@@ -158,6 +149,3 @@ class PiecewiseAffineInterp(_CurvilinearGridInterp):
         input = args.reshape((self.ndim, -1)).T
         output = self.interpolator(input).T.copy()
         return output.reshape(args.shape)
-
-    def _map_coordinates(self, coords):
-        return scipy_map_coordinates(self.values, coords, **self.mc_kwargs)

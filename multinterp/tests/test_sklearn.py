@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from multinterp import GeneralizedRegressionUnstructuredInterp
+from multinterp import RegressionUnstructuredInterp
 
 
 def function(*args):
@@ -30,13 +30,13 @@ class TestMultivariateInterp(unittest.TestCase):
     def test_interpolation_values(self):
         # check that interpolation values match expected values
 
-        interpolator2D = GeneralizedRegressionUnstructuredInterp(
+        interpolator2D = RegressionUnstructuredInterp(
             function(*self.grids[0:2]),
             [*np.meshgrid(*self.grids[0:2], indexing="ij")],
             model_kwargs={"fit_intercept": False},
         )
 
-        interpolator3D = GeneralizedRegressionUnstructuredInterp(
+        interpolator3D = RegressionUnstructuredInterp(
             function(*self.grids),
             [*np.meshgrid(*self.grids, indexing="ij")],
             model_kwargs={"fit_intercept": False},

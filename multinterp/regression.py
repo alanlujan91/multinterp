@@ -7,9 +7,10 @@ from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, Standar
 from sklearn.svm import SVR
 
 from multinterp.core import _CurvilinearGridInterp, _UnstructuredGridInterp
+from multinterp.regular import MultivariateInterp
 
 
-class PipelineCurvilinearInterp(_CurvilinearGridInterp):
+class PipelineCurvilinearInterp(_CurvilinearGridInterp, MultivariateInterp):
     """
     Curvilinear Interpolator using a pipeline of sklearn models.
     """
@@ -29,7 +30,7 @@ class PipelineCurvilinearInterp(_CurvilinearGridInterp):
         """
         # for now, only support scipy
         super().__init__(values, grids, backend="scipy")
-
+        self._parse_mc_options(options)
         self.pipeline = pipeline
 
         X_train = np.reshape(self.grids, (self.ndim, -1))
@@ -69,7 +70,8 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         grids,
         pipeline,
         std=False,
-        preprocessing_options=None,
+        mc_options=None,
+        pp_options=None,
     ):
         """
         Initialize a _PreprocessingCurvilinearInterp object. Preprocessing options
@@ -98,20 +100,20 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         """
         self.std = std
 
-        if preprocessing_options is None:
-            preprocessing_options = {}
+        if pp_options is None:
+            pp_options = {}
 
-        self.preprocessing_options = preprocessing_options
+        self.pp_options = pp_options
 
-        feature = preprocessing_options.get("feature", None)
+        feature = pp_options.get("feature", None)
 
         if feature and isinstance(feature, str):
-            degree = preprocessing_options.get("degree", 3)
+            degree = pp_options.get("degree", 3)
             assert isinstance(degree, int), "Degree must be an integer."
             if feature.startswith("pol"):
                 pipeline.insert(0, PolynomialFeatures(degree))
             elif feature.startswith("spl"):
-                n_knots = preprocessing_options.get("n_knots", 5)
+                n_knots = pp_options.get("n_knots", 5)
                 assert isinstance(n_knots, int), "n_knots must be an integer."
                 pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
             else:
@@ -122,10 +124,10 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         if std:
             pipeline.insert(0, StandardScaler())
 
-        super().__init__(values, grids, pipeline)
+        super().__init__(values, grids, pipeline, mc_options)
 
 
-class GeneralizedRegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
+class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
     """
     Generalized Regression for each dimension of the curvilinear grid.
     Use regression to map from the curvilinear grid to an index grid.
@@ -133,7 +135,13 @@ class GeneralizedRegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
     """
 
     def __init__(
-        self, values, grids, model="elastic-net-cv", model_kwargs=None, **kwargs
+        self,
+        values,
+        grids,
+        model="elastic-net-cv",
+        mc_options=None,
+        pp_options=None,
+        mod_options=None,
     ):
         """
         Initialize a GeneralizedRegressionCurvilinearInterp object.
@@ -148,7 +156,7 @@ class GeneralizedRegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         model : str, optional
             One of "elastic-net", "elastic-net-cv", "kernel-ridge", "svr", "sgd",
             "gaussian-process", by default "elastic-net".
-        model_kwargs : dict, optional
+        options : dict, optional
             Options for the model, by default None.
 
         Raises
@@ -156,30 +164,32 @@ class GeneralizedRegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         AttributeError
             Model is not implemented.
         """
-        if model_kwargs is None:
-            model_kwargs = {}
+        if mod_options is None:
+            mod_options = {}
 
         self.model = model
-        self.model_kwargs = model_kwargs
+        self.mod_options = mod_options
 
         if model == "elastic-net":
-            pipeline = [ElasticNet(**model_kwargs)]
+            pipeline = [ElasticNet(**mod_options)]
         elif model == "elastic-net-cv":
-            pipeline = [ElasticNetCV(**model_kwargs)]
+            pipeline = [ElasticNetCV(**mod_options)]
         elif model == "kernel-ridge":
-            pipeline = [KernelRidge(**model_kwargs)]
+            pipeline = [KernelRidge(**mod_options)]
         elif model == "svr":
-            pipeline = [SVR(**model_kwargs)]
+            pipeline = [SVR(**mod_options)]
         elif model == "sgd":
-            pipeline = [SGDRegressor(**model_kwargs)]
+            pipeline = [SGDRegressor(**mod_options)]
         elif model == "gaussian-process":
-            pipeline = [GaussianProcessRegressor(**model_kwargs)]
+            pipeline = [GaussianProcessRegressor(**mod_options)]
         else:
             raise AttributeError(
                 f"Model {model} not implemented. Consider using `PipelineCurvilinearInterp`."
             )
 
-        super().__init__(values, grids, pipeline, **kwargs)
+        super().__init__(
+            values, grids, pipeline, mc_options=mc_options, pp_options=pp_options
+        )
 
 
 class PipelineUnstructuredInterp(_UnstructuredGridInterp):
@@ -233,9 +243,7 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
         grids,
         pipeline,
         std=False,
-        feature=None,
-        degree=3,
-        n_knots=5,
+        options=None,
     ):
         """
         Initialize a _PreprocessingUnstructuredInterp object. Preprocessing options
@@ -264,39 +272,39 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
         """
 
         self.std = std
-        self.feature = feature
-        self.degree = degree
-        self.n_knots = n_knots
 
-        if feature is None:
-            pass
-        elif isinstance(feature, str):
+        if options is None:
+            options = {}
+
+        self.options = options
+
+        feature = options.get("feature", None)
+
+        if feature and isinstance(feature, str):
+            degree = options.get("degree", 3)
             assert isinstance(degree, int), "Degree must be an integer."
             if feature.startswith("pol"):
-                pipeline = [PolynomialFeatures(degree=degree)] + pipeline
+                pipeline.insert(0, PolynomialFeatures(degree))
             elif feature.startswith("spl"):
+                n_knots = options.get("n_knots", 5)
                 assert isinstance(n_knots, int), "n_knots must be an integer."
-                pipeline = [
-                    SplineTransformer(n_knots=n_knots, degree=degree)
-                ] + pipeline
+                pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
             else:
                 raise AttributeError(f"Feature {feature} not recognized.")
-        else:
-            raise AttributeError(f"Feature {feature} not recognized.")
 
         if std:
-            pipeline = [StandardScaler()] + pipeline
+            pipeline.insert(0, StandardScaler())
 
         super().__init__(values, grids, pipeline)
 
 
-class GeneralizedRegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
+class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
     """
     Generalized Regression for an unstructured grid.
     """
 
     def __init__(
-        self, values, grids, model="elastic-net-cv", model_kwargs=None, **kwargs
+        self, values, grids, model="elastic-net-cv", pp_options=None, mod_options=None
     ):
         """
         Initialize a GeneralizedRegressionUnstructuredInterp object.
@@ -311,7 +319,7 @@ class GeneralizedRegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         model : str, optional
             One of "elastic-net", "elastic-net-cv", "kernel-ridge", "svr", "sgd",
             "gaussian-process", by default "elastic-net".
-        model_kwargs : dict, optional
+        options : dict, optional
             Options for the model, by default None.
 
         Raises
@@ -319,27 +327,38 @@ class GeneralizedRegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         AttributeError
             Model is not implemented.
         """
-        if model_kwargs is None:
-            model_kwargs = {}
+
+        if mod_options is None:
+            mod_options = {}
 
         self.model = model
-        self.model_kwargs = model_kwargs
+        self.mod_options = mod_options
 
         if model == "elastic-net":
-            pipeline = [ElasticNet(**model_kwargs)]
+            pipeline = [ElasticNet(**mod_options)]
         elif model == "elastic-net-cv":
-            pipeline = [ElasticNetCV(**model_kwargs)]
+            pipeline = [ElasticNetCV(**mod_options)]
         elif model == "kernel-ridge":
-            pipeline = [KernelRidge(**model_kwargs)]
+            pipeline = [KernelRidge(**mod_options)]
         elif model == "svr":
-            pipeline = [SVR(**model_kwargs)]
+            pipeline = [SVR(**mod_options)]
         elif model == "sgd":
-            pipeline = [SGDRegressor(**model_kwargs)]
+            pipeline = [SGDRegressor(**mod_options)]
         elif model == "gaussian-process":
-            pipeline = [GaussianProcessRegressor(**model_kwargs)]
+            pipeline = [GaussianProcessRegressor(**mod_options)]
         else:
             raise AttributeError(
                 f"Model {model} not implemented. Consider using `PipelineUnstructuredInterp`."
             )
 
-        super().__init__(values, grids, pipeline, **kwargs)
+        super().__init__(values, grids, pipeline, pp_options)
+
+
+class GPRUnstructuredInterp(_PreprocessingUnstructuredInterp):
+    def __init__(self, values, grids, pp_options, mod_options):
+        self.model = "gaussian-process"
+        self.mod_options = mod_options
+
+        pipeline = [GaussianProcessRegressor(**mod_options)]
+
+        super().__init__(values, grids, pipeline, **pp_options)
