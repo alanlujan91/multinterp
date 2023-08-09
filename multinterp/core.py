@@ -3,26 +3,26 @@ from numba import typed
 
 
 def import_backends():
-    AVAILABLE_BACKENDS = ["scipy", "numba"]
-    BACKEND_MODULES = {"scipy": np, "numba": np}
+    backends = ["scipy", "numba"]
+    modules = {"scipy": np, "numba": np}
 
     try:
         import cupy as cp
 
-        AVAILABLE_BACKENDS.append("cupy")
-        BACKEND_MODULES["cupy"] = cp
+        backends.append("cupy")
+        modules["cupy"] = cp
     except ImportError:
         pass
 
     try:
         import jax.numpy as jnp
 
-        AVAILABLE_BACKENDS.append("jax")
-        BACKEND_MODULES["jax"] = jnp
+        backends.append("jax")
+        modules["jax"] = jnp
     except ImportError:
         pass
 
-    return AVAILABLE_BACKENDS, BACKEND_MODULES
+    return backends, modules
 
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
@@ -101,7 +101,7 @@ class _RegularGridInterp(_AbstractInterp):
         else:
             self.grids = [BACKEND_MODULES[backend].asarray(grid) for grid in grids]
 
-        if not (self.ndim == len(self.grids)):
+        if self.ndim != len(self.grids):
             raise ValueError("Number of grids must match number of dimensions.")
 
         if not all(self.shape[i] == grid.size for i, grid in enumerate(self.grids)):
@@ -131,9 +131,9 @@ class _CurvilinearGridInterp(_AbstractInterp):
 
         self.grids = BACKEND_MODULES[backend].asarray(grids)
 
-        if not self.ndim == self.grids[0].ndim:
+        if self.ndim != self.grids[0].ndim:
             raise ValueError("Number of grids must match number of dimensions.")
-        if not self.shape == self.grids[0].shape:
+        if self.shape != self.grids[0].shape:
             raise ValueError("Values shape must match points in each grid.")
 
 
@@ -157,7 +157,7 @@ class _UnstructuredGridInterp(_CurvilinearGridInterp):
         """
 
         super().__init__(values, grids, backend=backend)
-        # remove non finite values that might result from
+        # remove non-finite values that might result from
         # sequential endogenous grid method
         condition = np.logical_and.reduce([np.isfinite(grid) for grid in self.grids])
         condition = np.logical_and(condition, np.isfinite(self.values))

@@ -33,13 +33,13 @@ class PipelineCurvilinearInterp(_CurvilinearGridInterp, MultivariateInterp):
         self._parse_mc_options(options)
         self.pipeline = pipeline
 
-        X_train = np.reshape(self.grids, (self.ndim, -1))
+        x_train = np.reshape(self.grids, (self.ndim, -1))
         y_train = np.mgrid[[slice(0, dim) for dim in self.shape]]
         y_train = np.reshape(y_train, (self.ndim, -1))
 
         self.models = [make_pipeline(*pipeline) for _ in range(self.ndim)]
         for dim in range(self.ndim):
-            self.models[dim].fit(X_train, y_train[dim])
+            self.models[dim].fit(x_train, y_train[dim])
 
     def _get_coordinates(self, args):
         """
@@ -55,8 +55,8 @@ class PipelineCurvilinearInterp(_CurvilinearGridInterp, MultivariateInterp):
         np.ndarray
             Interpolated values.
         """
-        X_test = np.reshape(args, (self.ndim, -1))
-        return np.array([m.predict(X_test).reshape(args[0].shape) for m in self.models])
+        x_test = np.reshape(args, (self.ndim, -1))
+        return np.array([m.predict(x_test).reshape(args[0].shape) for m in self.models])
 
 
 class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
@@ -212,11 +212,11 @@ class PipelineUnstructuredInterp(_UnstructuredGridInterp):
         """
         # for now, only support scipy
         super().__init__(values, grids, backend="scipy")
-        X_train = np.moveaxis(self.grids, -1, 0)
+        x_train = np.moveaxis(self.grids, -1, 0)
         y_train = self.values
         self.pipeline = pipeline
         self.model = make_pipeline(*self.pipeline)
-        self.model.fit(X_train, y_train)
+        self.model.fit(x_train, y_train)
 
     def __call__(self, *args: np.ndarray):
         """
@@ -228,8 +228,8 @@ class PipelineUnstructuredInterp(_UnstructuredGridInterp):
             Interpolated values.
         """
 
-        X_test = np.c_[tuple(arg.ravel() for arg in args)]
-        return self.model.predict(X_test).reshape(args[0].shape)
+        x_test = np.c_[tuple(arg.ravel() for arg in args)]
+        return self.model.predict(x_test).reshape(args[0].shape)
 
 
 class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):

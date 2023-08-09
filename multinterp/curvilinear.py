@@ -7,7 +7,7 @@ from multinterp.regular import MultivariateInterp
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
 
-class WarpedInterp2D(_CurvilinearGridInterp):
+class Warped2DInterp(_CurvilinearGridInterp):
     """
     Warped Grid Interpolation on a 2D grid.
     """
@@ -131,7 +131,6 @@ class WarpedInterp2D(_CurvilinearGridInterp):
 class PiecewiseAffineInterp(_CurvilinearGridInterp, MultivariateInterp):
     def __init__(self, values, grids, options=None):
         super().__init__(values, grids, backend="scipy")
-
         self._parse_mc_options(options)
 
         source = self.grids.reshape((self.ndim, -1)).T
@@ -146,6 +145,6 @@ class PiecewiseAffineInterp(_CurvilinearGridInterp, MultivariateInterp):
         self.interpolator = interpolator
 
     def _get_coordinates(self, args):
-        input = args.reshape((self.ndim, -1)).T
-        output = self.interpolator(input).T.copy()
+        _input = args.reshape((self.ndim, -1)).T
+        output = self.interpolator(_input).T.copy()
         return output.reshape(args.shape)

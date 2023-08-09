@@ -32,7 +32,7 @@ class UnstructuredInterp(_UnstructuredGridInterp):
     Multivariate interpolation on an unstructured grid.
     This class wraps various scipy unstructured interpolation
     methods to provide a common interface. Additionally, it
-    can be used with meshgrids and returns meshgrids, which
+    can be used with mesh-grids and returns mesh-grids, which
     are not supported by scipy but are the default used in
     HARK.
     """

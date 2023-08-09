@@ -9,11 +9,11 @@ from multinterp.core import (
 
 
 def get_methods():
-    GET_COORDS = {
+    get_coords = {
         "scipy": scipy_get_coordinates,
         "numba": numba_get_coordinates,
     }
-    MAP_COORDS = {
+    map_coords = {
         "scipy": scipy_map_coordinates,
         "numba": numba_map_coordinates,
     }
@@ -21,21 +21,20 @@ def get_methods():
     try:
         from multinterp.backend._cupy import cupy_get_coordinates, cupy_map_coordinates
 
-        GET_COORDS["cupy"] = cupy_get_coordinates
-        MAP_COORDS["cupy"] = cupy_map_coordinates
+        get_coords["cupy"] = cupy_get_coordinates
+        map_coords["cupy"] = cupy_map_coordinates
     except ImportError:
         pass
 
     try:
         from multinterp.backend._jax import jax_get_coordinates, jax_map_coordinates
 
-        GET_COORDS["jax"] = jax_get_coordinates
-        MAP_COORDS["jax"] = jax_map_coordinates
-
+        get_coords["jax"] = jax_get_coordinates
+        map_coords["jax"] = jax_map_coordinates
     except ImportError:
         pass
 
-    return GET_COORDS, MAP_COORDS
+    return get_coords, map_coords
 
 
 GET_COORDS, MAP_COORDS = get_methods()
