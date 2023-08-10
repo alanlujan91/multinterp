@@ -304,7 +304,13 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
     """
 
     def __init__(
-        self, values, grids, model="elastic-net-cv", pp_options=None, mod_options=None
+        self,
+        values,
+        grids,
+        model="elastic-net-cv",
+        std=False,
+        pp_options=None,
+        mod_options=None,
     ):
         """
         Initialize a GeneralizedRegressionUnstructuredInterp object.
@@ -351,7 +357,7 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
                 f"Model {model} not implemented. Consider using `PipelineUnstructuredInterp`."
             )
 
-        super().__init__(values, grids, pipeline, pp_options)
+        super().__init__(values, grids, pipeline, std=std, options=pp_options)
 
 
 class GPRUnstructuredInterp(_PreprocessingUnstructuredInterp):

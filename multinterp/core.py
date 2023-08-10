@@ -127,7 +127,7 @@ class _CurvilinearGridInterp(_AbstractInterp):
             One of "scipy", "numba", or "cupy".
         """
 
-        super().__init__(values, backend=backend)
+        _AbstractInterp.__init__(self, values, backend=backend)
 
         self.grids = BACKEND_MODULES[backend].asarray(grids)
 
