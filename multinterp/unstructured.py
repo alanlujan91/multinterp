@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from scipy.interpolate import (
     CloughTocher2DInterpolator,
@@ -70,7 +72,8 @@ class UnstructuredInterp(_UnstructuredGridInterp):
 
         # Check for valid interpolation method
         if method not in AVAILABLE_METHODS:
-            raise ValueError("Invalid interpolation method.")
+            msg = "Invalid interpolation method."
+            raise ValueError(msg)
 
         self.method = method
 
@@ -88,9 +91,8 @@ class UnstructuredInterp(_UnstructuredGridInterp):
         )
 
         if not interp_kwargs:
-            raise ValueError(
-                f"Unknown interpolation method {method} for {self.ndim} dimensional data."
-            )
+            msg = f"Unknown interpolation method {method} for {self.ndim} dimensional data."
+            raise ValueError(msg)
 
         self.interp_kwargs = interp_kwargs
         if options:

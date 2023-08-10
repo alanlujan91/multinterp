@@ -1,9 +1,12 @@
+from __future__ import annotations
+
+import functools
+
 import jax.numpy as jnp
 from jax import jit
 from jax.scipy.ndimage import map_coordinates
 
 from multinterp.core import JAX_MC_KWARGS
-import functools
 
 
 @jit
@@ -19,8 +22,7 @@ def jax_multinterp(grids, values, args, options=None):
     grids = [jnp.asarray(grid) for grid in grids]
 
     coords = jax_get_coordinates(grids, args)
-    output = jax_map_coordinates(values, coords, **mc_kwargs)
-    return output
+    return jax_map_coordinates(values, coords, **mc_kwargs)
 
 
 @jit

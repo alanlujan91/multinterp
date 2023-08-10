@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from skimage.transform import PiecewiseAffineTransform
 
-from multinterp.core import _CurvilinearGridInterp, import_backends
 from multinterp.backend._numba import nb_interp_piecewise
+from multinterp.core import _CurvilinearGridInterp, import_backends
 from multinterp.regular import MultivariateInterp
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
@@ -37,7 +39,8 @@ class Warped2DInterp(_CurvilinearGridInterp):
         args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
-            raise ValueError("Number of arguments must match number of dimensions.")
+            msg = "Number of arguments must match number of dimensions."
+            raise ValueError(msg)
 
         if self.backend in ["scipy", "cupy"]:
             output = self._interp_piecewise(args, axis)
@@ -125,7 +128,7 @@ class Warped2DInterp(_CurvilinearGridInterp):
         """
         self(*self.grids)
 
-        return None
+        return
 
 
 class PiecewiseAffineInterp(_CurvilinearGridInterp, MultivariateInterp):

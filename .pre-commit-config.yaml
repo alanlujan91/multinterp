@@ -1,11 +1,42 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: "v4.4.0"
     hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
       - id: check-yaml
+      - id: debug-statements
       - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+      - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 23.7.0
     hooks:
-      - id: black
+      - id: black-jupyter
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.15.0
+    hooks:
+      - id: blacken-docs
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.1
+    hooks:
+      - id: prettier
+        files: \.(html|md|toml|yml|yaml)
+        args: [--prose-wrap=preserve]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.284
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: "1.7.0"
+    hooks:
+      - id: nbqa-ruff
+        args: ["--fix", "--extend-ignore=B018,B905,EXE002,F821,F401,T201"]
+        additional_dependencies: [ruff==0.0.275]

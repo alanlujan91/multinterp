@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
-
 from multinterp import RegressionUnstructuredInterp
 
 
@@ -46,5 +47,5 @@ class TestMultivariateInterp(unittest.TestCase):
 
         val3D = interpolator3D(*np.meshgrid(*self.args, indexing="ij"))
 
-        self.assertTrue(np.allclose(val2D, function(*self.args[0:2]), rtol=1e-2))
-        self.assertTrue(np.allclose(val3D, function(*self.args), rtol=1e-2))
+        assert np.allclose(val2D, function(*self.args[0:2]), rtol=0.01)
+        assert np.allclose(val3D, function(*self.args), rtol=0.01)

@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
 from multinterp.core import (
+    JAX_MC_KWARGS,
+    MC_KWARGS,
     _RegularGridInterp,
     import_backends,
-    MC_KWARGS,
-    JAX_MC_KWARGS,
 )
 
 
@@ -73,6 +75,9 @@ class MultivariateInterp(_RegularGridInterp):
             intersection = self.mc_kwargs.keys() & options.keys()
             self.mc_kwargs.update({key: options[key] for key in intersection})
 
+    def compile(self):
+        self(*self.grids)
+
     def __call__(self, *args):
         """
         Interpolates arguments on the regular grid.
@@ -91,7 +96,8 @@ class MultivariateInterp(_RegularGridInterp):
         args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
-            raise ValueError("Number of arguments must match number of dimensions.")
+            msg = "Number of arguments must match number of dimensions."
+            raise ValueError(msg)
 
         coords = self._get_coordinates(args)
         return self._map_coordinates(coords)

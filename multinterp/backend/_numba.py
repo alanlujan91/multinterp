@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import numpy as np
 from numba import njit, prange, typed
 from scipy.ndimage import map_coordinates
+
 from multinterp.core import MC_KWARGS
 
 
@@ -16,8 +19,7 @@ def numba_multinterp(grids, values, args, options=None):
     grids = typed.List([np.asarray(grid) for grid in grids])
 
     coords = numba_get_coordinates(grids, args)
-    output = numba_map_coordinates(values, coords, **mc_kwargs)
-    return output
+    return numba_map_coordinates(values, coords, **mc_kwargs)
 
 
 @njit(parallel=True, cache=True, fastmath=True)

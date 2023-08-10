@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import unittest
-from scipy.interpolate import interpn
+
 import numpy as np
-from multinterp.backend._scipy import scipy_multinterp
 from multinterp.backend._cupy import cupy_multinterp
-from multinterp.backend._numba import numba_multinterp
 from multinterp.backend._jax import jax_multinterp
+from multinterp.backend._numba import numba_multinterp
+from multinterp.backend._scipy import scipy_multinterp
+from scipy.interpolate import interpn
 
 
 def f_2d(u, v):
@@ -29,19 +32,19 @@ class Test2DInterpolation(unittest.TestCase):
 
     def test_scipy(self):
         result_multinterp = scipy_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_numba(self):
         result_multinterp = numba_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_cupy(self):
         result_multinterp = cupy_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_jax(self):
         result_multinterp = jax_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
 
 class Test3DInterpolation(unittest.TestCase):
@@ -68,16 +71,16 @@ class Test3DInterpolation(unittest.TestCase):
 
     def test_scipy(self):
         result_multinterp = scipy_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_numba(self):
         result_multinterp = numba_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_cupy(self):
         result_multinterp = cupy_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)
 
     def test_jax(self):
         result_multinterp = jax_multinterp(self.grids, self.values, self.args)
-        self.assertTrue(np.allclose(self.true_values, result_multinterp, atol=1e-5))
+        assert np.allclose(self.true_values, result_multinterp, atol=1e-05)

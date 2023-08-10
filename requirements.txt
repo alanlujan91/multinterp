@@ -1,6 +1,6 @@
 matplotlib
-numpy
-scipy
 numba
-scikit-learn
+numpy
 scikit-image
+scikit-learn
+scipy

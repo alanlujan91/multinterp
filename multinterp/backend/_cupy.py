@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import cupy as cp
 from cupyx.scipy.ndimage import map_coordinates
+
 from multinterp.core import MC_KWARGS
 
 
@@ -15,8 +18,7 @@ def cupy_multinterp(grids, values, args, options=None):
     grids = [cp.asarray(grid) for grid in grids]
 
     coords = cupy_get_coordinates(grids, args)
-    output = cupy_map_coordinates(values, coords, **mc_kwargs)
-    return output
+    return cupy_map_coordinates(values, coords, **mc_kwargs)
 
 
 def cupy_get_coordinates(grids, args):

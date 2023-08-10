@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
-
 from multinterp import RegularMultInterp
 
 
@@ -52,7 +53,7 @@ class TestMultivariateInterp(unittest.TestCase):
             *np.meshgrid(*self.args, indexing="ij")
         )
 
-        self.assertTrue(np.allclose(val2D_scipy, function(*self.args[0:2])))
-        self.assertTrue(np.allclose(val2D_parallel, function(*self.args[0:2])))
-        self.assertTrue(np.allclose(val3D_scipy, function(*self.args)))
-        self.assertTrue(np.allclose(val3D_parallel, function(*self.args)))
+        assert np.allclose(val2D_scipy, function(*self.args[0:2]))
+        assert np.allclose(val2D_parallel, function(*self.args[0:2]))
+        assert np.allclose(val3D_scipy, function(*self.args))
+        assert np.allclose(val3D_parallel, function(*self.args))

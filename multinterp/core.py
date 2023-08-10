@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from numba import typed
 
@@ -63,7 +65,8 @@ class _AbstractInterp:
             Backend is invalid.
         """
         if backend not in AVAILABLE_BACKENDS:
-            raise ValueError("Invalid backend.")
+            msg = "Invalid backend."
+            raise ValueError(msg)
         self.backend = backend
 
         self.values = BACKEND_MODULES[backend].asarray(values)
@@ -102,10 +105,12 @@ class _RegularGridInterp(_AbstractInterp):
             self.grids = [BACKEND_MODULES[backend].asarray(grid) for grid in grids]
 
         if self.ndim != len(self.grids):
-            raise ValueError("Number of grids must match number of dimensions.")
+            msg = "Number of grids must match number of dimensions."
+            raise ValueError(msg)
 
         if not all(self.shape[i] == grid.size for i, grid in enumerate(self.grids)):
-            raise ValueError("Values shape must match points in each grid.")
+            msg = "Values shape must match points in each grid."
+            raise ValueError(msg)
 
 
 class _CurvilinearGridInterp(_AbstractInterp):
@@ -132,9 +137,11 @@ class _CurvilinearGridInterp(_AbstractInterp):
         self.grids = BACKEND_MODULES[backend].asarray(grids)
 
         if self.ndim != self.grids[0].ndim:
-            raise ValueError("Number of grids must match number of dimensions.")
+            msg = "Number of grids must match number of dimensions."
+            raise ValueError(msg)
         if self.shape != self.grids[0].shape:
-            raise ValueError("Values shape must match points in each grid.")
+            msg = "Values shape must match points in each grid."
+            raise ValueError(msg)
 
 
 class _UnstructuredGridInterp(_CurvilinearGridInterp):

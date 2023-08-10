@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.kernel_ridge import KernelRidge
@@ -117,9 +119,11 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
                 assert isinstance(n_knots, int), "n_knots must be an integer."
                 pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
             else:
-                raise AttributeError(f"Feature {feature} not recognized.")
+                msg = f"Feature {feature} not recognized."
+                raise AttributeError(msg)
         else:
-            raise AttributeError(f"Feature {feature} not recognized.")
+            msg = f"Feature {feature} not recognized."
+            raise AttributeError(msg)
 
         if std:
             pipeline.insert(0, StandardScaler())
@@ -183,9 +187,8 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         elif model == "gaussian-process":
             pipeline = [GaussianProcessRegressor(**mod_options)]
         else:
-            raise AttributeError(
-                f"Model {model} not implemented. Consider using `PipelineCurvilinearInterp`."
-            )
+            msg = f"Model {model} not implemented. Consider using `PipelineCurvilinearInterp`."
+            raise AttributeError(msg)
 
         super().__init__(
             values, grids, pipeline, mc_options=mc_options, pp_options=pp_options
@@ -290,7 +293,8 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
                 assert isinstance(n_knots, int), "n_knots must be an integer."
                 pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
             else:
-                raise AttributeError(f"Feature {feature} not recognized.")
+                msg = f"Feature {feature} not recognized."
+                raise AttributeError(msg)
 
         if std:
             pipeline.insert(0, StandardScaler())
@@ -353,9 +357,8 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         elif model == "gaussian-process":
             pipeline = [GaussianProcessRegressor(**mod_options)]
         else:
-            raise AttributeError(
-                f"Model {model} not implemented. Consider using `PipelineUnstructuredInterp`."
-            )
+            msg = f"Model {model} not implemented. Consider using `PipelineUnstructuredInterp`."
+            raise AttributeError(msg)
 
         super().__init__(values, grids, pipeline, std=std, options=pp_options)
 
