@@ -1,50 +1,56 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from multinterp import RegressionUnstructuredInterp
 
 
-def function(*args):
+def sum_first_axis(*args):
     mats = np.meshgrid(*args, indexing="ij")
 
     return np.sum(mats, axis=0)
 
 
-class TestMultivariateInterp:
-    def setUp(self):
-        # create test data
+@pytest.fixture()
+def setup_data():
+    # create test data
 
-        self.grids = [
-            np.linspace(0, 1, 10),
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-        ]
+    grids = [
+        np.linspace(0, 1, 10),
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+    ]
 
-        self.args = [
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-            np.linspace(0, 1, 13),
-        ]
+    args = [
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+        np.linspace(0, 1, 13),
+    ]
 
-    def test_interpolation_values(self):
-        # check that interpolation values match expected values
+    return grids, args
 
-        interpolator2D = RegressionUnstructuredInterp(
-            function(*self.grids[0:2]),
-            [*np.meshgrid(*self.grids[0:2], indexing="ij")],
-            model_kwargs={"fit_intercept": False},
-        )
 
-        interpolator3D = RegressionUnstructuredInterp(
-            function(*self.grids),
-            [*np.meshgrid(*self.grids, indexing="ij")],
-            model_kwargs={"fit_intercept": False},
-        )
+def test_interpolation_values(setup_data):
+    # check that interpolation values match expected values
 
-        val2D = interpolator2D(*np.meshgrid(*self.args[0:2], indexing="ij"))
+    grids, args = setup_data
 
-        val3D = interpolator3D(*np.meshgrid(*self.args, indexing="ij"))
+    interpolator2D = RegressionUnstructuredInterp(
+        sum_first_axis(*grids[0:2]),
+        [*np.meshgrid(*grids[0:2], indexing="ij")],
+        model_kwargs={"fit_intercept": False},
+    )
 
-        assert np.allclose(val2D, function(*self.args[0:2]), rtol=0.01)
-        assert np.allclose(val3D, function(*self.args), rtol=0.01)
+    interpolator3D = RegressionUnstructuredInterp(
+        sum_first_axis(*grids),
+        [*np.meshgrid(*grids, indexing="ij")],
+        model_kwargs={"fit_intercept": False},
+    )
+
+    val2D = interpolator2D(*np.meshgrid(*args[0:2], indexing="ij"))
+
+    val3D = interpolator3D(*np.meshgrid(*args, indexing="ij"))
+
+    assert np.allclose(val2D, sum_first_axis(*args[0:2]), rtol=0.01)
+    assert np.allclose(val3D, sum_first_axis(*args), rtol=0.01)

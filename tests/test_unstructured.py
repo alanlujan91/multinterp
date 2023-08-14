@@ -1,46 +1,50 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from multinterp import UnstructuredInterp
 
 
-def function(*args):
+def sum_first_axis(*args):
     mats = np.meshgrid(*args, indexing="ij")
 
     return np.sum(mats, axis=0)
 
 
-class TestMultivariateInterp:
-    def setUp(self):
-        # create test data
+@pytest.fixture()
+def setup_data():
+    # create test data
+    grids = [
+        np.linspace(0, 1, 10),
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+    ]
 
-        self.grids = [
-            np.linspace(0, 1, 10),
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-        ]
+    args = [
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+        np.linspace(0, 1, 13),
+    ]
 
-        self.args = [
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-            np.linspace(0, 1, 13),
-        ]
+    return grids, args
 
-    def test_interpolation_values(self):
-        # check that interpolation values match expected values
 
-        interpolator2D = UnstructuredInterp(
-            function(*self.grids[0:2]), [*np.meshgrid(*self.grids[0:2], indexing="ij")]
-        )
+def test_interpolation_values(setup_data):
+    # check that interpolation values match expected values
+    grids, args = setup_data
 
-        interpolator3D = UnstructuredInterp(
-            function(*self.grids), [*np.meshgrid(*self.grids, indexing="ij")]
-        )
+    interpolator2D = UnstructuredInterp(
+        sum_first_axis(*grids[0:2]), [*np.meshgrid(*grids[0:2], indexing="ij")]
+    )
 
-        val2D = interpolator2D(*np.meshgrid(*self.args[0:2], indexing="ij"))
+    interpolator3D = UnstructuredInterp(
+        sum_first_axis(*grids), [*np.meshgrid(*grids, indexing="ij")]
+    )
 
-        val3D = interpolator3D(*np.meshgrid(*self.args, indexing="ij"))
+    val2D = interpolator2D(*np.meshgrid(*args[0:2], indexing="ij"))
 
-        assert np.allclose(val2D, function(*self.args[0:2]))
-        assert np.allclose(val3D, function(*self.args))
+    val3D = interpolator3D(*np.meshgrid(*args, indexing="ij"))
+
+    assert np.allclose(val2D, sum_first_axis(*args[0:2]))
+    assert np.allclose(val3D, sum_first_axis(*args))

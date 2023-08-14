@@ -33,7 +33,14 @@ classifiers = [
 dependencies = ["numpy", "scipy", "numba", "scikit-learn", "scikit-image"]
 [project.optional-dependencies]
 dev = []
-test = []
+docs = [
+    "furo",
+    "myst_parser >=0.13",
+    "sphinx >=4.0",
+    "sphinx-copybutton",
+    "sphinx-autodoc-typehints",
+]
+test = ["pytest"]
 cupy = ["cupy"]
 jax = ["jax", "jaxlib"]
 
