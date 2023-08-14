@@ -1,58 +1,58 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
-from multinterp import RegularMultInterp
+from multinterp import MultivariateInterp
 
 
-def function(*args):
+def sum_first_axis(*args):
     mats = np.meshgrid(*args, indexing="ij")
 
     return np.sum(mats, axis=0)
 
 
-class TestMultivariateInterp:
-    def setUp(self):
-        # create test data
+@pytest.fixture()
+def setup_data():
+    # create test data
+    grids = [
+        np.linspace(0, 1, 10),
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+    ]
 
-        self.grids = [
-            np.linspace(0, 1, 10),
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-        ]
+    args = [
+        np.linspace(0, 1, 11),
+        np.linspace(0, 1, 12),
+        np.linspace(0, 1, 13),
+    ]
 
-        self.args = [
-            np.linspace(0, 1, 11),
-            np.linspace(0, 1, 12),
-            np.linspace(0, 1, 13),
-        ]
+    return grids, args
 
-    def test_interpolation_values(self):
-        # check that interpolation values match expected values
 
-        interpolator2D_scipy = RegularMultInterp(
-            function(*self.grids[0:2]), self.grids[0:2], backend="scipy"
-        )
-        interpolator2D_parallel = RegularMultInterp(
-            function(*self.grids[0:2]), self.grids[0:2], backend="parallel"
-        )
-        interpolator3D_scipy = RegularMultInterp(
-            function(*self.grids), self.grids, backend="scipy"
-        )
-        interpolator3D_parallel = RegularMultInterp(
-            function(*self.grids), self.grids, backend="parallel"
-        )
+def test_interpolation_values(setup_data):
+    # check that interpolation values match expected values
+    grids, args = setup_data
 
-        val2D_scipy = interpolator2D_scipy(*np.meshgrid(*self.args[0:2], indexing="ij"))
-        val2D_parallel = interpolator2D_parallel(
-            *np.meshgrid(*self.args[0:2], indexing="ij")
-        )
-        val3D_scipy = interpolator3D_scipy(*np.meshgrid(*self.args, indexing="ij"))
-        val3D_parallel = interpolator3D_parallel(
-            *np.meshgrid(*self.args, indexing="ij")
-        )
+    interpolator2D_scipy = MultivariateInterp(
+        sum_first_axis(*grids[0:2]), grids[0:2], backend="scipy"
+    )
+    interpolator2D_numba = MultivariateInterp(
+        sum_first_axis(*grids[0:2]), grids[0:2], backend="numba"
+    )
+    interpolator3D_scipy = MultivariateInterp(
+        sum_first_axis(*grids), grids, backend="scipy"
+    )
+    interpolator3D_numba = MultivariateInterp(
+        sum_first_axis(*grids), grids, backend="numba"
+    )
 
-        assert np.allclose(val2D_scipy, function(*self.args[0:2]))
-        assert np.allclose(val2D_parallel, function(*self.args[0:2]))
-        assert np.allclose(val3D_scipy, function(*self.args))
-        assert np.allclose(val3D_parallel, function(*self.args))
+    val2D_scipy = interpolator2D_scipy(*np.meshgrid(*args[0:2], indexing="ij"))
+    val2D_numba = interpolator2D_numba(*np.meshgrid(*args[0:2], indexing="ij"))
+    val3D_scipy = interpolator3D_scipy(*np.meshgrid(*args, indexing="ij"))
+    val3D_numba = interpolator3D_numba(*np.meshgrid(*args, indexing="ij"))
+
+    assert np.allclose(val2D_scipy, sum_first_axis(*args[0:2]))
+    assert np.allclose(val2D_numba, sum_first_axis(*args[0:2]))
+    assert np.allclose(val3D_scipy, sum_first_axis(*args))
+    assert np.allclose(val3D_numba, sum_first_axis(*args))
