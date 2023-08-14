@@ -1,6 +1,55 @@
 [build-system]
-requires = ["setuptools>=61.2", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multinterp"
+version = "0.0.1"
+description = "Multivariate Interpolation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE.txt" }
+keywords = ["economics", "interpolation", "modeling", "heterogeneity"]
+authors = [{ name = "Alan Lujan", email = "alanlujan91@gmail.com" }]
+maintainers = [{ name = "All the contributors" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Other/Nonlisted Topic",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python",
+]
+dependencies = ["numpy", "scipy", "numba", "scikit-learn", "scikit-image"]
+[project.optional-dependencies]
+dev = []
+test = []
+cupy = ["cupy"]
+jax = ["jax", "jaxlib"]
+
+[project.urls]
+"Homepage" = "https://github.com/alanlujan91/multinterp"
+"Bug Reports" = "https://github.com/alanlujan91/multinterp/issues"
+"Source" = "https://github.com/alanlujan91/multinterp/"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]
+log_cli_level = "info"
+testpaths = ["tests"]
 
 [tool.ruff]
 select = [
@@ -47,46 +96,10 @@ isort.required-imports = ["from __future__ import annotations"]
 [tool.ruff.per-file-ignores]
 "tests/**" = ["T20"]
 
-[project]
-name = "multinterp"
-version = "0.0.1"
-authors = [{ name = "Alan Lujan", email = "alanlujan91@gmail.com" }]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Environment :: Console",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Financial and Insurance Industry",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Other/Nonlisted Topic",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "License :: OSI Approved :: Apache Software License",
-    "License :: OSI Approved",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-]
-description = "Multivariate Interpolation"
-keywords = ["economics", "interpolation", "modeling", "heterogeneity"]
-requires-python = ">=3.10"
-dynamic = ["dependencies", "optional-dependencies"]
-
 
 [tool.setuptools.dynamic.dependencies]
 file = "environment.yml"
 
-
-[project.urls]
-Homepage = "https://github.com/alanlujan91/multinterp"
-"Bug Reports" = "https://github.com/alanlujan91/multinterp/issues"
-
-[project.license]
-file = "LICENSE"
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
 # All the following settings are optional:

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import unittest
-
 import numpy as np
+
 from multinterp import UnstructuredInterp
 
 
@@ -12,7 +11,7 @@ def function(*args):
     return np.sum(mats, axis=0)
 
 
-class TestMultivariateInterp(unittest.TestCase):
+class TestMultivariateInterp:
     def setUp(self):
         # create test data
 

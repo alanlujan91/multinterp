@@ -90,7 +90,7 @@ class MultivariateInterp(_RegularGridInterp):
         Raises
         ------
         ValueError
-            Number of argumets does not match number of dimensions.
+            Number of arguments does not match number of dimensions.
         """
 
         args = BACKEND_MODULES[self.backend].asarray(args)
