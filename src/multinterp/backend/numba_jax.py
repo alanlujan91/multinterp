@@ -1,38 +1,25 @@
 from __future__ import annotations
 
-import functools
 import itertools
-import operator
 from collections.abc import Callable, Sequence
 
-import jax.numpy as jnp
-from jax import lax
-from jax._src import api, util
+import numpy as np
 from jax._src.typing import Array, ArrayLike
-from jax._src.util import safe_zip as zip
-
-
-def _nonempty_prod(arrs: Sequence[Array]) -> Array:
-    return functools.reduce(operator.mul, arrs)
-
-
-def _nonempty_sum(arrs: Sequence[Array]) -> Array:
-    return functools.reduce(operator.add, arrs)
 
 
 def _mirror_index_fixer(index: Array, size: int) -> Array:
     s = size - 1  # Half-wavelength of triangular wave
     # Scaled, integer-valued version of the triangular wave |x - round(x)|
-    return jnp.abs((index + s) % (2 * s) - s)
+    return np.abs((index + s) % (2 * s) - s)
 
 
 def _reflect_index_fixer(index: Array, size: int) -> Array:
-    return jnp.floor_divide(_mirror_index_fixer(2 * index + 1, 2 * size + 1) - 1, 2)
+    return np.floor_divide(_mirror_index_fixer(2 * index + 1, 2 * size + 1) - 1, 2)
 
 
 _INDEX_FIXERS: dict[str, Callable[[Array, int], Array]] = {
     "constant": lambda index, size: index,
-    "nearest": lambda index, size: jnp.clip(index, 0, size - 1),
+    "nearest": lambda index, size: np.clip(index, 0, size - 1),
     "wrap": lambda index, size: index % size,
     "mirror": _mirror_index_fixer,
     "reflect": _reflect_index_fixer,
@@ -40,24 +27,23 @@ _INDEX_FIXERS: dict[str, Callable[[Array, int], Array]] = {
 
 
 def _round_half_away_from_zero(a: Array) -> Array:
-    return a if jnp.issubdtype(a.dtype, jnp.integer) else lax.round(a)
+    return a if np.issubdtype(a.dtype, np.integer) else np.round(a)
 
 
 def _nearest_indices_and_weights(coordinate: Array) -> list[tuple[Array, ArrayLike]]:
-    index = _round_half_away_from_zero(coordinate).astype(jnp.int32)
+    index = _round_half_away_from_zero(coordinate).astype(np.int32)
     weight = coordinate.dtype.type(1)
     return [(index, weight)]
 
 
 def _linear_indices_and_weights(coordinate: Array) -> list[tuple[Array, ArrayLike]]:
-    lower = jnp.floor(coordinate)
+    lower = np.floor(coordinate)
     upper_weight = coordinate - lower
     lower_weight = 1 - upper_weight
-    index = lower.astype(jnp.int32)
+    index = lower.astype(np.int32)
     return [(index, lower_weight), (index + 1, upper_weight)]
 
 
-@functools.partial(api.jit, static_argnums=(2, 3, 4))
 def _map_coordinates(
     input: ArrayLike,
     coordinates: Sequence[ArrayLike],
@@ -65,9 +51,9 @@ def _map_coordinates(
     mode: str,
     cval: ArrayLike,
 ) -> Array:
-    input_arr = jnp.asarray(input)
-    coordinate_arrs = [jnp.asarray(c) for c in coordinates]
-    cval = jnp.asarray(cval, input_arr.dtype)
+    input_arr = np.asarray(input)
+    coordinate_arrs = [np.asarray(c) for c in coordinates]
+    cval = np.asarray(cval, input_arr.dtype)
 
     if len(coordinates) != input_arr.ndim:
         msg = (
@@ -114,16 +100,16 @@ def _map_coordinates(
 
     outputs = []
     for items in itertools.product(*valid_1d_interpolations):
-        indices, validities, weights = util.unzip3(items)
+        indices, validities, weights = zip(*items)
         if all(valid is True for valid in validities):
             # fast path
             contribution = input_arr[indices]
         else:
-            all_valid = functools.reduce(operator.and_, validities)
-            contribution = jnp.where(all_valid, input_arr[indices], cval)
-        outputs.append(_nonempty_prod(weights) * contribution)
-    result = _nonempty_sum(outputs)
-    if jnp.issubdtype(input_arr.dtype, jnp.integer):
+            all_valid = np.all(validities)
+            contribution = np.where(all_valid, input_arr[indices], cval)
+        outputs.append(np.prod(weights) * contribution)
+    result = np.sum(outputs)
+    if np.issubdtype(input_arr.dtype, np.integer):
         result = _round_half_away_from_zero(result)
     return result.astype(input_arr.dtype)
 
