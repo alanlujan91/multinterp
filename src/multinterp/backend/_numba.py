@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 from numba import njit, prange, typed
-from scipy.ndimage import map_coordinates
 
+# from scipy.ndimage import map_coordinates
+from multinterp.backend.numba_jax import map_coordinates
 from multinterp.core import MC_KWARGS
 
 
