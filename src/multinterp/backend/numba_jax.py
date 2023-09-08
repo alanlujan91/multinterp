@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 import itertools
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 
 import numpy as np
+from numba import njit
 
 
+@njit
 def _mirror_index_fixer(index: np.ndarray, size: int) -> np.ndarray:
     s = size - 1  # Half-wavelength of triangular wave
     # Scaled, integer-valued version of the triangular wave |x - round(x)|
     return np.abs((index + s) % (2 * s) - s)
 
 
+@njit
 def _reflect_index_fixer(index: np.ndarray, size: int) -> np.ndarray:
     return np.floor_divide(_mirror_index_fixer(2 * index + 1, 2 * size + 1) - 1, 2)
 
@@ -25,21 +28,19 @@ _INDEX_FIXERS: dict[str, Callable[[np.ndarray, int], np.ndarray]] = {
 }
 
 
+@njit
 def _round_half_away_from_zero(a: np.ndarray) -> np.ndarray:
     return a if np.issubdtype(a.dtype, np.integer) else np.round(a)
 
 
-def _nearest_indices_and_weights(
-    coordinate: np.ndarray,
-) -> list[tuple[np.ndarray, np.ndarray]]:
+@njit
+def _nearest_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
     index = _round_half_away_from_zero(coordinate).astype(np.int32)
     weight = coordinate.dtype.type(1)
     return [(index, weight)]
 
 
-def _linear_indices_and_weights(
-    coordinate: np.ndarray,
-) -> list[tuple[np.ndarray, np.ndarray]]:
+def _linear_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
     lower = np.floor(coordinate)
     upper_weight = coordinate - lower
     lower_weight = 1 - upper_weight
@@ -49,27 +50,27 @@ def _linear_indices_and_weights(
 
 def _map_coordinates(
     input: np.ndarray,
-    coordinates: Sequence[np.ndarray],
+    coordinates: np.ndarray,
     order: int,
     mode: str,
     cval: np.ndarray,
 ) -> np.ndarray:
     input_arr = np.asarray(input)
-    coordinate_arrs = [np.asarray(c) for c in coordinates]
+    coordinate_arrs = np.asarray(coordinates)
     cval = np.asarray(cval, input_arr.dtype)
 
     if len(coordinates) != input_arr.ndim:
         msg = (
-            "coordinates must be a sequence of length input.ndim, but {} != {}".format(
-                len(coordinates), input_arr.ndim
-            )
+            f"coordinates must be a sequence of length input.ndim,"
+            f"but {len(coordinates)} != {input_arr.ndim}"
         )
         raise ValueError(msg)
 
     index_fixer = _INDEX_FIXERS.get(mode)
-    if index_fixer is None:
-        msg = "jax.scipy.ndimage.map_coordinates does not yet support mode {}. Currently supported modes are {}.".format(
-            mode, set(_INDEX_FIXERS)
+    if not index_fixer:
+        msg = (
+            f"map_coordinates does not yet support mode {mode}."
+            f"Currently supported modes are {set(_INDEX_FIXERS)}."
         )
         raise NotImplementedError(msg)
 
@@ -88,7 +89,7 @@ def _map_coordinates(
     elif order == 1:
         interp_fun = _linear_indices_and_weights
     else:
-        msg = "jax.scipy.ndimage.map_coordinates currently requires order<=1"
+        msg = "map_coordinates currently requires order<=1"
         raise NotImplementedError(msg)
 
     valid_1d_interpolations = []
@@ -102,6 +103,7 @@ def _map_coordinates(
         valid_1d_interpolations.append(valid_interp)
 
     outputs = []
+
     for items in itertools.product(*valid_1d_interpolations):
         indices, validities, weights = zip(*items, strict=True)
         if all(valid is True for valid in validities):
@@ -111,6 +113,7 @@ def _map_coordinates(
             all_valid = np.all(validities, axis=0)
             contribution = np.where(all_valid, input_arr[indices], cval)
         outputs.append(np.prod(weights, axis=0) * contribution)
+
     result = np.sum(outputs, axis=0)
     if np.issubdtype(input_arr.dtype, np.integer):
         result = _round_half_away_from_zero(result)
@@ -119,7 +122,7 @@ def _map_coordinates(
 
 def map_coordinates(
     input: np.ndarray,
-    coordinates: Sequence[np.ndarray],
+    coordinates: np.ndarray,
     order: int,
     output: None,
     prefilter: None,
