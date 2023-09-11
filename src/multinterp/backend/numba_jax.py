@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import itertools
-from collections.abc import Callable
 
 import numpy as np
 from numba import njit
+
+_INDEX_FIXERS = ("constant", "nearest", "wrap", "mirror", "reflect")
 
 
 @njit
@@ -17,15 +18,6 @@ def _mirror_index_fixer(index: np.ndarray, size: int) -> np.ndarray:
 @njit
 def _reflect_index_fixer(index: np.ndarray, size: int) -> np.ndarray:
     return np.floor_divide(_mirror_index_fixer(2 * index + 1, 2 * size + 1) - 1, 2)
-
-
-_INDEX_FIXERS: dict[str, Callable[[np.ndarray, int], np.ndarray]] = {
-    "constant": lambda index, size: index,
-    "nearest": lambda index, size: np.clip(index, 0, size - 1),
-    "wrap": lambda index, size: index % size,
-    "mirror": _mirror_index_fixer,
-    "reflect": _reflect_index_fixer,
-}
 
 
 @njit
@@ -67,23 +59,41 @@ def _map_coordinates(
         )
         raise ValueError(msg)
 
-    index_fixer = _INDEX_FIXERS.get(mode)
-    if not index_fixer:
-        msg = (
-            f"map_coordinates does not yet support mode {mode}."
-            f"Currently supported modes are {set(_INDEX_FIXERS)}."
-        )
-        raise NotImplementedError(msg)
-
     if mode == "constant":
 
         def is_valid(index, size):
             return (index >= 0) & (index < size)
 
+        def index_fixer(index, size):
+            return index
+
     else:
 
         def is_valid(index, size):
             return True
+
+        if mode == "nearest":
+
+            def index_fixer(index, size):
+                return np.clip(index, 0, size - 1)
+
+        elif mode == "wrap":
+
+            def index_fixer(index, size):
+                return index % size
+
+        elif mode == "mirror":
+            index_fixer = _mirror_index_fixer
+
+        elif mode == "reflect":
+            index_fixer = _reflect_index_fixer
+
+        else:
+            msg = (
+                f"map_coordinates does not yet support mode {mode}."
+                f"Currently supported modes are {_INDEX_FIXERS}."
+            )
+            raise NotImplementedError(msg)
 
     if order == 0:
         interp_fun = _nearest_indices_and_weights
