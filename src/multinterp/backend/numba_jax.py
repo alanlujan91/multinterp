@@ -30,22 +30,23 @@ _INDEX_FIXERS: dict[str, Callable[[np.ndarray, int], np.ndarray]] = {
 
 @njit
 def _round_half_away_from_zero(a: np.ndarray) -> np.ndarray:
-    return a if np.issubdtype(a.dtype, np.integer) else np.round(a)
+    return a if a.dtype.kind in "iu" else np.round(a)
 
 
 @njit
 def _nearest_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
     index = _round_half_away_from_zero(coordinate).astype(np.int32)
     weight = coordinate.dtype.type(1)
-    return [(index, weight)]
+    return ((index, weight),)
 
 
+@njit
 def _linear_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
     lower = np.floor(coordinate)
     upper_weight = coordinate - lower
     lower_weight = 1 - upper_weight
     index = lower.astype(np.int32)
-    return [(index, lower_weight), (index + 1, upper_weight)]
+    return ((index, lower_weight), (index + 1, upper_weight))
 
 
 def _map_coordinates(

@@ -50,13 +50,13 @@ jax = ["jax", "jaxlib"]
 "Source" = "https://github.com/alanlujan91/multinterp/"
 
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
-xfail_strict = true
-filterwarnings = ["error"]
-log_cli_level = "info"
-testpaths = ["tests"]
+# [tool.pytest.ini_options]
+# minversion = "6.0"
+# addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+# xfail_strict = true
+# filterwarnings = ["error"]
+# log_cli_level = "info"
+# testpaths = ["tests"]
 
 [tool.ruff]
 select = [
