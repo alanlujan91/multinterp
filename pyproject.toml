@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs", "hatch-fancy-pypi-readme"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "multinterp"
-version = "0.0.1"
+version = "0.1.0"
 description = "Multivariate Interpolation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,6 +31,8 @@ classifiers = [
     "Programming Language :: Python",
 ]
 dependencies = ["numpy", "scipy", "numba", "scikit-learn", "scikit-image"]
+dynamic = ["version"]
+
 [project.optional-dependencies]
 dev = []
 docs = [
@@ -103,7 +105,6 @@ isort.required-imports = ["from __future__ import annotations"]
 [tool.ruff.per-file-ignores]
 "tests/**" = ["T20"]
 
-
 [tool.setuptools.dynamic.dependencies]
 file = "environment.yml"
 
@@ -118,3 +119,20 @@ namespaces = false
 
 [tool.distutils.bdist_wheel]
 universal = 1
+
+[tool.hatch]
+version.path = "src/<package>/__init__.py"
+
+[tool.mypy]
+files = "src"
+python_version = "3.8"
+strict = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+
+
+# You can disable imports or control per-module/file settings here
+[[tool.mypy.overrides]]
+module = ["numpy.*"]
+ignore_missing_imports = true
