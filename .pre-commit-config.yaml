@@ -1,7 +1,6 @@
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
-  autoupdate_schedule: "quarterly"
 
 repos:
   - repo: https://github.com/psf/black-pre-commit-mirror
@@ -14,12 +13,6 @@ repos:
     hooks:
       - id: blacken-docs
         additional_dependencies: [black==23.7.0]
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.292"
-    hooks:
-      - id: ruff
-        args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v4.4.0"
@@ -51,22 +44,35 @@ repos:
         types_or: [yaml, markdown, html, css, scss, javascript, json]
         args: [--prose-wrap=always]
 
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: "1.7.0"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.0.290"
     hooks:
-      - id: nbqa-ruff
-        args: ["--fix", "--extend-ignore=B018,B905,EXE002,F821,F401,T201"]
-        additional_dependencies: [ruff==0.0.275]
+      - id: ruff
+        args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.5.1"
     hooks:
       - id: mypy
-        files: src
+        files: src|tests
         args: []
+        additional_dependencies:
+          - pytest
 
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.2.5"
     hooks:
       - id: codespell
-        args: ["-L", "sur,nd"]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: "v0.9.0.5"
+    hooks:
+      - id: shellcheck
+
+  - repo: local
+    hooks:
+      - id: disallow-caps
+        name: Disallow improper capitalization
+        language: pygrep
+        entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
+        exclude: .pre-commit-config.yaml
