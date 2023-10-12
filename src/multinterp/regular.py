@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import cupy as cp
+import numpy as np
+
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
 from multinterp.core import (
@@ -19,12 +22,17 @@ def get_methods():
         "scipy": scipy_map_coordinates,
         "numba": numba_map_coordinates,
     }
+    get_grad = {
+        "scipy": np.gradient,
+        "numba": np.gradient,
+    }
 
     try:
         from multinterp.backend._cupy import cupy_get_coordinates, cupy_map_coordinates
 
         get_coords["cupy"] = cupy_get_coordinates
         map_coords["cupy"] = cupy_map_coordinates
+        get_grad["cupy"] = cp.gradient
     except ImportError:
         pass
 
@@ -36,10 +44,10 @@ def get_methods():
     except ImportError:
         pass
 
-    return get_coords, map_coords
+    return get_coords, map_coords, get_grad
 
 
-GET_COORDS, MAP_COORDS = get_methods()
+GET_COORDS, MAP_COORDS, GET_GRAD = get_methods()
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
@@ -67,6 +75,7 @@ class MultivariateInterp(_RegularGridInterp):
 
         super().__init__(values, grids, backend=backend)
         self._parse_mc_options(options)
+        self._gradient = {}
 
     def _parse_mc_options(self, options):
         self.mc_kwargs = MC_KWARGS if self.backend != "jax" else JAX_MC_KWARGS
@@ -136,3 +145,23 @@ class MultivariateInterp(_RegularGridInterp):
         """
 
         return MAP_COORDS[self.backend](self.values, coords, **self.mc_kwargs)
+
+    def diff(self, axis=None, edge_order=1):
+        # if axis is not an integer less than or equal to the number
+        # of dimensions of the input array, then a ValueError is raised.
+        if axis is None:
+            msg = "Must specify axis to differentiate along."
+            raise ValueError(msg)
+        if axis >= self.ndim:
+            msg = "Axis must be less than number of dimensions."
+            raise ValueError(msg)
+
+        grad = self._gradient.get(axis)
+        if grad is None:
+            grad = GET_GRAD[self.backend](
+                self.values, self.grids[axis], axis=axis, edge_order=edge_order
+            )
+
+        return MultivariateInterp(
+            grad, self.grids, backend=self.backend, options=self.mc_kwargs
+        )
