@@ -1,8 +1,17 @@
 from __future__ import annotations
 
-import cupy as cp
-import jax.numpy as jnp
+
 import numpy as np
+
+try:
+    import cupy as cp
+except ImportError:
+    pass
+
+try:
+    import jax.numpy as jnp
+except ImportError:
+    pass
 
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
