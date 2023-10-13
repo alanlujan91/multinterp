@@ -8,7 +8,7 @@ from scipy.interpolate import (
     RBFInterpolator,
 )
 
-from multinterp.core import _UnstructuredGridInterp
+from multinterp.core import _UnstructuredGrid
 
 LNDI_KWARGS = {"fill_value": np.nan, "rescale": False}  # linear
 NNDI_KWARGS = {"rescale": False, "tree_options": None}  # nearest
@@ -29,7 +29,7 @@ RBFI_KWARGS = {  # rbf (radial basis function)
 AVAILABLE_METHODS = ["nearest", "linear", "cubic", "rbf"]
 
 
-class UnstructuredInterp(_UnstructuredGridInterp):
+class UnstructuredInterp(_UnstructuredGrid):
     """
     Multivariate interpolation on an unstructured grid.
     This class wraps various scipy unstructured interpolation

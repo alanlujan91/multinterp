@@ -8,11 +8,11 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, StandardScaler
 from sklearn.svm import SVR
 
-from multinterp.core import _CurvilinearGridInterp, _UnstructuredGridInterp
+from multinterp.core import _CurvilinearGrid, _UnstructuredGrid
 from multinterp.regular import MultivariateInterp
 
 
-class PipelineCurvilinearInterp(_CurvilinearGridInterp, MultivariateInterp):
+class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
     """
     Curvilinear Interpolator using a pipeline of sklearn models.
     """
@@ -195,7 +195,7 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         )
 
 
-class PipelineUnstructuredInterp(_UnstructuredGridInterp):
+class PipelineUnstructuredInterp(_UnstructuredGrid):
     """
     Unstructured Interpolator using a pipeline of sklearn models.
     """
