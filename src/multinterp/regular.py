@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import cupy as cp
+import jax.numpy as jnp
 import numpy as np
 
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
@@ -41,6 +42,7 @@ def get_methods():
 
         get_coords["jax"] = jax_get_coordinates
         map_coords["jax"] = jax_map_coordinates
+        get_grad["jax"] = jnp.gradient
     except ImportError:
         pass
 
