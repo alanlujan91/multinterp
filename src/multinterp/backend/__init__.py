@@ -1,16 +1,33 @@
 from __future__ import annotations
 
-from multinterp.backend._cupy import cupy_multinterp
-from multinterp.backend._jax import jax_multinterp
-from multinterp.backend._numba import numba_multinterp
-from multinterp.backend._scipy import scipy_multinterp
+backend_functions = {}
+try:
+    from multinterp.backend._cupy import cupy_multinterp
 
-backend_functions = {
-    "scipy": scipy_multinterp,
-    "numba": numba_multinterp,
-    "cupy": cupy_multinterp,
-    "jax": jax_multinterp,
-}
+    backend_functions["cupy"] = cupy_multinterp
+except:
+    pass
+
+try:
+    from multinterp.backend._cupy import jax_multinterp
+
+    backend_functions["jax"] = jax_multinterp
+except:
+    pass
+
+try:
+    from multinterp.backend._cupy import numba_multinterp
+
+    backend_functions["numba"] = numba_multinterp
+except:
+    pass
+
+try:
+    from multinterp.backend._cupy import scipy_multinterp
+
+    backend_functions["scipy"] = scipy_multinterp
+except:
+    pass
 
 
 def multinterp(grids, values, args, backend="numba"):
