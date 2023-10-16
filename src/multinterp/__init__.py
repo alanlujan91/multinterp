@@ -1,6 +1,16 @@
+"""
+Copyright (c) 2023 Alan Lujan. All rights reserved.
+
+multinterp: A great package.
+"""
+
+
 from __future__ import annotations
 
-__all__ = [
+from ._version import version as __version__
+
+__all__ = (
+    "__version__",
     "MultivariateInterp",
     "Warped2DInterp",
     "PiecewiseAffineInterp",
@@ -9,7 +19,8 @@ __all__ = [
     "PipelineUnstructuredInterp",
     "RegressionCurvilinearInterp",
     "RegressionUnstructuredInterp",
-]
+)
+
 
 from .curvilinear import PiecewiseAffineInterp, Warped2DInterp
 from .regression import (

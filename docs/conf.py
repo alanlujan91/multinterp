@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import importlib.metadata
 
-project = "package"
-copyright = "2023, My Name"
-author = "My Name"
-version = release = importlib.metadata.version("package")
+project = "multinterp"
+copyright = "2023, Alan Lujan"
+author = "Alan Lujan"
+version = release = importlib.metadata.version("multinterp")
 
 extensions = [
     "myst_parser",

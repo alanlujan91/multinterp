@@ -1,4 +1,4 @@
-# package
+# multinterp
 
 ```{toctree}
 :maxdepth: 2

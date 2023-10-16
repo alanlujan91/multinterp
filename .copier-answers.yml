@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 2023.09.21
+_src_path: gh:scientific-python/cookie
+backend: hatch
+email: alanlujan91@gmail.com
+full_name: Alan Lujan
+license: MIT
+org: alanlujan91
+project_name: multinterp
+project_short_description: A great package.
+url: https://github.com/alanlujan91/multinterp
+vcs: true
