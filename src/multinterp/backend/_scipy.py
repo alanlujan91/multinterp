@@ -3,15 +3,11 @@ from __future__ import annotations
 import numpy as np
 from scipy.ndimage import map_coordinates
 
-from multinterp.core import MC_KWARGS
+from multinterp.core import update_mc_kwargs
 
 
 def scipy_multinterp(grids, values, args, options=None):
-    mc_kwargs = MC_KWARGS
-    if options:
-        mc_kwargs = MC_KWARGS.copy()
-        intersection = mc_kwargs.keys() & options.keys()
-        mc_kwargs.update({key: options[key] for key in intersection})
+    mc_kwargs = update_mc_kwargs(options)
 
     args = np.asarray(args)
     values = np.asarray(values)
@@ -19,6 +15,27 @@ def scipy_multinterp(grids, values, args, options=None):
 
     coords = scipy_get_coordinates(grids, args)
     return scipy_map_coordinates(values, coords, **mc_kwargs)
+
+
+def scipy_gradinterp(grids, values, args, axis=None, options=None):
+    mc_kwargs = update_mc_kwargs(options)
+    eo = options.get("edge_order", 1) if options else 1
+
+    args = np.asarray(args)
+    values = np.asarray(values)
+    grids = [np.asarray(grid) for grid in grids]
+
+    coords = scipy_get_coordinates(grids, args)
+
+    if axis is not None:
+        if not isinstance(axis, int):
+            raise ValueError("Axis should be an integer.")
+        gradient = np.gradient(values, grids[axis], axis=axis, edge_order=eo)
+        return scipy_map_coordinates(gradient, coords, **mc_kwargs)
+    gradient = np.gradient(values, *grids, edge_order=eo)
+    return np.asarray(
+        [scipy_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient]
+    )
 
 
 def scipy_get_coordinates(grids, args):
