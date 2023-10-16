@@ -21,15 +21,37 @@ def _reflect_index_fixer(index: np.ndarray, size: int) -> np.ndarray:
 
 
 @njit
+def _index_fixer(index: np.ndarray, size: int, mode="constant") -> np.ndarray:
+    if mode == "constant":
+        output = index
+    elif mode == "nearest":
+        output = np.clip(index, 0, size - 1)
+    elif mode == "wrap":
+        output = index % size
+    elif mode == "mirror":
+        output = _mirror_index_fixer(index, size)
+    elif mode == "reflect":
+        output = _reflect_index_fixer(index, size)
+    else:
+        msg = (
+            f"map_coordinates does not yet support mode {mode}."
+            f"Currently supported modes are {_INDEX_FIXERS}."
+        )
+        raise NotImplementedError(msg)
+
+    return output.astype(np.int64)
+
+
+@njit
 def _round_half_away_from_zero(a: np.ndarray) -> np.ndarray:
     return a if a.dtype.kind in "iu" else np.round(a)
 
 
 @njit
 def _nearest_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
-    index = _round_half_away_from_zero(coordinate).astype(np.int32)
+    index = _round_half_away_from_zero(coordinate).astype(np.int64)
     weight = coordinate.dtype.type(1)
-    return ((index, weight),)
+    return index, weight
 
 
 @njit
@@ -37,8 +59,15 @@ def _linear_indices_and_weights(coordinate: np.ndarray) -> np.ndarray:
     lower = np.floor(coordinate)
     upper_weight = coordinate - lower
     lower_weight = 1 - upper_weight
-    index = lower.astype(np.int32)
+    index = lower.astype(np.int64)
     return ((index, lower_weight), (index + 1, upper_weight))
+
+
+@njit
+def _is_valid(index: np.ndarray, size: int, mode: str) -> np.ndarray:
+    if mode == "constant":
+        return (index >= 0) & (index < size)
+    return np.ones_like(index, dtype=np.bool_)
 
 
 def _map_coordinates(
@@ -59,64 +88,33 @@ def _map_coordinates(
         )
         raise ValueError(msg)
 
-    if mode == "constant":
-
-        def is_valid(index, size):
-            return (index >= 0) & (index < size)
-
-        def index_fixer(index, size):
-            return index
-
-    else:
-
-        def is_valid(index, size):
-            return True
-
-        if mode == "nearest":
-
-            def index_fixer(index, size):
-                return np.clip(index, 0, size - 1)
-
-        elif mode == "wrap":
-
-            def index_fixer(index, size):
-                return index % size
-
-        elif mode == "mirror":
-            index_fixer = _mirror_index_fixer
-
-        elif mode == "reflect":
-            index_fixer = _reflect_index_fixer
-
-        else:
-            msg = (
-                f"map_coordinates does not yet support mode {mode}."
-                f"Currently supported modes are {_INDEX_FIXERS}."
-            )
-            raise NotImplementedError(msg)
+    valid_1d_interpolations = []
 
     if order == 0:
-        interp_fun = _nearest_indices_and_weights
+        for coordinate, size in zip(coordinate_arrs, input_arr.shape):
+            index, weight = _nearest_indices_and_weights(coordinate)
+            fixed_index = _index_fixer(index, size, mode)
+            valid = _is_valid(index, size, mode)
+            valid_1d_interpolations.append([(fixed_index, valid, weight)])
+
     elif order == 1:
-        interp_fun = _linear_indices_and_weights
+        for coordinate, size in zip(coordinate_arrs, input_arr.shape):
+            interp_nodes = _linear_indices_and_weights(coordinate)
+            valid_interp = []
+            for index, weight in interp_nodes:
+                fixed_index = _index_fixer(index, size, mode)
+                valid = _is_valid(index, size, mode)
+                valid_interp.append((fixed_index, valid, weight))
+
+            valid_1d_interpolations.append(valid_interp)
     else:
         msg = "map_coordinates currently requires order<=1"
         raise NotImplementedError(msg)
 
-    valid_1d_interpolations = []
-    for coordinate, size in zip(coordinate_arrs, input_arr.shape, strict=True):
-        interp_nodes = interp_fun(coordinate)
-        valid_interp = []
-        for index, weight in interp_nodes:
-            fixed_index = index_fixer(index, size)
-            valid = is_valid(index, size)
-            valid_interp.append((fixed_index, valid, weight))
-        valid_1d_interpolations.append(valid_interp)
-
     outputs = []
 
     for items in itertools.product(*valid_1d_interpolations):
-        indices, validities, weights = zip(*items, strict=True)
+        indices, validities, weights = zip(*items)
         if all(valid is True for valid in validities):
             # fast path
             contribution = input_arr[indices]
