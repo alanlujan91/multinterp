@@ -33,7 +33,8 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
 
     if axis is not None:
         if not isinstance(axis, int):
-            raise ValueError("Axis should be an integer.")
+            msg = "Axis should be an integer."
+            raise ValueError(msg)
         gradient = jnp.gradient(values, grids[axis], axis=axis, edge_order=eo)
         return jax_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = jnp.gradient(values, *grids, edge_order=eo)
