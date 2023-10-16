@@ -1,16 +1,14 @@
 from __future__ import annotations
 
+import contextlib
+
 import numpy as np
 
-try:
+with contextlib.suppress(ImportError):
     import cupy as cp
-except ImportError:
-    pass
 
-try:
+with contextlib.suppress(ImportError):
     import jax.numpy as jnp
-except ImportError:
-    pass
 
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
