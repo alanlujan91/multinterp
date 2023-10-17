@@ -3,7 +3,7 @@ from __future__ import annotations
 import cupy as cp
 from cupyx.scipy.ndimage import map_coordinates
 
-from multinterp.core import update_mc_kwargs
+from multinterp.utilities import update_mc_kwargs
 
 
 def cupy_multinterp(grids, values, args, options=None):

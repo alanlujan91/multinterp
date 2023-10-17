@@ -5,6 +5,7 @@ from skimage.transform import PiecewiseAffineTransform
 from multinterp.backend._numba import nb_interp_piecewise
 from multinterp.core import _CurvilinearGrid, import_backends
 from multinterp.regular import MultivariateInterp
+from multinterp.utilities import update_mc_kwargs
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
@@ -134,7 +135,7 @@ class Warped2DInterp(_CurvilinearGrid):
 class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
     def __init__(self, values, grids, options=None):
         super().__init__(values, grids, backend="scipy")
-        self._parse_mc_options(options)
+        self.mc_kwargs = update_mc_kwargs(options)
 
         source = self.grids.reshape((self.ndim, -1)).T
         coordinates = BACKEND_MODULES[self.backend].mgrid[

@@ -5,28 +5,28 @@ try:
     from multinterp.backend._cupy import cupy_multinterp
 
     backend_functions["cupy"] = cupy_multinterp
-except:
+except ImportError:
     pass
 
 try:
     from multinterp.backend._cupy import jax_multinterp
 
     backend_functions["jax"] = jax_multinterp
-except:
+except ImportError:
     pass
 
 try:
     from multinterp.backend._cupy import numba_multinterp
 
     backend_functions["numba"] = numba_multinterp
-except:
+except ImportError:
     pass
 
 try:
     from multinterp.backend._cupy import scipy_multinterp
 
     backend_functions["scipy"] = scipy_multinterp
-except:
+except ImportError:
     pass
 
 

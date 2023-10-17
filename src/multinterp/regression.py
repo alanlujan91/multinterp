@@ -10,6 +10,7 @@ from sklearn.svm import SVR
 
 from multinterp.core import _CurvilinearGrid, _UnstructuredGrid
 from multinterp.regular import MultivariateInterp
+from multinterp.utilities import update_mc_kwargs
 
 
 class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
@@ -32,7 +33,7 @@ class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
         """
         # for now, only support scipy
         super().__init__(values, grids, backend="scipy")
-        self._parse_mc_options(options)
+        self.mc_kwargs = update_mc_kwargs(options)
         self.pipeline = pipeline
 
         x_train = np.reshape(self.grids, (self.ndim, -1))
