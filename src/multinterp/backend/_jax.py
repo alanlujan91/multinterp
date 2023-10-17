@@ -6,7 +6,7 @@ import jax.numpy as jnp
 from jax import jit
 from jax.scipy.ndimage import map_coordinates
 
-from multinterp.core import update_mc_kwargs
+from multinterp.utilities import update_mc_kwargs
 
 
 @jit

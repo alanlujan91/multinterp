@@ -4,7 +4,7 @@ import numpy as np
 from numba import njit, prange, typed
 from scipy.ndimage import map_coordinates
 
-from multinterp.core import update_mc_kwargs
+from multinterp.utilities import update_mc_kwargs
 
 
 def numba_multinterp(grids, values, args, options=None):
