@@ -8,6 +8,7 @@ from multinterp.backend._cupy import cupy_multinterp
 from multinterp.backend._jax import jax_multinterp
 from multinterp.backend._numba import numba_multinterp
 from multinterp.backend._scipy import scipy_multinterp
+from multinterp.backend._torch import torch_multinterp
 
 
 def f_2d(u, v):
@@ -52,6 +53,12 @@ def test_cupy_2d(setup_data_2d):
 def test_jax_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = jax_multinterp(grids, values, args)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
+
+
+def test_torch_2d(setup_data_2d):
+    grids, values, args, true_values = setup_data_2d
+    result_multinterp = torch_multinterp(grids, values, args)
     assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
