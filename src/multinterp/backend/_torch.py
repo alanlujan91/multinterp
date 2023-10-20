@@ -1,9 +1,11 @@
-import torch
+from __future__ import annotations
+
 import functools
 import itertools
 import operator
-from collections.abc import Sequence
-from typing import Callable, Sequence as SequenceType
+from typing import Sequence as SequenceType
+
+import torch
 
 from multinterp.utilities import update_mc_kwargs
 
@@ -109,25 +111,31 @@ def _map_coordinates(
     cval: float,
 ) -> torch.Tensor:
     if len(coordinates) != input.ndim:
-        raise ValueError(f"coordinates must be a sequence of length {input.ndim}")
+        msg = f"coordinates must be a sequence of length {input.ndim}"
+        raise ValueError(msg)
 
     index_fixer = _INDEX_FIXERS.get(mode)
     if index_fixer is None:
-        raise NotImplementedError(
-            f"Mode {mode} is not yet supported. Supported modes are {set(_INDEX_FIXERS.keys())}."
-        )
+        msg = f"Mode {mode} is not yet supported. Supported modes are {set(_INDEX_FIXERS.keys())}."
+        raise NotImplementedError(msg)
 
     if mode == "constant":
-        is_valid = lambda index, size: (0 <= index) & (index < size)
+
+        def is_valid(index, size):
+            return (index >= 0) & (index < size)
+
     else:
-        is_valid = lambda index, size: True
+
+        def is_valid(index, size):
+            return True
 
     if order == 0:
         interp_fun = _nearest_indices_and_weights
     elif order == 1:
         interp_fun = _linear_indices_and_weights
     else:
-        raise NotImplementedError("Currently requires order<=1")
+        msg = "Currently requires order<=1"
+        raise NotImplementedError(msg)
 
     valid_1d_interpolations = []
     for coordinate, size in zip(coordinates, input.shape):
