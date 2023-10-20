@@ -24,6 +24,14 @@ def import_backends():
     except ImportError:
         pass
 
+    try:
+        import torch
+
+        backends.append("torch")
+        modules["torch"] = torch
+    except ImportError:
+        pass
+
     return backends, modules
 
 
