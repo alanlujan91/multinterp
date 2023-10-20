@@ -5,6 +5,7 @@ import itertools
 import operator
 from typing import Sequence as SequenceType
 
+import numpy as np
 import torch
 
 from multinterp.utilities import update_mc_kwargs
@@ -13,8 +14,8 @@ from multinterp.utilities import update_mc_kwargs
 def torch_multinterp(grids, values, args, options=None):
     mc_kwargs = update_mc_kwargs(options)
 
-    args = torch.asarray(args)
-    values = torch.asarray(values)
+    args = torch.asarray(np.asarray(args))
+    values = torch.asarray(np.asarray(values))
     grids = [torch.asarray(grid) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
@@ -46,8 +47,8 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
 def torch_get_coordinates(grids, args):
     coords = torch.empty_like(args)
     for dim, grid in enumerate(grids):
-        grid_size = torch.arange(grid.size)
-        coords[dim] = torch.interp(args[dim], grid, grid_size)
+        grid_size = torch.arange(grid.numel())
+        coords[dim] = torch_interp(args[dim], grid, grid_size)
 
     return coords
 
@@ -168,5 +169,38 @@ def map_coordinates(
     order: int,
     mode: str = "constant",
     cval: float = 0.0,
+    output=None,
+    prefilter=None,
 ) -> torch.Tensor:
     return _map_coordinates(input, coordinates, order, mode, cval)
+
+
+def torch_interp(x, xp, fp):
+    """
+    One-dimensional linear interpolation in PyTorch.
+
+    Parameters:
+        x: array_like
+            The x-coordinates of the interpolated values.
+        xp: 1-D sequence of floats
+            The x-coordinates of the data points.
+        fp: 1-D sequence of floats
+            The y-coordinates of the data points, same length as xp.
+
+    Returns:
+        array_like
+            The interpolated values, same shape as x.
+    """
+
+    # Sort and get sorted indices
+    sort_idx = torch.argsort(xp)
+    xp = xp[sort_idx]
+    fp = fp[sort_idx]
+
+    # Find bin indices and clip within range
+    bin_indices = torch.clamp(torch.searchsorted(xp, x, right=False), 0, len(xp) - 2)
+
+    # Compute weights and interpolate
+    bin_diff = xp[bin_indices + 1] - xp[bin_indices]
+    w2 = (x - xp[bin_indices]) / bin_diff
+    return (1 - w2) * fp[bin_indices] + w2 * fp[bin_indices + 1]

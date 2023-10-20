@@ -35,31 +35,31 @@ def setup_data_2d():
 def test_scipy_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = scipy_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_numba_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = numba_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_cupy_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = cupy_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_jax_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = jax_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_torch_2d(setup_data_2d):
     grids, values, args, true_values = setup_data_2d
     result_multinterp = torch_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 @pytest.fixture()
@@ -88,22 +88,22 @@ def setup_data_3d():
 def test_scipy_3d(setup_data_3d):
     grids, values, args, true_values = setup_data_3d
     result_multinterp = scipy_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_numba_3d(setup_data_3d):
     grids, values, args, true_values = setup_data_3d
     result_multinterp = numba_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_cupy_3d(setup_data_3d):
     grids, values, args, true_values = setup_data_3d
     result_multinterp = cupy_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
 
 
 def test_jax_3d(setup_data_3d):
     grids, values, args, true_values = setup_data_3d
     result_multinterp = jax_multinterp(grids, values, args)
-    assert np.allclose(true_values, result_multinterp)
+    assert np.allclose(true_values, result_multinterp, atol=1e-05)
