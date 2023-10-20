@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import functools
 import itertools
-import operator
-from typing import Sequence as SequenceType
+from typing import Sequence
 
 import numpy as np
 import torch
@@ -60,14 +58,6 @@ def torch_map_coordinates(values, coords, **kwargs):
     return output.reshape(original_shape)
 
 
-def _nonempty_prod(arrs: SequenceType[torch.Tensor]) -> torch.Tensor:
-    return functools.reduce(operator.mul, arrs)
-
-
-def _nonempty_sum(arrs: SequenceType[torch.Tensor]) -> torch.Tensor:
-    return functools.reduce(operator.add, arrs)
-
-
 def _mirror_index_fixer(index: torch.Tensor, size: int) -> torch.Tensor:
     s = size - 1
     return torch.abs((index + s) % (2 * s) - s)
@@ -106,7 +96,7 @@ def _linear_indices_and_weights(coordinate: torch.Tensor) -> list:
 
 def _map_coordinates(
     input: torch.Tensor,
-    coordinates: SequenceType[torch.Tensor],
+    coordinates: Sequence[torch.Tensor],
     order: int,
     mode: str,
     cval: float,
@@ -154,10 +144,10 @@ def _map_coordinates(
         if all(valid is True for valid in validities):
             contribution = input[indices]
         else:
-            all_valid = functools.reduce(operator.and_, validities)
+            all_valid = torch.all(torch.stack(validities), dim=0)
             contribution = torch.where(all_valid, input[indices], cval)
-        outputs.append(_nonempty_prod(weights) * contribution)
-    result = _nonempty_sum(outputs)
+        outputs.append(torch.prod(torch.stack(weights), dim=0) * contribution)
+    result = torch.sum(torch.stack(outputs), dim=0)
     if input.dtype == torch.int:
         result = _round_half_away_from_zero(result)
     return result.to(input.dtype)
@@ -165,7 +155,7 @@ def _map_coordinates(
 
 def map_coordinates(
     input: torch.Tensor,
-    coordinates: SequenceType[torch.Tensor],
+    coordinates: Sequence[torch.Tensor],
     order: int,
     mode: str = "constant",
     cval: float = 0.0,
