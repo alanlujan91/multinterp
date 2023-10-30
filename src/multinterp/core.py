@@ -104,7 +104,7 @@ class _RegularGrid(_AbstractGrid):
             msg = "Number of grids must match number of dimensions."
             raise ValueError(msg)
 
-        if not all(self.shape[i] == grid.size for i, grid in enumerate(self.grids)):
+        if any(self.shape[i] != grid.size for i, grid in enumerate(self.grids)):
             msg = "Values shape must match points in each grid."
             raise ValueError(msg)
 
@@ -237,6 +237,6 @@ class _MultivaluedRegularGrid(_MultivaluedGrid):
             msg = "Number of grids must match number of dimensions."
             raise ValueError(msg)
 
-        if not all(self.shape[i] == grid.size for i, grid in enumerate(self.grids)):
+        if any(self.shape[i] != grid.size for i, grid in enumerate(self.grids)):
             msg = "Values shape must match points in each grid."
             raise ValueError(msg)
