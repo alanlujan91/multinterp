@@ -37,20 +37,20 @@ def test_interpolation_values(setup_data):
     grids, args = setup_data
 
     interpolator2D = RegressionUnstructuredInterp(
-        sum_first_axis(*grids[0:2]),
-        [*np.meshgrid(*grids[0:2], indexing="ij")],
-        model_kwargs={"fit_intercept": False},
+        sum_first_axis(*grids[:2]),
+        [*np.meshgrid(*grids[:2], indexing="ij")],
+        mod_options={"fit_intercept": False},
     )
 
     interpolator3D = RegressionUnstructuredInterp(
         sum_first_axis(*grids),
         [*np.meshgrid(*grids, indexing="ij")],
-        model_kwargs={"fit_intercept": False},
+        mod_options={"fit_intercept": False},
     )
 
-    val2D = interpolator2D(*np.meshgrid(*args[0:2], indexing="ij"))
+    val2D = interpolator2D(*np.meshgrid(*args[:2], indexing="ij"))
 
     val3D = interpolator3D(*np.meshgrid(*args, indexing="ij"))
 
-    assert np.allclose(val2D, sum_first_axis(*args[0:2]), rtol=0.01)
+    assert np.allclose(val2D, sum_first_axis(*args[:2]), rtol=0.01)
     assert np.allclose(val3D, sum_first_axis(*args), rtol=0.01)
