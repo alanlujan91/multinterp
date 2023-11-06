@@ -22,12 +22,15 @@ __all__ = (
 )
 
 
-from .curvilinear import PiecewiseAffineInterp, Warped2DInterp
-from .regression import (
+from .curvilinear import (
+    PiecewiseAffineInterp,
     PipelineCurvilinearInterp,
-    PipelineUnstructuredInterp,
     RegressionCurvilinearInterp,
-    RegressionUnstructuredInterp,
+    Warped2DInterp,
 )
 from .regular import MultivariateInterp
-from .unstructured import UnstructuredInterp
+from .unstructured import (
+    PipelineUnstructuredInterp,
+    RegressionUnstructuredInterp,
+    UnstructuredInterp,
+)

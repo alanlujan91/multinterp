@@ -11,6 +11,26 @@ from multinterp.utilities import update_mc_kwargs
 
 @jit
 def jax_multinterp(grids, values, args, options=None):
+    """
+    Perform multidimensional interpolation using JAX.
+
+    Parameters:
+    ----------
+    grids : list of array-like
+        List of grid points for each dimension.
+    values : array-like
+        Values at each point in the grid.
+    args : array-like
+        Points at which to interpolate data.
+    options : dict, optional
+        Additional options for interpolation.
+
+    Returns:
+    -------
+    array-like
+        Interpolated values.
+    """
+
     mc_kwargs = update_mc_kwargs(options, jax=True)
 
     args = jnp.asarray(args)
@@ -45,11 +65,13 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
 
 @jit
 def jax_get_coordinates(grids, args):
-    coords = jnp.empty_like(args)
-    for dim in range(len(grids)):
-        grid_size = jnp.arange(grids[dim].size)
-        coords = coords.at[dim].set(jnp.interp(args[dim], grids[dim], grid_size))
-
+    grid_sizes = [jnp.arange(grid.size) for grid in grids]
+    coords = jnp.array(
+        [
+            jnp.interp(arg, grid, grid_size)
+            for arg, grid, grid_size in zip(args, grids, grid_sizes)
+        ]
+    )
     return coords
 
 
