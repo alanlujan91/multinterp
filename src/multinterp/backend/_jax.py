@@ -66,13 +66,12 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
 @jit
 def jax_get_coordinates(grids, args):
     grid_sizes = [jnp.arange(grid.size) for grid in grids]
-    coords = jnp.array(
+    return jnp.array(
         [
             jnp.interp(arg, grid, grid_size)
             for arg, grid, grid_size in zip(args, grids, grid_sizes)
         ]
     )
-    return coords
 
 
 @functools.partial(jit, static_argnums=(2, 3, 4))
