@@ -8,7 +8,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, StandardScaler
 from sklearn.svm import SVR
 
-from multinterp.core import _CurvilinearGrid, _UnstructuredGrid
+from multinterp.grids import _CurvilinearGrid, _UnstructuredGrid
 from multinterp.regular import MultivariateInterp
 from multinterp.utilities import update_mc_kwargs
 
