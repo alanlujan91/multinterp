@@ -1,7 +1,7 @@
 """
 Copyright (c) 2023 Alan Lujan. All rights reserved.
 
-multinterp: A great package.
+multinterp: Multivariate Interpolation.
 """
 
 
