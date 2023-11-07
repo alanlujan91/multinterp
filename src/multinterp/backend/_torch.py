@@ -9,7 +9,7 @@ import torch
 from multinterp.utilities import update_mc_kwargs
 
 
-def to_tensor(arrs, device="cuda"):
+def to_tensor(arrs, device="cpu"):
     target_device = torch.device(device)
 
     if isinstance(arrs, (torch.Tensor, np.ndarray)):
@@ -17,9 +17,8 @@ def to_tensor(arrs, device="cuda"):
     elif isinstance(arrs, list):
         return torch.stack([torch.as_tensor(a) for a in arrs]).to(target_device)
     else:
-        raise TypeError(
-            "arrs must be a numpy array, a torch tensor, or a list of these."
-        )
+        msg = "arrs must be a numpy array, a torch tensor, or a list of these."
+        raise TypeError(msg)
 
 
 def torch_multinterp(grids, values, args, options=None):

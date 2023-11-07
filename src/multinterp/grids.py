@@ -132,6 +132,9 @@ class _CurvilinearGrid(_AbstractGrid):
 
         self.grids = BACKEND_MODULES[backend].asarray(grids)
 
+        if self.grids.ndim == 1:
+            self.grids = self.grids.reshape((1, -1))
+
         if self.ndim != self.grids[0].ndim:
             msg = "Number of grids must match number of dimensions."
             raise ValueError(msg)
@@ -162,11 +165,6 @@ class _UnstructuredGrid(_CurvilinearGrid):
         super().__init__(values, grids, backend=backend)
         # remove non-finite values that might result from
         # sequential endogenous grid method
-        condition = np.logical_and.reduce([np.isfinite(grid) for grid in self.grids])
-        condition = np.logical_and(condition, np.isfinite(self.values))
-        self.values = self.values[condition]
-        self.grids = self.grids[:, condition]
-        self.ndim = self.grids.shape[0]
 
 
 class _MultivaluedGrid:
