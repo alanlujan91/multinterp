@@ -9,11 +9,10 @@ from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.means import ConstantMean
 from gpytorch.models import ExactGP
 
+from multinterp.backend.LBFGS import FullBatchLBFGS
 from multinterp.grids import _UnstructuredGrid
 
 N_DEVICES = torch.cuda.device_count()
-
-from .LBFGS import FullBatchLBFGS
 
 
 class _SimpleExactGPModel(ExactGP):

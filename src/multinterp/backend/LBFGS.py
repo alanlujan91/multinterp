@@ -20,7 +20,6 @@ def is_legal(v):
     return not torch.isnan(v).any() and not torch.isinf(v)
 
 
-
 def polyinterp(points, x_min_bound=None, x_max_bound=None, plot=False):
     """
     Gives the minimizer and minimum of the interpolating polynomial over given points
@@ -257,9 +256,7 @@ class LBFGS(Optimizer):
 
         if len(self.param_groups) != 1:
             msg = "L-BFGS doesn't support per-parameter options (parameter groups)"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
         self._params = self.param_groups[0]["params"]
         self._numel_cache = None
@@ -625,11 +622,7 @@ class LBFGS(Optimizer):
 
             else:
                 msg = "Options are not specified; need closure evaluating function."
-                raise (
-                    ValueError(
-                        msg
-                    )
-                )
+                raise (ValueError(msg))
 
             # initialize values
             if interpolate:
@@ -834,11 +827,7 @@ class LBFGS(Optimizer):
 
             else:
                 msg = "Options are not specified; need closure evaluating function."
-                raise (
-                    ValueError(
-                        msg
-                    )
-                )
+                raise (ValueError(msg))
 
             # initialize counters
             ls_step = 0
@@ -1084,9 +1073,7 @@ class FullBatchLBFGS(LBFGS):
         dtype=torch.float,
         debug=False,
     ):
-        super().__init__(
-            params, lr, history_size, line_search, dtype, debug
-        )
+        super().__init__(params, lr, history_size, line_search, dtype, debug)
 
     def step(self, options=None):
         """

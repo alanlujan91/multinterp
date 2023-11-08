@@ -5,7 +5,11 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.linear_model import ElasticNet, ElasticNetCV, SGDRegressor
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, StandardScaler
+from sklearn.preprocessing import (
+    PolynomialFeatures,
+    SplineTransformer,
+    StandardScaler,
+)
 from sklearn.svm import SVR
 
 from multinterp.grids import _UnstructuredGrid
