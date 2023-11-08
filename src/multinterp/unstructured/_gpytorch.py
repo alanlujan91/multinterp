@@ -8,11 +8,12 @@ from gpytorch.kernels import MultiDeviceKernel, RBFKernel, ScaleKernel
 from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.means import ConstantMean
 from gpytorch.models import ExactGP
+from torch.optim import Adam
 
 from multinterp.backend.LBFGS import FullBatchLBFGS
 from multinterp.grids import _UnstructuredGrid
 
-N_DEVICES = torch.cuda.device_count()
+DEVICE_COUNT = torch.cuda.device_count()
 
 
 class _SimpleExactGPModel(ExactGP):
@@ -107,7 +108,7 @@ class _PipelineGPUExactGPModel(ExactGP):
         mean_module=None,
         covar_module=None,
         distribution=None,
-        n_devices=N_DEVICES,
+        n_devices=DEVICE_COUNT,
         output_device=None,
     ):
         super().__init__(train_x, train_y, likelihood)
@@ -116,8 +117,8 @@ class _PipelineGPUExactGPModel(ExactGP):
         self.distribution = distribution or MultivariateNormal
 
         assert (
-            0 < n_devices <= N_DEVICES
-        ), f"n_devices must be between 1 and {N_DEVICES}"
+            0 < n_devices <= DEVICE_COUNT
+        ), f"n_devices must be between 1 and {DEVICE_COUNT}"
 
         if n_devices == 1:
             self.covar_module = base_covar_module
@@ -146,68 +147,93 @@ class GaussianProcessRegression(_UnstructuredGrid):
             n_devices=2,
         )
 
+        self._to_cuda()
         self._train()
 
-    def _train(self, training_iter=50, preconditioner_size=100):
-        self._model.train()
-        self._likelihood.train()
-
+    def _to_cuda(self):
         self.grids = self.grids.cuda()
         self.values = self.values.cuda()
         self._model = self._model.cuda()
         self._likelihood = self._likelihood.cuda()
 
-        # Use the adam optimizer
-        # Includes GaussianLikelihood parameters
-        optimizer = FullBatchLBFGS(self._model.parameters(), lr=0.1)
+    def _train(self, training_iter=50, preconditioner_size=100):
+        _train_simple(
+            self.grids[0],
+            self.values,
+            self._model,
+            self._likelihood,
+            training_iter,
+            verbose=True,
+        )
 
-        # "Loss" for GPs - the marginal log likelihood
-        mll = ExactMarginalLogLikelihood(self._likelihood, self._model)
-
-        with gpytorch.settings.max_preconditioner_size(preconditioner_size):
-
-            def closure():
-                optimizer.zero_grad()
-                output = self._model(self.grids[0])
-                return -mll(output, self.values)
-
-            loss = closure()
-            loss.backward()
-
-            for _i in range(training_iter):
-                options = {"closure": closure, "current_loss": loss, "max_ls": 10}
-                loss, _, _, _, _, _, _, fail = optimizer.step(options)
-
-                # print(
-                #     "Iter %d/%d - Loss: %.3f   lengthscale: %.3f   noise: %.3f"
-                #     % (
-                #         i + 1,
-                #         training_iter,
-                #         loss.item(),
-                #         self._model.covar_module.module.base_kernel.lengthscale.item(),
-                #         self._model.likelihood.noise.item(),
-                #     )
-                # )
-
-                if fail:
-                    # print("Convergence reached!")
-                    break
-
+    def __call__(self, *args):
+        # Get into evaluation (predictive posterior) mode
         self._model.eval()
         self._likelihood.eval()
 
-    def __call__(self, *args):
-        return self._model(*args)
+        # Test points are regularly spaced along [0,1]
+        # Make predictions by feeding model through likelihood
+        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+            return self._model(*args)
 
 
-def train(
-    train_x,
-    train_y,
+def _train_simple(
     model,
     likelihood,
-    n_devices,
-    preconditioner_size,
-    n_training_iter,
+    train_x,
+    train_y,
+    training_iter=50,
+    verbose=False,
+    n_skip=10,
+):
+    # Find optimal model hyperparameters
+    model.train()
+    likelihood.train()
+
+    # Use the adam optimizer
+    optimizer = Adam(model.parameters(), lr=0.1)
+    # Includes GaussianLikelihood parameters
+
+    # "Loss" for GPs - the marginal log likelihood
+    mll = ExactMarginalLogLikelihood(likelihood, model)
+
+    for i in range(training_iter):
+        # Zero gradients from previous iteration
+        optimizer.zero_grad()
+        # Output from model
+        output = model(train_x)
+        # Calc loss and backprop gradients
+        loss = -mll(output, train_y)
+        loss.backward()
+
+        if verbose and i % n_skip == 0:
+            _loss = loss.item()
+            _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
+            _noise = model.likelihood.noise.item()
+            print(
+                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+            )
+
+        optimizer.step()
+
+
+def _eval_simple(model, likelihood, test_x):
+    # Get into evaluation (predictive posterior) mode
+    model.eval()
+    likelihood.eval()
+
+    # Make predictions by feeding model through likelihood
+    with torch.no_grad(), gpytorch.settings.fast_pred_var():
+        return likelihood(model(test_x))
+
+
+def _train_lbfgs(
+    model,
+    likelihood,
+    train_x,
+    train_y,
+    preconditioner_size=100,
+    training_iter=50,
     verbose=False,
     n_skip=10,
 ):
@@ -215,7 +241,8 @@ def train(
     likelihood.train()
 
     optimizer = FullBatchLBFGS(model.parameters(), lr=0.1)
-    mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
+    # "Loss" for GPs - the marginal log likelihood
+    mll = ExactMarginalLogLikelihood(likelihood, model)
 
     with gpytorch.settings.max_preconditioner_size(preconditioner_size):
 
@@ -227,22 +254,55 @@ def train(
         loss = closure()
         loss.backward()
 
-        lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
-        noise = model.likelihood.noise.item()
-
-        for i in range(n_training_iter):
+        for i in range(training_iter):
             options = {"closure": closure, "current_loss": loss, "max_ls": 10}
             loss, _, _, _, _, _, _, fail = optimizer.step(options)
 
-            if verbose:
-                if i % n_skip == 0:  # Print progress every 10 steps if verbose is True
-                    print(
-                        f"Iter {i+1}/{n_training_iter} - Loss: {loss.item():.3f}   lengthscale: {lengthscale:.3f}   noise: {noise:.3f}"
-                    )
+            # Print progress every n_skip steps if verbose is True
+            if verbose and i % n_skip == 0:
+                _loss = loss.item()
+                _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
+                _noise = model.likelihood.noise.item()
+                print(
+                    f"Iter {i+1}/{training_iter} - Loss: {loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+                )
 
             if fail:
-                print("Convergence reached!")
+                if verbose:
+                    print("Convergence reached!")
                 break
 
-    print(f"Finished training on {train_x.size(0)} data points using {n_devices} GPUs.")
-    return model, likelihood
+
+def _train_pipeline(
+    train_x,
+    train_y,
+    model,
+    likelihood,
+    optimizer,
+    mll,
+    training_iter=50,
+    verbose=False,
+    n_skip=10,
+):
+    # Find optimal model hyperparameters
+    model.train()
+    likelihood.train()
+
+    for i in range(training_iter):
+        # Zero gradients from previous iteration
+        optimizer.zero_grad()
+        # Output from model
+        output = model(train_x)
+        # Calc loss and backprop gradients
+        loss = -mll(output, train_y)
+        loss.backward()
+
+        if verbose and i % n_skip == 0:
+            _loss = loss.item()
+            _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
+            _noise = model.likelihood.noise.item()
+            print(
+                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+            )
+
+        optimizer.step()
