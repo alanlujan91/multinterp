@@ -9,7 +9,7 @@ import torch
 from multinterp.utilities import update_mc_kwargs
 
 
-def to_tensor(arrs, device="cpu"):
+def as_tensor(arrs, device="cpu"):
     target_device = torch.device(device)
 
     if isinstance(arrs, (torch.Tensor, np.ndarray)):
@@ -23,10 +23,11 @@ def to_tensor(arrs, device="cpu"):
 
 def torch_multinterp(grids, values, args, options=None):
     mc_kwargs = update_mc_kwargs(options)
+    target_device = options.get("device", "cpu") if options else "cpu"
 
-    args = to_tensor(args)
-    values = to_tensor(values)
-    grids = [to_tensor(grid) for grid in grids]
+    args = as_tensor(args, device=target_device)
+    values = as_tensor(values, device=target_device)
+    grids = [as_tensor(grid, device=target_device) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
     return torch_map_coordinates(values, coords, **mc_kwargs)
@@ -36,9 +37,9 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
 
-    args = to_tensor(args)
-    values = to_tensor(values)
-    grids = [to_tensor(grid) for grid in grids]
+    args = as_tensor(args)
+    values = as_tensor(values)
+    grids = [as_tensor(grid) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
 
