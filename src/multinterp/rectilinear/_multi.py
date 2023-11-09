@@ -15,9 +15,8 @@ from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinat
 from multinterp.grids import (
     _MultivaluedRegularGrid,
     _RegularGrid,
-    import_backends,
 )
-from multinterp.utilities import update_mc_kwargs
+from multinterp.utilities import import_backends, update_mc_kwargs
 
 
 def get_methods():
