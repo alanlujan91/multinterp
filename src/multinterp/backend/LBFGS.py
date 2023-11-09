@@ -235,10 +235,10 @@ class LBFGS(Optimizer):
         debug=False,
     ):
         # ensure inputs are valid
-        if not lr >= 0.0:
+        if lr < 0.0:
             msg = f"Invalid learning rate: {lr}"
             raise ValueError(msg)
-        if not history_size >= 0:
+        if history_size < 0:
             msg = f"Invalid history size: {history_size}"
             raise ValueError(msg)
         if line_search not in ["Armijo", "Wolfe", "None"]:
@@ -302,16 +302,11 @@ class LBFGS(Optimizer):
         assert offset == self._numel()
 
     def _copy_params(self):
-        current_params = []
-        for param in self._params:
-            current_params.append(deepcopy(param.data))
-        return current_params
+        return [deepcopy(param.data) for param in self._params]
 
     def _load_params(self, current_params):
-        i = 0
-        for param in self._params:
+        for i, param in enumerate(self._params):
             param.data[:] = current_params[i]
-            i += 1
 
     def line_search(self, line_search):
         """
