@@ -1,5 +1,6 @@
 name: multinterp-dev
 channels:
+  - pytorch
   - nvidia
   - conda-forge
   - defaults
@@ -14,5 +15,5 @@ dependencies:
   - jupyterlab
   - scikit-learn
   - scikit-image
-  - pytest
-  - pip
+  - pytorch
+  - pytorch-cuda

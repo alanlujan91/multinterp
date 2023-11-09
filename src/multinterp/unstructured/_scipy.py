@@ -8,7 +8,7 @@ from scipy.interpolate import (
     RBFInterpolator,
 )
 
-from multinterp.core import _UnstructuredGrid
+from multinterp.grids import _UnstructuredGrid
 
 LNDI_KWARGS = {"fill_value": np.nan, "rescale": False}  # linear
 NNDI_KWARGS = {"rescale": False, "tree_options": None}  # nearest

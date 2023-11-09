@@ -12,7 +12,7 @@ with contextlib.suppress(ImportError):
 
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
-from multinterp.core import (
+from multinterp.grids import (
     _MultivaluedRegularGrid,
     _RegularGrid,
     import_backends,
@@ -34,24 +34,18 @@ def get_methods():
         "numba": np.gradient,
     }
 
-    try:
+    with contextlib.suppress(ImportError):
         from multinterp.backend._cupy import cupy_get_coordinates, cupy_map_coordinates
 
         get_coords["cupy"] = cupy_get_coordinates
         map_coords["cupy"] = cupy_map_coordinates
         get_grad["cupy"] = cp.gradient
-    except ImportError:
-        pass
-
-    try:
+    with contextlib.suppress(ImportError):
         from multinterp.backend._jax import jax_get_coordinates, jax_map_coordinates
 
         get_coords["jax"] = jax_get_coordinates
         map_coords["jax"] = jax_map_coordinates
         get_grad["jax"] = jnp.gradient
-    except ImportError:
-        pass
-
     return get_coords, map_coords, get_grad
 
 

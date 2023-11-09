@@ -9,12 +9,25 @@ import torch
 from multinterp.utilities import update_mc_kwargs
 
 
+def as_tensor(arrs, device="cpu"):
+    target_device = torch.device(device)
+
+    if isinstance(arrs, (torch.Tensor, np.ndarray)):
+        return torch.as_tensor(arrs, device=target_device)
+    elif isinstance(arrs, list):
+        return torch.stack([torch.as_tensor(a) for a in arrs]).to(target_device)
+    else:
+        msg = "arrs must be a numpy array, a torch tensor, or a list of these."
+        raise TypeError(msg)
+
+
 def torch_multinterp(grids, values, args, options=None):
     mc_kwargs = update_mc_kwargs(options)
+    target_device = options.get("device", "cpu") if options else "cpu"
 
-    args = torch.asarray(np.asarray(args))
-    values = torch.asarray(np.asarray(values))
-    grids = [torch.asarray(grid) for grid in grids]
+    args = as_tensor(args, device=target_device)
+    values = as_tensor(values, device=target_device)
+    grids = [as_tensor(grid, device=target_device) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
     return torch_map_coordinates(values, coords, **mc_kwargs)
@@ -24,9 +37,9 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
 
-    args = torch.asarray(args)
-    values = torch.asarray(values)
-    grids = [torch.asarray(grid) for grid in grids]
+    args = as_tensor(args)
+    values = as_tensor(values)
+    grids = [as_tensor(grid) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
 
@@ -45,7 +58,7 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
 def torch_get_coordinates(grids, args):
     coords = torch.empty_like(args)
     for dim, grid in enumerate(grids):
-        grid_size = torch.arange(grid.numel())
+        grid_size = torch.arange(grid.numel(), device=grid.device)
         coords[dim] = torch_interp(args[dim], grid, grid_size)
 
     return coords
