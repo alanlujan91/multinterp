@@ -162,6 +162,9 @@ class _UnstructuredGrid(_CurvilinearGrid):
             One of "scipy", "numba", or "cupy".
         """
 
+        values = values.flatten()
+        grids = [grid.flatten() for grid in grids]
+
         super().__init__(values, grids, backend=backend)
         # remove non-finite values that might result from
         # sequential endogenous grid method

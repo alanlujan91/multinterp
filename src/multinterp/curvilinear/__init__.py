@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from .curvilinear import PiecewiseAffineInterp, Warped2DInterp
-from .regression import (
+from ._scikit_image import PiecewiseAffineInterp
+from ._scikit_learn import (
     PipelineCurvilinearInterp,
     RegressionCurvilinearInterp,
 )
+from ._warped import Warped2DInterp
 
 __all__ = [
     "PiecewiseAffineInterp",

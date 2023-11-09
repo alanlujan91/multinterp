@@ -9,7 +9,7 @@ from sklearn.preprocessing import PolynomialFeatures, SplineTransformer, Standar
 from sklearn.svm import SVR
 
 from multinterp.grids import _CurvilinearGrid
-from multinterp.regular import MultivariateInterp
+from multinterp.rectilinear._multi import MultivariateInterp
 from multinterp.utilities import update_mc_kwargs
 
 
