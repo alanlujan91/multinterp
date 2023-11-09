@@ -3,7 +3,7 @@ from __future__ import annotations
 from skimage.transform import PiecewiseAffineTransform
 
 from multinterp.backend._numba import nb_interp_piecewise
-from multinterp.core import _CurvilinearGrid, import_backends
+from multinterp.grids import _CurvilinearGrid, import_backends
 from multinterp.regular import MultivariateInterp
 from multinterp.utilities import update_mc_kwargs
 
