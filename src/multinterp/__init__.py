@@ -28,7 +28,7 @@ from .curvilinear import (
     RegressionCurvilinearInterp,
     Warped2DInterp,
 )
-from .regular import MultivariateInterp
+from .rectilinear._multi import MultivariateInterp
 from .unstructured import (
     PipelineUnstructuredInterp,
     RegressionUnstructuredInterp,

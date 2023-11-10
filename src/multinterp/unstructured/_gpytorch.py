@@ -139,9 +139,11 @@ class GaussianProcessRegression(_UnstructuredGrid):
     def __init__(self, values, grids):
         super().__init__(values, grids, backend="torch")
 
+        self.grids = self.grids.T
+
         self._likelihood = GaussianLikelihood()
         self._model = _PipelineGPUExactGPModel(
-            self.grids[0],
+            self.grids,
             self.values,
             likelihood=self._likelihood,
             n_devices=2,
@@ -157,16 +159,21 @@ class GaussianProcessRegression(_UnstructuredGrid):
         self._likelihood = self._likelihood.cuda()
 
     def _train(self, training_iter=50, preconditioner_size=100):
-        _train_simple(
-            self.grids[0],
-            self.values,
+        _train_lbfgs(
             self._model,
             self._likelihood,
+            self.grids,
+            self.values,
             training_iter,
             verbose=True,
         )
 
     def __call__(self, *args):
+        args = torch.as_tensor(
+            args,
+            device=self.grids.device,
+        ).T
+
         # Get into evaluation (predictive posterior) mode
         self._model.eval()
         self._likelihood.eval()
@@ -174,7 +181,7 @@ class GaussianProcessRegression(_UnstructuredGrid):
         # Test points are regularly spaced along [0,1]
         # Make predictions by feeding model through likelihood
         with torch.no_grad(), gpytorch.settings.fast_pred_var():
-            return self._model(*args)
+            return self._model(args)
 
 
 def _train_simple(
@@ -211,7 +218,8 @@ def _train_simple(
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
             print(
-                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+                f"""Iter {i+1}/{training_iter} - Loss: {_loss:.3f}
+                lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"""
             )
 
         optimizer.step()
