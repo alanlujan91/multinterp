@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from skimage.transform import PiecewiseAffineTransform
 
-from multinterp.grids import _CurvilinearGrid, import_backends
+from multinterp.grids import _CurvilinearGrid
 from multinterp.rectilinear._multi import MultivariateInterp
-from multinterp.utilities import update_mc_kwargs
+from multinterp.utilities import import_backends, update_mc_kwargs
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 

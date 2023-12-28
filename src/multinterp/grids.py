@@ -3,37 +3,7 @@ from __future__ import annotations
 import numpy as np
 from numba import typed
 
-
-def import_backends():
-    backends = ["scipy", "numba"]
-    modules = {"scipy": np, "numba": np}
-
-    try:
-        import cupy as cp
-
-        backends.append("cupy")
-        modules["cupy"] = cp
-    except ImportError:
-        pass
-
-    try:
-        import jax.numpy as jnp
-
-        backends.append("jax")
-        modules["jax"] = jnp
-    except ImportError:
-        pass
-
-    try:
-        import torch
-
-        backends.append("torch")
-        modules["torch"] = torch
-    except ImportError:
-        pass
-
-    return backends, modules
-
+from multinterp.utilities import import_backends
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 

@@ -14,11 +14,11 @@ def as_tensor(arrs, device="cpu"):
 
     if isinstance(arrs, (torch.Tensor, np.ndarray)):
         return torch.as_tensor(arrs, device=target_device)
-    elif isinstance(arrs, list):
-        return torch.stack([torch.as_tensor(a) for a in arrs]).to(target_device)
-    else:
-        msg = "arrs must be a numpy array, a torch tensor, or a list of these."
-        raise TypeError(msg)
+    if isinstance(arrs, (list, tuple)) and isinstance(arrs[0], np.ndarray):
+        arrs = np.asarray(arrs)
+        return torch.as_tensor(arrs, device=target_device)
+    msg = "arrs must be a numpy array, a torch tensor, or a list of these."
+    raise TypeError(msg)
 
 
 def torch_multinterp(grids, values, args, options=None):

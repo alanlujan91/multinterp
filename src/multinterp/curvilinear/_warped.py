@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from multinterp.backend._numba import nb_interp_piecewise
-from multinterp.grids import _CurvilinearGrid, import_backends
+from multinterp.grids import _CurvilinearGrid
+from multinterp.utilities import import_backends
 
 AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
