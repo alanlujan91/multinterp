@@ -9,12 +9,11 @@ authors = [{ name = "Alan Lujan", email = "alanlujan91@gmail.com" }]
 maintainers = [{ name = "All the contributors." }]
 description = "Multivariate Interpolation."
 readme = "README.md"
-requires-python = ">=3.8"
-license = { file = "LICENSE" }
+license.file = "LICENSE"
 keywords = ["multivariate", "interpolation", "multidimensional"]
+requires-python = ">=3.8"
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Environment :: Console",
+  "Development Status :: 1 - Planning",
   "Environment :: GPU",
   "Intended Audience :: Science/Research",
   "Intended Audience :: Developers",
@@ -60,7 +59,10 @@ Changelog = "https://github.com/alanlujan91/multinterp/releases"
 [tool.hatch]
 version.source = "vcs"
 build.hooks.vcs.version-file = "src/multinterp/_version.py"
-envs.default.dependencies = ["pytest", "pytest-cov"]
+
+[tool.hatch.env.default]
+features = ["test"]
+scripts.test = "pytest {args}"
 
 
 [tool.pytest.ini_options]
@@ -74,7 +76,22 @@ testpaths = ["tests"]
 
 [tool.coverage]
 run.source = ["multinterp"]
-port.exclude_lines = ['pragma: no cover', '\.\.\.', 'if typing.TYPE_CHECKING:']
+report.exclude_also = ['\.\.\.', 'if typing.TYPE_CHECKING:']
+
+[tool.mypy]
+files = ["src", "tests"]
+python_version = "3.8"
+warn_unused_configs = true
+strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = "multinterp.*"
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
 
 
 [tool.ruff]
@@ -105,7 +122,9 @@ extend-select = [
   "PD",  # pandas-vet
 ]
 ignore = [
-  "PLR", # Design related pylint codes
+  "PLR09",   # Too many <...>
+  "PLR2004", # Magic value used in comparison
+  "ISC001",  # Conflicts with formatter
 ]
 isort.required-imports = ["from __future__ import annotations"]
 # Uncomment if using a _compat.typing backport
