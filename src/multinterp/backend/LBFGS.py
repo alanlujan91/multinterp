@@ -324,8 +324,6 @@ class LBFGS(Optimizer):
         group = self.param_groups[0]
         group["line_search"] = line_search
 
-        return
-
     def two_loop_recursion(self, vec):
         """
         Performs two-loop recursion on given vector to obtain Hv.
@@ -451,8 +449,6 @@ class LBFGS(Optimizer):
             state["fail_skips"] += 1
             if debug:
                 print("Line search failed; curvature pair update skipped")
-
-        return
 
     def _step(self, p_k, g_Ok, g_Sk=None, options=None):
         """

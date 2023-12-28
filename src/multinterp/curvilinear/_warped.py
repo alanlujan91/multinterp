@@ -125,5 +125,3 @@ class Warped2DInterp(_CurvilinearGrid):
         Warms up the JIT compiler.
         """
         self(*self.grids)
-
-        return
