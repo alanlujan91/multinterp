@@ -16,22 +16,22 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: "examples\\00_Rectilinear\\01. Multivariate Interpolation"
+root: examples\00_Rectilinear\01._Multivariate_Interpolation
 chapters:
   - title: Examples
     sections:
       - title: Rectilinear
         sections:
-          - file: "examples\\00_Rectilinear\\Multivalued Interpolation"
-          - file: "examples\\00_Rectilinear\\Multivariate Interpolation with Derivatives"
+          - file: examples\00_Rectilinear\Multivalued_Interpolation
+          - file: examples\00_Rectilinear\Multivariate_Interpolation_with_Derivatives
       - title: Curvilinear
         sections:
-          - file: "examples\\01_Curvilinear\\02. Warped Interpolation"
-          - file: "examples\\01_Curvilinear\\03. Curvilinear Interpolation"
-          - file: "examples\\01_Curvilinear\\04. Piecewise Affine Interpolation"
+          - file: examples\01_Curvilinear\02._Warped_Interpolation
+          - file: examples\01_Curvilinear\03._Curvilinear_Interpolation
+          - file: examples\01_Curvilinear\04._Piecewise_Affine_Interpolation
       - title: Unstructured
         sections:
-          - file: "examples\\02_Unstructured\\06. Unstructured Interpolation"
-          - file: "examples\\02_Unstructured\\07. Regression Interpolation"
-          - file: "examples\\02_Unstructured\\gpytorch"
-      - file: "examples\\05. Triangulation"
+          - file: examples\02_Unstructured\06._Unstructured_Interpolation
+          - file: examples\02_Unstructured\07._Regression_Interpolation
+          - file: examples\02_Unstructured\gpytorch
+      - file: examples\05._Triangulation
