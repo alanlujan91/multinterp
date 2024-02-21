@@ -16,7 +16,7 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: examples\00_Rectilinear\01._Multivariate_Interpolation
+root: examples\00_Rectilinear\Multivalued_Interpolation
 chapters:
   - title: Examples
     sections:
