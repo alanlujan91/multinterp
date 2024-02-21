@@ -69,6 +69,7 @@ class UnstructuredInterp(_UnstructuredGrid):
         """
 
         super().__init__(values, grids, backend="scipy")
+        self.ndim = len(grids)
 
         # Check for valid interpolation method
         if method not in AVAILABLE_METHODS:
@@ -80,9 +81,11 @@ class UnstructuredInterp(_UnstructuredGrid):
         interpolator_mapping = {
             "nearest": (NNDI_KWARGS, NearestNDInterpolator),
             "linear": (LNDI_KWARGS, LinearNDInterpolator),
-            "cubic": (CT2DI_KWARGS, CloughTocher2DInterpolator)
-            if self.ndim == 2
-            else (None, None),
+            "cubic": (
+                (CT2DI_KWARGS, CloughTocher2DInterpolator)
+                if self.ndim == 2
+                else (None, None)
+            ),
             "rbf": (RBFI_KWARGS, RBFInterpolator),
         }
 

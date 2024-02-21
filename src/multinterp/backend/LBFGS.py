@@ -132,7 +132,7 @@ def polyinterp(points, x_min_bound=None, x_max_bound=None, plot=False):
         # check if system is solvable
         if A.shape[0] != A.shape[1] or np.linalg.matrix_rank(A) != A.shape[0]:
             x_sol = (x_min_bound + x_max_bound) / 2
-            f_min = np.Inf
+            f_min = np.inf
         else:
             # solve linear system for interpolating polynomial
             coeff = np.linalg.solve(A, b)
@@ -150,7 +150,7 @@ def polyinterp(points, x_min_bound=None, x_max_bound=None, plot=False):
                 crit_pts = np.append(crit_pts, roots)
 
             # test critical points
-            f_min = np.Inf
+            f_min = np.inf
             x_sol = (x_min_bound + x_max_bound) / 2  # defaults to bisection
             for crit_pt in crit_pts:
                 if (
@@ -958,11 +958,10 @@ class LBFGS(Optimizer):
                             t = 2 * eta * t_prev
                         elif t < eta * t_prev:
                             t = eta * t_prev
-                    else:
-                        if t < alpha + 0.2 * (beta - alpha):
-                            t = alpha + 0.2 * (beta - alpha)
-                        elif t > (beta - alpha) / 2.0:
-                            t = (beta - alpha) / 2.0
+                    elif t < alpha + 0.2 * (beta - alpha):
+                        t = alpha + 0.2 * (beta - alpha)
+                    elif t > (beta - alpha) / 2.0:
+                        t = (beta - alpha) / 2.0
 
                     # if we obtain nonsensical value from interpolation
                     if t <= 0:

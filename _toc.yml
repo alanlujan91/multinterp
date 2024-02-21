@@ -1,0 +1,39 @@
+# Table of Contents
+#
+# Myst will respect:
+# 1. New pages
+#      - file: relative/path/to/page
+# 2. New sections without an associated page
+#      - title: Folder Title
+#        sections: ...
+# 3. New sections with an associated page
+#      - file: relative/path/to/page
+#        sections: ...
+#
+# Note: Titles defined on pages here are not recognized.
+#
+# This spec is based on the JupyterBook table of contents.
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: examples\00_Rectilinear\01. Multivariate Interpolation
+chapters:
+  - title: Examples
+    sections:
+      - title: Rectilinear
+        sections:
+          - file: examples\00_Rectilinear\Multivalued Interpolation
+          - file: >-
+              examples\00_Rectilinear\Multivariate Interpolation with
+              Derivatives
+      - title: Curvilinear
+        sections:
+          - file: examples\01_Curvilinear\02. Warped Interpolation
+          - file: examples\01_Curvilinear\03. Curvilinear Interpolation
+          - file: examples\01_Curvilinear\04. Piecewise Affine Interpolation
+      - title: Unstructured
+        sections:
+          - file: examples\02_Unstructured\06. Unstructured Interpolation
+          - file: examples\02_Unstructured\07. Regression Interpolation
+          - file: examples\02_Unstructured\gpytorch
+      - file: examples\05. Triangulation
