@@ -8,13 +8,10 @@ AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
 
 class Warped2DInterp(_CurvilinearGrid):
-    """
-    Warped Grid Interpolation on a 2D grid.
-    """
+    """Warped Grid Interpolation on a 2D grid."""
 
     def __call__(self, *args, axis=1):
-        """
-        Interpolate on a warped grid using the Warped Grid Interpolation
+        """Interpolate on a warped grid using the Warped Grid Interpolation
         method described in `EGM$^n$`.
 
         Parameters
@@ -32,8 +29,8 @@ class Warped2DInterp(_CurvilinearGrid):
         ------
         ValueError
             Number of arguments doesn't match number of dimensions.
-        """
 
+        """
         args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
@@ -48,8 +45,7 @@ class Warped2DInterp(_CurvilinearGrid):
         return output
 
     def _interp_piecewise(self, args, axis):
-        """
-        Uses numpy to interpolate on a warped grid.
+        """Uses numpy to interpolate on a warped grid.
 
         Parameters
         ----------
@@ -62,8 +58,8 @@ class Warped2DInterp(_CurvilinearGrid):
         -------
         np.ndarray
             Interpolated values on arguments.
-        """
 
+        """
         shape = args[0].shape  # original shape of arguments
         size = args[0].size  # number of points in arguments
         shape_axis = self.shape[axis]  # number of points in axis
@@ -80,10 +76,14 @@ class Warped2DInterp(_CurvilinearGrid):
             grids1 = BACKEND_MODULES[self.backend].take(self.grids[1], i, axis=axis)
             values = BACKEND_MODULES[self.backend].take(self.values, i, axis=axis)
             y_intermed[i] = BACKEND_MODULES[self.backend].interp(
-                args[0], grids0, grids1
+                args[0],
+                grids0,
+                grids1,
             )
             z_intermed[i] = BACKEND_MODULES[self.backend].interp(
-                args[0], grids0, values
+                args[0],
+                grids0,
+                values,
             )
 
         output = BACKEND_MODULES[self.backend].empty_like(args[0])
@@ -102,8 +102,7 @@ class Warped2DInterp(_CurvilinearGrid):
         return output.reshape(shape)
 
     def _backend_numba(self, args, axis):
-        """
-        Uses numba to interpolate on a warped grid.
+        """Uses numba to interpolate on a warped grid.
 
         Parameters
         ----------
@@ -116,12 +115,10 @@ class Warped2DInterp(_CurvilinearGrid):
         -------
         np.ndarray
             Interpolated values on arguments.
-        """
 
+        """
         return nb_interp_piecewise(args, self.grids, self.values, axis)
 
     def warmup(self):
-        """
-        Warms up the JIT compiler.
-        """
+        """Warms up the JIT compiler."""
         self(*self.grids)

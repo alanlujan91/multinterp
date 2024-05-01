@@ -17,9 +17,7 @@ DEVICE_COUNT = torch.cuda.device_count()
 
 
 class _SimpleExactGPModel(ExactGP):
-    """
-    A simple Gaussian Process model.
-    """
+    """A simple Gaussian Process model."""
 
     def __init__(
         self,
@@ -27,27 +25,30 @@ class _SimpleExactGPModel(ExactGP):
         train_y: torch.Tensor,
         likelihood,
     ):
-        """
-        Initialize the GP model.
+        """Initialize the GP model.
 
         Args:
+        ----
             train_x: Training input data
             train_y: Training output data
             likelihood: Likelihood function
+
         """
         super().__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean()
         self.covar_module = ScaleKernel(RBFKernel())
 
     def forward(self, x: torch.Tensor) -> MultivariateNormal:
-        """
-        Forward pass through the GP model.
+        """Forward pass through the GP model.
 
         Args:
+        ----
             x: Input data
 
         Returns:
+        -------
             Distribution over the input data
+
         """
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
@@ -55,9 +56,7 @@ class _SimpleExactGPModel(ExactGP):
 
 
 class _PipelineExactGPModel(ExactGP):
-    """
-    A Gaussian Process model for data extraction.
-    """
+    """A Gaussian Process model for data extraction."""
 
     def __init__(
         self,
@@ -68,16 +67,17 @@ class _PipelineExactGPModel(ExactGP):
         covar_module=None,
         distribution=None,
     ):
-        """
-        Initialize the GP model.
+        """Initialize the GP model.
 
         Args:
+        ----
             train_x: Training input data
             train_y: Training output data
             likelihood: Likelihood function (default: GaussianLikelihood)
             mean_module: Mean function (default: ConstantMean)
             covar_module: Covariance function (default: ScaleKernel(RBFKernel))
             distribution: Distribution function (default: MultivariateNormal)
+
         """
         super().__init__(train_x, train_y, likelihood)
         self.mean_module = mean_module or ConstantMean()
@@ -85,14 +85,16 @@ class _PipelineExactGPModel(ExactGP):
         self.distribution = distribution or MultivariateNormal
 
     def forward(self, x):
-        """
-        Forward pass through the GP model.
+        """Forward pass through the GP model.
 
         Args:
+        ----
             x: Input data
 
         Returns:
+        -------
             Distribution over the input data
+
         """
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
@@ -219,7 +221,7 @@ def _train_simple(
             _noise = model.likelihood.noise.item()
             print(
                 f"""Iter {i+1}/{training_iter} - Loss: {_loss:.3f}
-                lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"""
+                lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}""",
             )
 
         optimizer.step()
@@ -272,7 +274,7 @@ def _train_lbfgs(
                 _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
                 _noise = model.likelihood.noise.item()
                 print(
-                    f"Iter {i+1}/{training_iter} - Loss: {loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+                    f"Iter {i+1}/{training_iter} - Loss: {loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
                 )
 
             if fail:
@@ -310,7 +312,7 @@ def _train_pipeline(
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
             print(
-                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}"
+                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
             )
 
         optimizer.step()

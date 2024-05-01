@@ -10,8 +10,7 @@ AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
 class _AbstractGrid:
     def __init__(self, values, backend="scipy"):
-        """
-        Initialize a regular grid interpolator.
+        """Initialize a regular grid interpolator.
 
         Parameters
         ----------
@@ -29,6 +28,7 @@ class _AbstractGrid:
         ------
         ValueError
             Backend is invalid.
+
         """
         if backend not in AVAILABLE_BACKENDS:
             msg = "Invalid backend."
@@ -42,15 +42,13 @@ class _AbstractGrid:
 
 
 class _RegularGrid(_AbstractGrid):
-    """
-    Abstract class for interpolating on a regular grid. Sets up
+    """Abstract class for interpolating on a regular grid. Sets up
     structure for using different backends (scipy, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -61,8 +59,8 @@ class _RegularGrid(_AbstractGrid):
         backend : str, optional
             One of "scipy", "numba", or "cupy". Determines
             hardware to use for interpolation.
-        """
 
+        """
         super().__init__(values, backend=backend)
 
         if backend == "numba":
@@ -80,13 +78,10 @@ class _RegularGrid(_AbstractGrid):
 
 
 class _CurvilinearGrid(_AbstractGrid):
-    """
-    Abstract class for interpolating on a curvilinear grid.
-    """
+    """Abstract class for interpolating on a curvilinear grid."""
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a curvilinear grid interpolator.
+        """Initialize a curvilinear grid interpolator.
 
         Parameters
         ----------
@@ -96,8 +91,8 @@ class _CurvilinearGrid(_AbstractGrid):
             ND curvilinear grids for each dimension
         backend : str, optional
             One of "scipy", "numba", or "cupy".
-        """
 
+        """
         _AbstractGrid.__init__(self, values, backend=backend)
 
         self.grids = BACKEND_MODULES[backend].asarray(grids)
@@ -114,13 +109,10 @@ class _CurvilinearGrid(_AbstractGrid):
 
 
 class _UnstructuredGrid(_CurvilinearGrid):
-    """
-    Abstract class for interpolation on unstructured grids.
-    """
+    """Abstract class for interpolation on unstructured grids."""
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize interpolation on unstructured grids.
+        """Initialize interpolation on unstructured grids.
 
         Parameters
         ----------
@@ -130,8 +122,8 @@ class _UnstructuredGrid(_CurvilinearGrid):
             ND unstructured grids for each dimension.
         backend : str, optional
             One of "scipy", "numba", or "cupy".
-        """
 
+        """
         values = values.flatten()
         grids = [grid.flatten() for grid in grids]
 
@@ -142,8 +134,7 @@ class _UnstructuredGrid(_CurvilinearGrid):
 
 class _MultivaluedGrid:
     def __init__(self, values, backend="scipy"):
-        """
-        Initialize a regular grid interpolator.
+        """Initialize a regular grid interpolator.
 
         Parameters
         ----------
@@ -161,8 +152,8 @@ class _MultivaluedGrid:
         ------
         ValueError
             Backend is invalid.
-        """
 
+        """
         if backend not in AVAILABLE_BACKENDS:
             msg = "Invalid backend."
             raise ValueError(msg)
@@ -176,15 +167,13 @@ class _MultivaluedGrid:
 
 
 class _MultivaluedRegularGrid(_MultivaluedGrid):
-    """
-    Abstract class for interpolating on a regular grid. Sets up
+    """Abstract class for interpolating on a regular grid. Sets up
     structure for using different backends (scipy, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -195,8 +184,8 @@ class _MultivaluedRegularGrid(_MultivaluedGrid):
         backend : str, optional
             One of "scipy", "numba", or "cupy". Determines
             hardware to use for interpolation.
-        """
 
+        """
         super().__init__(values, backend=backend)
 
         if backend == "numba":

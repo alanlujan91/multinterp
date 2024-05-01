@@ -35,11 +35,13 @@ def test_interpolation_values(setup_data):
     grids, args = setup_data
 
     interpolator2D = UnstructuredInterp(
-        sum_first_axis(*grids[:2]), [*np.meshgrid(*grids[:2], indexing="ij")]
+        sum_first_axis(*grids[:2]),
+        [*np.meshgrid(*grids[:2], indexing="ij")],
     )
 
     interpolator3D = UnstructuredInterp(
-        sum_first_axis(*grids), [*np.meshgrid(*grids, indexing="ij")]
+        sum_first_axis(*grids),
+        [*np.meshgrid(*grids, indexing="ij")],
     )
 
     val2D = interpolator2D(*np.meshgrid(*args[:2], indexing="ij"))

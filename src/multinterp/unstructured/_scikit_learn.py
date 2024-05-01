@@ -16,13 +16,10 @@ from multinterp.grids import _UnstructuredGrid
 
 
 class PipelineUnstructuredInterp(_UnstructuredGrid):
-    """
-    Unstructured Interpolator using a pipeline of sklearn models.
-    """
+    """Unstructured Interpolator using a pipeline of sklearn models."""
 
     def __init__(self, values, grids, pipeline):
-        """
-        Initialize a PipelineUnstructuredInterp object.
+        """Initialize a PipelineUnstructuredInterp object.
 
         Parameters
         ----------
@@ -32,6 +29,7 @@ class PipelineUnstructuredInterp(_UnstructuredGrid):
             Functional coordinates on an unstructured grid.
         pipeline : sklearn.pipeline.Pipeline
             Pipeline of sklearn models.
+
         """
         # for now, only support scipy
         super().__init__(values, grids, backend="scipy")
@@ -42,23 +40,20 @@ class PipelineUnstructuredInterp(_UnstructuredGrid):
         self.model.fit(x_train, y_train)
 
     def __call__(self, *args: np.ndarray):
-        """
-        Interpolate on the unstructured grid.
+        """Interpolate on the unstructured grid.
 
         Returns
         -------
         np.ndarray
             Interpolated values.
-        """
 
+        """
         x_test = np.c_[tuple(arg.ravel() for arg in args)]
         return self.model.predict(x_test).reshape(args[0].shape)
 
 
 class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
-    """
-    Abstract class for PipelineUnstructuredInterp with preprocessing.
-    """
+    """Abstract class for PipelineUnstructuredInterp with preprocessing."""
 
     def __init__(
         self,
@@ -68,8 +63,7 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
         std=False,
         options=None,
     ):
-        """
-        Initialize a _PreprocessingUnstructuredInterp object. Preprocessing options
+        """Initialize a _PreprocessingUnstructuredInterp object. Preprocessing options
         includes standardization, polynomial features, and spline features.
 
         Parameters
@@ -92,8 +86,8 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
         ------
         AttributeError
             Feature not recognized.
-        """
 
+        """
         self.std = std
 
         if options is None:
@@ -123,9 +117,7 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
 
 
 class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
-    """
-    Generalized Regression for an unstructured grid.
-    """
+    """Generalized Regression for an unstructured grid."""
 
     def __init__(
         self,
@@ -136,8 +128,7 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         pp_options=None,
         mod_options=None,
     ):
-        """
-        Initialize a GeneralizedRegressionUnstructuredInterp object.
+        """Initialize a GeneralizedRegressionUnstructuredInterp object.
         The model determines the regression used.
 
         Parameters
@@ -156,8 +147,8 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         ------
         AttributeError
             Model is not implemented.
-        """
 
+        """
         if mod_options is None:
             mod_options = {}
 

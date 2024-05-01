@@ -51,7 +51,7 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
         return torch_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = torch.gradient(values, *grids, edge_order=eo)
     return torch.asarray(
-        [torch_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient]
+        [torch_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient],
     )
 
 
@@ -179,10 +179,10 @@ def map_coordinates(
 
 
 def torch_interp(x, xp, fp):
-    """
-    One-dimensional linear interpolation in PyTorch.
+    """One-dimensional linear interpolation in PyTorch.
 
-    Parameters:
+    Parameters
+    ----------
         x: array_like
             The x-coordinates of the interpolated values.
         xp: 1-D sequence of floats
@@ -190,11 +190,12 @@ def torch_interp(x, xp, fp):
         fp: 1-D sequence of floats
             The y-coordinates of the data points, same length as xp.
 
-    Returns:
+    Returns
+    -------
         array_like
             The interpolated values, same shape as x.
-    """
 
+    """
     # Sort and get sorted indices
     sort_idx = torch.argsort(xp)
     xp = xp[sort_idx]

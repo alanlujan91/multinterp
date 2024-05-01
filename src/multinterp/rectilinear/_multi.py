@@ -54,14 +54,12 @@ AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
 
 
 class MultivariateInterp(_RegularGrid):
-    """
-    Multivariate Interpolator on a regular grid. Maps functional coordinates
+    """Multivariate Interpolator on a regular grid. Maps functional coordinates
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
     def __init__(self, values, grids, backend="scipy", options=None):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -72,8 +70,8 @@ class MultivariateInterp(_RegularGrid):
         backend : str, optional
             One of "scipy", "numba", "cupy", or "jax". Determines
             hardware to use for interpolation.
-        """
 
+        """
         super().__init__(values, grids, backend=backend)
         self.mc_kwargs = update_mc_kwargs(options)
         self._gradient = {}
@@ -82,8 +80,7 @@ class MultivariateInterp(_RegularGrid):
         self(*self.grids)
 
     def __call__(self, *args):
-        """
-        Interpolates arguments on the regular grid.
+        """Interpolates arguments on the regular grid.
 
         Returns
         -------
@@ -94,8 +91,8 @@ class MultivariateInterp(_RegularGrid):
         ------
         ValueError
             Number of arguments does not match number of dimensions.
-        """
 
+        """
         args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
@@ -106,8 +103,7 @@ class MultivariateInterp(_RegularGrid):
         return self._map_coordinates(coords)
 
     def _get_coordinates(self, args):
-        """
-        For each argument, finds the index coordinates for interpolation.
+        """For each argument, finds the index coordinates for interpolation.
 
         Parameters
         ----------
@@ -118,13 +114,12 @@ class MultivariateInterp(_RegularGrid):
         -------
         np.ndarray
             Index coordinates for interpolation.
-        """
 
+        """
         return GET_COORDS[self.backend](self.grids, args)
 
     def _map_coordinates(self, coords):
-        """
-        Uses coordinates to interpolate on the regular grid with
+        """Uses coordinates to interpolate on the regular grid with
         `map_coordinates` from scipy or cupy, depending on backend.
 
         Parameters
@@ -136,8 +131,8 @@ class MultivariateInterp(_RegularGrid):
         -------
         np.ndarray
             Interpolated functional values for each coordinate.
-        """
 
+        """
         return MAP_COORDS[self.backend](self.values, coords, **self.mc_kwargs)
 
     def diff(self, axis=None, edge_order=1):
@@ -148,7 +143,10 @@ class MultivariateInterp(_RegularGrid):
             for ax in range(self.ndim):
                 if ax not in self._gradient:
                     self._gradient[ax] = GET_GRAD[self.backend](
-                        self.values, self.grids[ax], axis=ax, edge_order=edge_order
+                        self.values,
+                        self.grids[ax],
+                        axis=ax,
+                        edge_order=edge_order,
                     )
             return MultivaluedInterp(
                 np.asarray(list(self._gradient.items())),
@@ -164,24 +162,28 @@ class MultivariateInterp(_RegularGrid):
         grad = self._gradient.get(axis)
         if grad is None:
             self._gradient[axis] = GET_GRAD[self.backend](
-                self.values, self.grids[axis], axis=axis, edge_order=edge_order
+                self.values,
+                self.grids[axis],
+                axis=axis,
+                edge_order=edge_order,
             )
             grad = self._gradient[axis]
 
         return MultivariateInterp(
-            grad, self.grids, backend=self.backend, options=self.mc_kwargs
+            grad,
+            self.grids,
+            backend=self.backend,
+            options=self.mc_kwargs,
         )
 
 
 class MultivaluedInterp(_MultivaluedRegularGrid):
-    """
-    Multivariate Interpolator on a regular grid. Maps functional coordinates
+    """Multivariate Interpolator on a regular grid. Maps functional coordinates
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
     def __init__(self, values, grids, backend="scipy", options=None):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -192,8 +194,8 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         backend : str, optional
             One of "scipy", "numba", "cupy", or "jax". Determines
             hardware to use for interpolation.
-        """
 
+        """
         super().__init__(values, grids, backend=backend)
         self.mc_kwargs = update_mc_kwargs(options)
         self._gradient = {}
@@ -202,8 +204,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         self(*self.grids)
 
     def __call__(self, *args):
-        """
-        Interpolates arguments on the regular grid.
+        """Interpolates arguments on the regular grid.
 
         Returns
         -------
@@ -214,8 +215,8 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         ------
         ValueError
             Number of arguments does not match number of dimensions.
-        """
 
+        """
         args = BACKEND_MODULES[self.backend].asarray(args)
 
         if args.shape[0] != self.ndim:
@@ -226,8 +227,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         return self._map_coordinates(coords)
 
     def _get_coordinates(self, args):
-        """
-        For each argument, finds the index coordinates for interpolation.
+        """For each argument, finds the index coordinates for interpolation.
 
         Parameters
         ----------
@@ -238,13 +238,12 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         -------
         np.ndarray
             Index coordinates for interpolation.
-        """
 
+        """
         return GET_COORDS[self.backend](self.grids, args)
 
     def _map_coordinates(self, coords):
-        """
-        Uses coordinates to interpolate on the regular grid with
+        """Uses coordinates to interpolate on the regular grid with
         `map_coordinates` from scipy or cupy, depending on backend.
 
         Parameters
@@ -256,8 +255,8 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         -------
         np.ndarray
             Interpolated functional values for each coordinate.
-        """
 
+        """
         fvals = [
             MAP_COORDS[self.backend](self.values[i], coords, **self.mc_kwargs)
             for i in range(self.nval)
@@ -281,7 +280,10 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
             for arg in range(self.ndim):
                 if (axis, arg) not in self._gradient:
                     self._gradient[(axis, arg)] = GET_GRAD[self.backend](
-                        self.values, self.grids[arg], axis=arg, edge_order=edge_order
+                        self.values,
+                        self.grids[arg],
+                        axis=arg,
+                        edge_order=edge_order,
                     )
             return MultivaluedInterp(
                 np.asarray(list(self._gradient.items())),
@@ -293,9 +295,15 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         grad = self._gradient.get((axis, arg))
         if grad is None:
             self._gradient[(axis, arg)] = GET_GRAD[self.backend](
-                self.values, self.grids[axis], axis=axis, edge_order=edge_order
+                self.values,
+                self.grids[axis],
+                axis=axis,
+                edge_order=edge_order,
             )
 
         return MultivariateInterp(
-            grad, self.grids, backend=self.backend, options=self.mc_kwargs
+            grad,
+            self.grids,
+            backend=self.backend,
+            options=self.mc_kwargs,
         )

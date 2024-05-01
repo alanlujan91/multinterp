@@ -35,16 +35,24 @@ def test_interpolation_values(setup_data):
     grids, args = setup_data
 
     interpolator2D_scipy = MultivariateInterp(
-        sum_first_axis(*grids[:2]), grids[:2], backend="scipy"
+        sum_first_axis(*grids[:2]),
+        grids[:2],
+        backend="scipy",
     )
     interpolator2D_numba = MultivariateInterp(
-        sum_first_axis(*grids[:2]), grids[:2], backend="numba"
+        sum_first_axis(*grids[:2]),
+        grids[:2],
+        backend="numba",
     )
     interpolator3D_scipy = MultivariateInterp(
-        sum_first_axis(*grids), grids, backend="scipy"
+        sum_first_axis(*grids),
+        grids,
+        backend="scipy",
     )
     interpolator3D_numba = MultivariateInterp(
-        sum_first_axis(*grids), grids, backend="numba"
+        sum_first_axis(*grids),
+        grids,
+        backend="numba",
     )
 
     val2D_scipy = interpolator2D_scipy(*np.meshgrid(*args[:2], indexing="ij"))
