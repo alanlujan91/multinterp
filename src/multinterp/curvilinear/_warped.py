@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from multinterp.backend._numba import nb_interp_piecewise
 from multinterp.grids import _CurvilinearGrid
-from multinterp.utilities import import_backends
-
-AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
+from multinterp.utilities import asarray, empty, empty_like, interp, take
 
 
 class Warped2DInterp(_CurvilinearGrid):
@@ -31,7 +29,7 @@ class Warped2DInterp(_CurvilinearGrid):
             Number of arguments doesn't match number of dimensions.
 
         """
-        args = BACKEND_MODULES[self.backend].asarray(args)
+        args = asarray(args, backend=self.backend)
 
         if args.shape[0] != self.ndim:
             msg = "Number of arguments must match number of dimensions."
@@ -67,26 +65,18 @@ class Warped2DInterp(_CurvilinearGrid):
         # flatten arguments by dimension
         args = args.reshape((self.ndim, -1))
 
-        y_intermed = BACKEND_MODULES[self.backend].empty((shape_axis, size))
-        z_intermed = BACKEND_MODULES[self.backend].empty((shape_axis, size))
+        y_intermed = empty((shape_axis, size), self.backend)
+        z_intermed = empty((shape_axis, size), self.backend)
 
         for i in range(shape_axis):
             # for each dimension, interpolate the first argument
-            grids0 = BACKEND_MODULES[self.backend].take(self.grids[0], i, axis=axis)
-            grids1 = BACKEND_MODULES[self.backend].take(self.grids[1], i, axis=axis)
-            values = BACKEND_MODULES[self.backend].take(self.values, i, axis=axis)
-            y_intermed[i] = BACKEND_MODULES[self.backend].interp(
-                args[0],
-                grids0,
-                grids1,
-            )
-            z_intermed[i] = BACKEND_MODULES[self.backend].interp(
-                args[0],
-                grids0,
-                values,
-            )
+            grids0 = take(self.grids[0], i, axis=axis, backend=self.backend)
+            grids1 = take(self.grids[1], i, axis=axis, backend=self.backend)
+            values = take(self.values, i, axis=axis, backend=self.backend)
+            y_intermed[i] = interp(args[0], grids0, grids1, backend=self.backend)
+            z_intermed[i] = interp(args[0], grids0, values, backend=self.backend)
 
-        output = BACKEND_MODULES[self.backend].empty_like(args[0])
+        output = empty_like(args[0], self.backend)
 
         for j in range(size):
             y_temp = y_intermed[:, j]
@@ -97,7 +87,7 @@ class Warped2DInterp(_CurvilinearGrid):
                 y_temp = y_temp[::-1]
                 z_temp = z_temp[::-1]
 
-            output[j] = BACKEND_MODULES[self.backend].interp(args[1][j], y_temp, z_temp)
+            output[j] = interp(args[1][j], y_temp, z_temp, backend=self.backend)
 
         return output.reshape(shape)
 

@@ -4,9 +4,7 @@ from skimage.transform import PiecewiseAffineTransform
 
 from multinterp.grids import _CurvilinearGrid
 from multinterp.rectilinear._multi import MultivariateInterp
-from multinterp.utilities import import_backends, update_mc_kwargs
-
-AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
+from multinterp.utilities import mgrid, update_mc_kwargs
 
 
 class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
@@ -15,9 +13,10 @@ class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
         self.mc_kwargs = update_mc_kwargs(options)
 
         source = self.grids.reshape((self.ndim, -1)).T
-        coordinates = BACKEND_MODULES[self.backend].mgrid[
-            tuple(slice(0, dim) for dim in self.shape)
-        ]
+        coordinates = mgrid(
+            tuple(slice(0, dim) for dim in self.shape),
+            backend=self.backend,
+        )
         destination = coordinates.reshape((self.ndim, -1)).T
 
         interpolator = PiecewiseAffineTransform()

@@ -1,6 +1,34 @@
 from __future__ import annotations
 
 import numpy as np
+from numba import typed
+
+BACKENDS = ["scipy", "numba"]
+MODULES = {"scipy": np, "numba": np}
+
+try:
+    import cupy as cp
+
+    BACKENDS.append("cupy")
+    MODULES["cupy"] = cp
+except ImportError:
+    pass
+
+try:
+    import jax.numpy as jnp
+
+    BACKENDS.append("jax")
+    MODULES["jax"] = jnp
+except ImportError:
+    pass
+
+try:
+    import torch
+
+    BACKENDS.append("torch")
+    MODULES["torch"] = torch
+except ImportError:
+    pass
 
 SHORT_MC_KWARGS = {
     "order": 1,  # order of interpolation, default to linear
@@ -24,32 +52,38 @@ def update_mc_kwargs(options=None, jax=False):
     return mc_kwargs
 
 
-def import_backends():
-    backends = ["scipy", "numba"]
-    modules = {"scipy": np, "numba": np}
+def asarray(values, backend):
+    if backend not in BACKENDS:
+        msg = f"Invalid backend. Must be one of: {BACKENDS}"
+        raise ValueError(msg)
 
-    try:
-        import cupy as cp
+    return MODULES[backend].asarray(values)
 
-        backends.append("cupy")
-        modules["cupy"] = cp
-    except ImportError:
-        pass
 
-    try:
-        import jax.numpy as jnp
+def aslist(grids, backend):
+    if backend == "numba":
+        grids = typed.List([np.asarray(grid) for grid in grids])
+    else:
+        grids = [MODULES[backend].asarray(grid) for grid in grids]
 
-        backends.append("jax")
-        modules["jax"] = jnp
-    except ImportError:
-        pass
+    return grids
 
-    try:
-        import torch
 
-        backends.append("torch")
-        modules["torch"] = torch
-    except ImportError:
-        pass
+def empty(shape, backend):
+    return MODULES[backend].empty(shape)
 
-    return backends, modules
+
+def empty_like(values, backend):
+    return MODULES[backend].empty_like(values)
+
+
+def interp(x, y, z, backend):
+    return MODULES[backend].interp(x, y, z)
+
+
+def take(arr, indices, axis, backend):
+    return MODULES[backend].take(arr, indices, axis=axis)
+
+
+def mgrid(args, backend):
+    return MODULES[backend].mgrid[args]

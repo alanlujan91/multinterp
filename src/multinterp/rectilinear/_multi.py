@@ -1,56 +1,11 @@
 from __future__ import annotations
 
-import contextlib
-
 import numpy as np
 
-with contextlib.suppress(ImportError):
-    import cupy as cp
+from multinterp.grids import _MultivaluedRegularGrid, _RegularGrid
+from multinterp.utilities import asarray, update_mc_kwargs
 
-with contextlib.suppress(ImportError):
-    import jax.numpy as jnp
-
-from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
-from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
-from multinterp.grids import (
-    _MultivaluedRegularGrid,
-    _RegularGrid,
-)
-from multinterp.utilities import import_backends, update_mc_kwargs
-
-
-def get_methods():
-    get_coords = {
-        "scipy": scipy_get_coordinates,
-        "numba": numba_get_coordinates,
-    }
-    map_coords = {
-        "scipy": scipy_map_coordinates,
-        "numba": numba_map_coordinates,
-    }
-    get_grad = {
-        "scipy": np.gradient,
-        "numba": np.gradient,
-    }
-
-    with contextlib.suppress(ImportError):
-        from multinterp.backend._cupy import cupy_get_coordinates, cupy_map_coordinates
-
-        get_coords["cupy"] = cupy_get_coordinates
-        map_coords["cupy"] = cupy_map_coordinates
-        get_grad["cupy"] = cp.gradient
-    with contextlib.suppress(ImportError):
-        from multinterp.backend._jax import jax_get_coordinates, jax_map_coordinates
-
-        get_coords["jax"] = jax_get_coordinates
-        map_coords["jax"] = jax_map_coordinates
-        get_grad["jax"] = jnp.gradient
-    return get_coords, map_coords, get_grad
-
-
-GET_COORDS, MAP_COORDS, GET_GRAD = get_methods()
-
-AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
+from ._utils import get_coords, get_grad, map_coords
 
 
 class MultivariateInterp(_RegularGrid):
@@ -93,7 +48,7 @@ class MultivariateInterp(_RegularGrid):
             Number of arguments does not match number of dimensions.
 
         """
-        args = BACKEND_MODULES[self.backend].asarray(args)
+        args = asarray(args, backend=self.backend)
 
         if args.shape[0] != self.ndim:
             msg = "Number of arguments must match number of dimensions."
@@ -116,7 +71,7 @@ class MultivariateInterp(_RegularGrid):
             Index coordinates for interpolation.
 
         """
-        return GET_COORDS[self.backend](self.grids, args)
+        return get_coords(self.grids, args, backend=self.backend)
 
     def _map_coordinates(self, coords):
         """Uses coordinates to interpolate on the regular grid with
@@ -133,7 +88,7 @@ class MultivariateInterp(_RegularGrid):
             Interpolated functional values for each coordinate.
 
         """
-        return MAP_COORDS[self.backend](self.values, coords, **self.mc_kwargs)
+        return map_coords(self.values, coords, **self.mc_kwargs, backend=self.backend)
 
     def diff(self, axis=None, edge_order=1):
         # if axis is not an integer less than or equal to the number
@@ -142,11 +97,12 @@ class MultivariateInterp(_RegularGrid):
             # return MultivaluedInterp
             for ax in range(self.ndim):
                 if ax not in self._gradient:
-                    self._gradient[ax] = GET_GRAD[self.backend](
+                    self._gradient[ax] = get_grad(
                         self.values,
                         self.grids[ax],
                         axis=ax,
                         edge_order=edge_order,
+                        backend=self.backend,
                     )
             return MultivaluedInterp(
                 np.asarray(list(self._gradient.items())),
@@ -161,11 +117,12 @@ class MultivariateInterp(_RegularGrid):
 
         grad = self._gradient.get(axis)
         if grad is None:
-            self._gradient[axis] = GET_GRAD[self.backend](
+            self._gradient[axis] = get_grad(
                 self.values,
                 self.grids[axis],
                 axis=axis,
                 edge_order=edge_order,
+                backend=self.backend,
             )
             grad = self._gradient[axis]
 
@@ -217,7 +174,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
             Number of arguments does not match number of dimensions.
 
         """
-        args = BACKEND_MODULES[self.backend].asarray(args)
+        args = asarray(args, backend=self.backend)
 
         if args.shape[0] != self.ndim:
             msg = "Number of arguments must match number of dimensions."
@@ -240,7 +197,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
             Index coordinates for interpolation.
 
         """
-        return GET_COORDS[self.backend](self.grids, args)
+        return get_coords(self.grids, args, self.backend)
 
     def _map_coordinates(self, coords):
         """Uses coordinates to interpolate on the regular grid with
@@ -258,11 +215,11 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
 
         """
         fvals = [
-            MAP_COORDS[self.backend](self.values[i], coords, **self.mc_kwargs)
+            map_coords(self.values[i], coords, **self.mc_kwargs, backend=self.backend)
             for i in range(self.nval)
         ]
 
-        return BACKEND_MODULES[self.backend].asarray(fvals)
+        return asarray(fvals, backend=self.backend)
 
     def diff(self, axis=None, argnum=None, edge_order=1):
         # if axis is not an integer less than or equal to the number
@@ -279,11 +236,12 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
             # return MultivaluedInterp
             for arg in range(self.ndim):
                 if (axis, arg) not in self._gradient:
-                    self._gradient[(axis, arg)] = GET_GRAD[self.backend](
+                    self._gradient[(axis, arg)] = get_grad(
                         self.values,
                         self.grids[arg],
                         axis=arg,
                         edge_order=edge_order,
+                        backend=self.backend,
                     )
             return MultivaluedInterp(
                 np.asarray(list(self._gradient.items())),
@@ -294,11 +252,12 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
 
         grad = self._gradient.get((axis, arg))
         if grad is None:
-            self._gradient[(axis, arg)] = GET_GRAD[self.backend](
+            self._gradient[(axis, arg)] = get_grad(
                 self.values,
                 self.grids[axis],
                 axis=axis,
                 edge_order=edge_order,
+                backend=self.backend,
             )
 
         return MultivariateInterp(
