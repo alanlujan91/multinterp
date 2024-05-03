@@ -30,8 +30,7 @@ AVAILABLE_METHODS = ["nearest", "linear", "cubic", "rbf"]
 
 
 class UnstructuredInterp(_UnstructuredGrid):
-    """
-    Multivariate interpolation on an unstructured grid.
+    """Multivariate interpolation on an unstructured grid.
     This class wraps various scipy unstructured interpolation
     methods to provide a common interface. Additionally, it
     can be used with mesh-grids and returns mesh-grids, which
@@ -46,8 +45,7 @@ class UnstructuredInterp(_UnstructuredGrid):
         method="linear",
         options=None,
     ):
-        """
-        Initialize an Unstructured Grid Interpolator.
+        """Initialize an Unstructured Grid Interpolator.
 
         Parameters
         ----------
@@ -66,9 +64,10 @@ class UnstructuredInterp(_UnstructuredGrid):
         ------
         ValueError
             The interpolation method is not valid.
-        """
 
+        """
         super().__init__(values, grids, backend="scipy")
+        self.ndim = len(grids)
 
         # Check for valid interpolation method
         if method not in AVAILABLE_METHODS:
@@ -80,14 +79,17 @@ class UnstructuredInterp(_UnstructuredGrid):
         interpolator_mapping = {
             "nearest": (NNDI_KWARGS, NearestNDInterpolator),
             "linear": (LNDI_KWARGS, LinearNDInterpolator),
-            "cubic": (CT2DI_KWARGS, CloughTocher2DInterpolator)
-            if self.ndim == 2
-            else (None, None),
+            "cubic": (
+                (CT2DI_KWARGS, CloughTocher2DInterpolator)
+                if self.ndim == 2
+                else (None, None)
+            ),
             "rbf": (RBFI_KWARGS, RBFInterpolator),
         }
 
         interp_kwargs, interpolator_class = interpolator_mapping.get(
-            method, (None, None)
+            method,
+            (None, None),
         )
 
         if not interp_kwargs:
@@ -101,19 +103,20 @@ class UnstructuredInterp(_UnstructuredGrid):
             self.interp_kwargs.update({key: options[key] for key in intersection})
 
         self.interpolator = interpolator_class(
-            np.moveaxis(self.grids, -1, 0), self.values, **self.interp_kwargs
+            np.moveaxis(self.grids, -1, 0),
+            self.values,
+            **self.interp_kwargs,
         )
 
     def __call__(self, *args):
-        """
-        Interpolates function on arguments.
+        """Interpolates function on arguments.
 
         Returns
         -------
         np.ndarray
             Interpolated values.
-        """
 
+        """
         if self.method == "rbf":
             coords = np.asarray(args).reshape(self.ndim, -1).T
             return self.interpolator(coords).reshape(args[0].shape)

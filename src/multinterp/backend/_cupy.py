@@ -35,7 +35,7 @@ def cupy_gradinterp(grids, values, args, axis=None, options=None):
         return cupy_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = cp.gradient(values, *grids, edge_order=eo)
     return cp.asarray(
-        [cupy_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient]
+        [cupy_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient],
     )
 
 

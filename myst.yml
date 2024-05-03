@@ -1,18 +1,30 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
-  # title:
+  title: Multivariate Interpolation
   # description:
-  keywords: []
-  authors: []
+  keywords: [interpolation, multivariate, unstructured]
+  authors:
+    - name: Alan Lujan
+      orcid: 0000-0002-5289-7054
+      corresponding: true
+      email: alanlujan91@gmail.com
+      affiliations:
+        - institution: Johns Hopkins University
+          department: Department of Economics
+          url: https://econ.jhu.edu/
+        - institution: Econ-ARK
+          url: https://econ-ark.org/
+      github: alanlujan91
   github: https://github.com/alanlujan91/multinterp
   # bibliography: []
 site:
   template: book-theme
-  # title:
+  title: Multivariate Interpolation
   # logo:
   nav: []
   actions:
     - title: Learn More
       url: https://mystmd.org/guide
-  domains: []
+  domains: 
+    - alanlujan91.curve.space

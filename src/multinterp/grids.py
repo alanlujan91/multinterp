@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-import numpy as np
-from numba import typed
-
-from multinterp.utilities import import_backends
-
-AVAILABLE_BACKENDS, BACKEND_MODULES = import_backends()
+from multinterp.utilities import asarray, aslist
 
 
 class _AbstractGrid:
     def __init__(self, values, backend="scipy"):
-        """
-        Initialize a regular grid interpolator.
+        """Initialize a regular grid interpolator.
 
         Parameters
         ----------
@@ -29,28 +23,30 @@ class _AbstractGrid:
         ------
         ValueError
             Backend is invalid.
-        """
-        if backend not in AVAILABLE_BACKENDS:
-            msg = "Invalid backend."
-            raise ValueError(msg)
-        self.backend = backend
 
-        self.values = BACKEND_MODULES[backend].asarray(values)
+        """
+        self.values = asarray(values, backend=backend)
+        self.backend = backend
 
         self.ndim = self.values.ndim  # should match number of grids
         self.shape = self.values.shape  # should match points in each grid
 
 
-class _RegularGrid(_AbstractGrid):
-    """
-    Abstract class for interpolating on a regular grid. Sets up
+class _StructuredGrid(_AbstractGrid):
+    def __init__(self, values, grids, backend="scipy"):
+        super().__init__(values, backend=backend)
+
+        self.grids = aslist(grids, backend=backend)
+
+
+class _RegularGrid(_StructuredGrid):
+    """Abstract class for interpolating on a regular grid. Sets up
     structure for using different backends (scipy, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -61,14 +57,9 @@ class _RegularGrid(_AbstractGrid):
         backend : str, optional
             One of "scipy", "numba", or "cupy". Determines
             hardware to use for interpolation.
+
         """
-
-        super().__init__(values, backend=backend)
-
-        if backend == "numba":
-            self.grids = typed.List([np.asarray(grid) for grid in grids])
-        else:
-            self.grids = [BACKEND_MODULES[backend].asarray(grid) for grid in grids]
+        super().__init__(values, grids, backend=backend)
 
         if self.ndim != len(self.grids):
             msg = "Number of grids must match number of dimensions."
@@ -80,13 +71,10 @@ class _RegularGrid(_AbstractGrid):
 
 
 class _CurvilinearGrid(_AbstractGrid):
-    """
-    Abstract class for interpolating on a curvilinear grid.
-    """
+    """Abstract class for interpolating on a curvilinear grid."""
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a curvilinear grid interpolator.
+        """Initialize a curvilinear grid interpolator.
 
         Parameters
         ----------
@@ -96,14 +84,10 @@ class _CurvilinearGrid(_AbstractGrid):
             ND curvilinear grids for each dimension
         backend : str, optional
             One of "scipy", "numba", or "cupy".
+
         """
-
         _AbstractGrid.__init__(self, values, backend=backend)
-
-        self.grids = BACKEND_MODULES[backend].asarray(grids)
-
-        if self.grids.ndim == 1:
-            self.grids = self.grids.reshape((1, -1))
+        self.grids = asarray(grids, backend=self.backend)
 
         if self.ndim != self.grids[0].ndim:
             msg = "Number of grids must match number of dimensions."
@@ -113,14 +97,11 @@ class _CurvilinearGrid(_AbstractGrid):
             raise ValueError(msg)
 
 
-class _UnstructuredGrid(_CurvilinearGrid):
-    """
-    Abstract class for interpolation on unstructured grids.
-    """
+class _UnstructuredGrid(_StructuredGrid):
+    """Abstract class for interpolation on unstructured grids."""
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize interpolation on unstructured grids.
+        """Initialize interpolation on unstructured grids.
 
         Parameters
         ----------
@@ -130,20 +111,20 @@ class _UnstructuredGrid(_CurvilinearGrid):
             ND unstructured grids for each dimension.
         backend : str, optional
             One of "scipy", "numba", or "cupy".
-        """
 
+        """
         values = values.flatten()
         grids = [grid.flatten() for grid in grids]
 
         super().__init__(values, grids, backend=backend)
-        # remove non-finite values that might result from
-        # sequential endogenous grid method
+
+        self.ndim = len(grids)
+        self.shape = values.shape
 
 
-class _MultivaluedGrid:
+class _MultivaluedGrid(_AbstractGrid):
     def __init__(self, values, backend="scipy"):
-        """
-        Initialize a regular grid interpolator.
+        """Initialize a regular grid interpolator.
 
         Parameters
         ----------
@@ -161,14 +142,9 @@ class _MultivaluedGrid:
         ------
         ValueError
             Backend is invalid.
+
         """
-
-        if backend not in AVAILABLE_BACKENDS:
-            msg = "Invalid backend."
-            raise ValueError(msg)
-        self.backend = backend
-
-        self.values = BACKEND_MODULES[backend].asarray(values)
+        super().__init__(values, backend=backend)
 
         self.ndim = self.values.ndim - 1
         self.nval = self.values.shape[0]
@@ -176,15 +152,13 @@ class _MultivaluedGrid:
 
 
 class _MultivaluedRegularGrid(_MultivaluedGrid):
-    """
-    Abstract class for interpolating on a regular grid. Sets up
+    """Abstract class for interpolating on a regular grid. Sets up
     structure for using different backends (scipy, parallel, gpu).
     Takes in arguments to be used by `map_coordinates`.
     """
 
     def __init__(self, values, grids, backend="scipy"):
-        """
-        Initialize a multivariate interpolator.
+        """Initialize a multivariate interpolator.
 
         Parameters
         ----------
@@ -195,14 +169,11 @@ class _MultivaluedRegularGrid(_MultivaluedGrid):
         backend : str, optional
             One of "scipy", "numba", or "cupy". Determines
             hardware to use for interpolation.
-        """
 
+        """
         super().__init__(values, backend=backend)
 
-        if backend == "numba":
-            self.grids = typed.List([np.asarray(grid) for grid in grids])
-        else:
-            self.grids = [BACKEND_MODULES[backend].asarray(grid) for grid in grids]
+        self.grids = aslist(grids, backend=backend)
 
         if self.ndim != len(self.grids):
             msg = "Number of grids must match number of dimensions."

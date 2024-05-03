@@ -38,8 +38,7 @@ def numba_map_coordinates(values, coords, **kwargs):
 
 @njit(parallel=True, cache=True, fastmath=True)
 def nb_interp_piecewise(args, grids, values, axis):
-    """
-    Just-in-time compiled function to interpolate on a warped grid.
+    """Just-in-time compiled function to interpolate on a warped grid.
 
     Parameters
     ----------
@@ -56,8 +55,8 @@ def nb_interp_piecewise(args, grids, values, axis):
     -------
     np.ndarray
         Interpolated values on arguments.
-    """
 
+    """
     shape = args[0].shape  # original shape of arguments
     size = args[0].size  # number of points in arguments
     shape_axis = values.shape[axis]  # number of points in axis

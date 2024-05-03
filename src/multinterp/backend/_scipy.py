@@ -35,7 +35,7 @@ def scipy_gradinterp(grids, values, args, axis=None, options=None):
         return scipy_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = np.gradient(values, *grids, edge_order=eo)
     return np.asarray(
-        [scipy_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient]
+        [scipy_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient],
     )
 
 

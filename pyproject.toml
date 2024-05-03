@@ -60,7 +60,7 @@ Changelog = "https://github.com/alanlujan91/multinterp/releases"
 version.source = "vcs"
 build.hooks.vcs.version-file = "src/multinterp/_version.py"
 
-[tool.hatch.env.default]
+[tool.hatch.envs.default]
 features = ["test"]
 scripts.test = "pytest {args}"
 

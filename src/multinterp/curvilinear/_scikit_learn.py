@@ -14,13 +14,10 @@ from multinterp.utilities import update_mc_kwargs
 
 
 class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
-    """
-    Curvilinear Interpolator using a pipeline of sklearn models.
-    """
+    """Curvilinear Interpolator using a pipeline of sklearn models."""
 
     def __init__(self, values, grids, pipeline, options=None):
-        """
-        Initialize a PipelineCurvilinearInterp object.
+        """Initialize a PipelineCurvilinearInterp object.
 
         Parameters
         ----------
@@ -30,6 +27,7 @@ class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
             Functional coordinates on a curvilinear grid.
         pipeline : sklearn.pipeline.Pipeline
             Pipeline of sklearn models.
+
         """
         # for now, only support scipy
         super().__init__(values, grids, backend="scipy")
@@ -45,8 +43,7 @@ class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
             self.models[dim].fit(x_train, y_train[dim])
 
     def _get_coordinates(self, args):
-        """
-        Apply the sklearn pipeline to each dimension of arguments.
+        """Apply the sklearn pipeline to each dimension of arguments.
 
         Parameters
         ----------
@@ -57,15 +54,14 @@ class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
         -------
         np.ndarray
             Interpolated values.
+
         """
         x_test = np.reshape(args, (self.ndim, -1))
         return np.array([m.predict(x_test).reshape(args[0].shape) for m in self.models])
 
 
 class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
-    """
-    Abstract class for PipelineCurvilinearInterp with preprocessing.
-    """
+    """Abstract class for PipelineCurvilinearInterp with preprocessing."""
 
     def __init__(
         self,
@@ -76,8 +72,7 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         mc_options=None,
         pp_options=None,
     ):
-        """
-        Initialize a _PreprocessingCurvilinearInterp object. Preprocessing options
+        """Initialize a _PreprocessingCurvilinearInterp object. Preprocessing options
         includes standardization, polynomial features, and spline features.
 
         Parameters
@@ -100,6 +95,7 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         ------
         AttributeError
             Feature not recognized.
+
         """
         self.std = std
 
@@ -133,8 +129,7 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
 
 
 class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
-    """
-    Generalized Regression for each dimension of the curvilinear grid.
+    """Generalized Regression for each dimension of the curvilinear grid.
     Use regression to map from the curvilinear grid to an index grid.
     Then use map_coordinates to interpolate on the index grid.
     """
@@ -148,8 +143,7 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         pp_options=None,
         mod_options=None,
     ):
-        """
-        Initialize a GeneralizedRegressionCurvilinearInterp object.
+        """Initialize a GeneralizedRegressionCurvilinearInterp object.
         The model determines the regression used for each dimension.
 
         Parameters
@@ -168,6 +162,7 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         ------
         AttributeError
             Model is not implemented.
+
         """
         if mod_options is None:
             mod_options = {}
@@ -192,5 +187,9 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
             raise AttributeError(msg)
 
         super().__init__(
-            values, grids, pipeline, mc_options=mc_options, pp_options=pp_options
+            values,
+            grids,
+            pipeline,
+            mc_options=mc_options,
+            pp_options=pp_options,
         )

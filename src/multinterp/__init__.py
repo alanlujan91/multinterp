@@ -1,9 +1,7 @@
-"""
-Copyright (c) 2023 Alan Lujan. All rights reserved.
+"""Copyright (c) 2023 Alan Lujan. All rights reserved.
 
 multinterp: Multivariate Interpolation.
 """
-
 
 from __future__ import annotations
 
