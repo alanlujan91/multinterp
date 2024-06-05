@@ -28,7 +28,7 @@ class MultivariateInterp(_RegularGrid):
 
         """
         super().__init__(values, grids, backend=backend)
-        self.mc_kwargs = update_mc_kwargs(options)
+        self.mc_kwargs = update_mc_kwargs(options, jax=self.backend == "jax")
         self._gradient = {}
 
     def compile(self):
