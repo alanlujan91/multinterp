@@ -1,4 +1,4 @@
-"""Copyright (c) 2023 Alan Lujan. All rights reserved.
+"""Copyright (c) 2024 Alan Lujan. All rights reserved.
 
 multinterp: Multivariate Interpolation.
 """

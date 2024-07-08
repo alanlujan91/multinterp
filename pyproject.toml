@@ -33,7 +33,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = ["numpy", "scipy", "numba", "scikit-learn", "scikit-image"]
+dependencies = ["numpy", "scipy", "scikit-learn", "scikit-image"]
 
 [project.optional-dependencies]
 test = ["pytest >=6", "pytest-cov >=3"]
@@ -45,6 +45,7 @@ docs = [
   "sphinx_autodoc_typehints",
   "furo>=2023.08.17",
 ]
+numba = ["numba"]
 cupy = ["cupy"]
 jax = ["jax", "jaxlib"]
 torch = ["pytorch", "gpytorch"]
@@ -145,5 +146,6 @@ messages_control.disable = [
   "fixme",
   "line-too-long",
   "missing-module-docstring",
+  "missing-function-docstring",
   "wrong-import-position",
 ]

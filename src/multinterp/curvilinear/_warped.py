@@ -331,7 +331,8 @@ class Curvilinear2DInterp(_CurvilinearGrid):
         # These points weren't able to identify coordinates
         if np.any(z):
             these = np.isclose(
-                f / b, (y_coords[3] - y_coords[2]) / (x_coords[3] - x_coords[2]),
+                f / b,
+                (y_coords[3] - y_coords[2]) / (x_coords[3] - x_coords[2]),
             )
             # iso-beta lines have equal slope
             if np.any(these):

@@ -5,7 +5,7 @@ from ._scikit_learn import (
     PipelineCurvilinearInterp,
     RegressionCurvilinearInterp,
 )
-from ._warped import Warped2DInterp, Curvilinear2DInterp
+from ._warped import Curvilinear2DInterp, Warped2DInterp
 
 __all__ = [
     "PiecewiseAffineInterp",
