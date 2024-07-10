@@ -25,3 +25,9 @@
 [rtd-link]:                 https://multinterp.readthedocs.io/en/latest/?badge=latest
 
 <!-- prettier-ignore-end -->
+
+# To Install 
+
+```
+pip install git+https://github.com/alanlujan91/multinterp
+```
