@@ -47,7 +47,7 @@ jobs:
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-        if: github.event_name == 'release' && github.event.action == 'published'
-        with:
-          # Remember to tell (test-)pypi about this repo before publishing
-          repository-url: https://test.pypi.org/legacy/
+        # if: github.event_name == 'release' && github.event.action == 'published'
+        # with:
+        #   # Remember to tell (test-)pypi about this repo before publishing
+        #   repository-url: https://test.pypi.org/legacy/
