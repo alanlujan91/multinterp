@@ -91,6 +91,23 @@ class MultivariateInterp(_RegularGrid):
         return map_coords(self.values, coords, **self.mc_kwargs, backend=self.backend)
 
     def diff(self, axis=None, edge_order=1):
+        """
+        Differentiates the interpolator along the specified axis. If axis is None, then returns a MultivaluedInterp object that approximates the partial derivative of the function across all axes. Otherwise, returns a MultivariateInterp object that approximates the partial derivative of the function along the specified axis.
+
+        Parameters
+        ----------
+        axis : int, optional
+            Axis along which to differentiate the function.
+        edge_order : int, optional
+            TODO: Add description
+
+        Returns
+        -------
+        MultivaluedInterp or MultivariateInterp
+            Interpolator object that approximates the partial derivative(s) of the function.
+        
+        """
+
         # if axis is not an integer less than or equal to the number
         # of dimensions of the input array, then a ValueError is raised.
         if axis is None:
@@ -222,6 +239,22 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         return asarray(fvals, backend=self.backend)
 
     def diff(self, axis=None, argnum=None, edge_order=1):
+        """
+        Differentiates the interpolator along the specified axis. If both axis and argnum are specified, then returns the partial derivative of the specified function argument along the specified axis. If axis is None, then returns a MultivaluedInterp object that approximates the partial derivatives of the specified function argument along each axis. If argnum is None, then returns a MultivaluedInterp object that approximates the partial derivatives of all arguments of the function along the specified axes.
+
+        Parameters
+        ----------
+        axis : int, optional
+            Axis along which to differentiate the function.
+        edge_order : int, optional
+            TODO: Add description
+
+        Returns
+        -------
+        MultivaluedInterp or MultivariateInterp
+            Interpolator object that approximates the partial derivative(s) of the function.
+        
+        """
         # if axis is not an integer less than or equal to the number
         # of dimensions of the input array, then a ValueError is raised.
         if axis is None:

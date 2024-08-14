@@ -39,12 +39,23 @@ with contextlib.suppress(ImportError):
 
 
 def get_coords(grids, args, backend="scipy"):
+    """
+    Wrapper function for the get_coordinates function from the chosen backend.
+    """
     return GET_COORDS[backend](grids, args)
 
 
 def map_coords(values, coords, backend="scipy", **kwargs):
+    """
+    Wrapper function for the map_coordinates function from the chosen backend.
+    """
     return MAP_COORDS[backend](values, coords, **kwargs)
 
 
 def get_grad(values, grids, axis=None, edge_order=None, backend="scipy"):
+    """
+    Wrapper function for the gradient function from the chosen backend.
+
+    TODO: use appropriate gradient functions from each backend.
+    """
     return GET_GRAD[backend](values, grids, axis=axis, edge_order=edge_order)
