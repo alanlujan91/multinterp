@@ -12,7 +12,7 @@ def sum_first_axis(*args):
     return np.sum(mats, axis=0)
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_data():
     # create test data
     grids = [

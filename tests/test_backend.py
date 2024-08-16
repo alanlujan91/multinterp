@@ -19,7 +19,7 @@ def f_3d(x, y, z):
     return 2 * x**3 + 3 * y**2 - z
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_data_2d():
     grids = [np.linspace(0, 3, 8), np.linspace(0, 3, 11)]
     values = f_2d(*np.meshgrid(*grids, indexing="ij"))
@@ -62,7 +62,7 @@ def test_torch_2d(setup_data_2d):
     assert np.allclose(true_values, result_multinterp.cpu(), atol=1e-05)
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_data_3d():
     x = np.linspace(1, 4, 11)
     y = np.linspace(4, 7, 22)
