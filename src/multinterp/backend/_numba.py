@@ -8,8 +8,7 @@ from multinterp.utilities import update_mc_kwargs
 
 
 def numba_multinterp(grids, values, args, options=None):
-    """
-    Perform multivariate interpolation using JIT-compiled functions with Numba.
+    """Perform multivariate interpolation using JIT-compiled functions with Numba.
 
     Parameters
     ----------
@@ -21,11 +20,12 @@ def numba_multinterp(grids, values, args, options=None):
         Points at which to interpolate data.
     options: dict, optional
         Additional options for interpolation.
-    
+
     Returns
     -------
     array-like
         Interpolated values of the function.
+
     """
     mc_kwargs = update_mc_kwargs(options)
 
@@ -39,8 +39,7 @@ def numba_multinterp(grids, values, args, options=None):
 
 @njit(parallel=True, cache=True, fastmath=True)
 def numba_get_coordinates(grids, args):
-    """
-    Converts input arguments to coordinates with respect to the specified grid. JIT-compiled using Numba.
+    """Converts input arguments to coordinates with respect to the specified grid. JIT-compiled using Numba.
 
     Parameters
     ----------
@@ -48,11 +47,12 @@ def numba_get_coordinates(grids, args):
         Curvilinear grids for each dimension.
     args : np.ndarray
         Values in the domain at which the function is to be interpolated.
-    
+
     Returns
     -------
     np.ndarray
         Coordinates of the input arguments.
+
     """
     coords = np.empty_like(args)
     for dim in prange(len(grids)):
@@ -64,9 +64,7 @@ def numba_get_coordinates(grids, args):
 
 # same as scipy map_coordinates until replacement is found
 def numba_map_coordinates(values, coords, **kwargs):
-    """
-    Identical to scipy_map_coordinates until a replacement is found. See documentation for scipy_map_coordinates.
-    """
+    """Identical to scipy_map_coordinates until a replacement is found. See documentation for scipy_map_coordinates."""
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)
     output = map_coordinates(values, coords, **kwargs)

@@ -7,8 +7,7 @@ from multinterp.utilities import update_mc_kwargs
 
 
 def cupy_multinterp(grids, values, args, options=None):
-    """
-    Perform multivariate interpolation using CuPy.
+    """Perform multivariate interpolation using CuPy.
 
     Parameters
     ----------
@@ -20,11 +19,12 @@ def cupy_multinterp(grids, values, args, options=None):
         Points at which to interpolate data.
     options : dict, optional
         Additional options for interpolation.
-    
+
     Returns
     -------
     array-like
         Interpolated values of the function.
+
     """
     mc_kwargs = update_mc_kwargs(options)
 
@@ -37,8 +37,7 @@ def cupy_multinterp(grids, values, args, options=None):
 
 
 def cupy_gradinterp(grids, values, args, axis=None, options=None):
-    """
-    Computes the interpolated value of the gradient evaluated at specified points using CuPy.
+    """Computes the interpolated value of the gradient evaluated at specified points using CuPy.
 
     Parameters
     ----------
@@ -52,11 +51,12 @@ def cupy_gradinterp(grids, values, args, axis=None, options=None):
         Axis along which to compute the gradient.
     options : dict, optional
         Additional options for interpolation.
-    
+
     Returns
     -------
     array-like
         Interpolated values of the gradient.
+
     """
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
@@ -80,8 +80,7 @@ def cupy_gradinterp(grids, values, args, axis=None, options=None):
 
 
 def cupy_get_coordinates(grids, args):
-    """
-    Takes input values and converts them to coordinates with respect to the specified grid.
+    """Takes input values and converts them to coordinates with respect to the specified grid.
 
     Parameters
     ----------
@@ -89,11 +88,12 @@ def cupy_get_coordinates(grids, args):
         Grid points for each dimension.
     args : cp.array
         Points at which to interpolate data.
-    
+
     Returns
     -------
     cp.array
         Coordinates with respect to the grid.
+
     """
     coords = cp.empty_like(args)
     for dim, grid in enumerate(grids):
@@ -104,8 +104,7 @@ def cupy_get_coordinates(grids, args):
 
 
 def cupy_map_coordinates(values, coords, **kwargs):
-    """
-    Run the map_coordinates function from the cupyx.scipy.ndimage module on the specified values.
+    """Run the map_coordinates function from the cupyx.scipy.ndimage module on the specified values.
 
     Parameters
     ----------
@@ -118,6 +117,7 @@ def cupy_map_coordinates(values, coords, **kwargs):
     -------
     cp.array
         Interpolated values.
+
     """
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)

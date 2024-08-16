@@ -26,7 +26,7 @@
 
 <!-- prettier-ignore-end -->
 
-# To Install 
+# To Install
 
 ```
 pip install git+https://github.com/alanlujan91/multinterp

@@ -34,6 +34,7 @@ class _AbstractGrid:
 
 class _StructuredGrid(_AbstractGrid):
     """Abstract class for interpolating on a structured grid. Serves as a base class for regular and abstract unstructured grid interpolators."""
+
     def __init__(self, values, grids, backend="scipy"):
         super().__init__(values, backend=backend)
 

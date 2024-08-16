@@ -41,8 +41,7 @@ def jax_multinterp(grids, values, args, options=None):
 
 
 def jax_gradinterp(grids, values, args, axis=None, options=None):
-    """
-    Computes the interpolated value of the gradient evaluated at specified points using JAX.
+    """Computes the interpolated value of the gradient evaluated at specified points using JAX.
 
     Parameters
     ----------
@@ -56,11 +55,12 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
         Axis along which to compute the gradient.
     options : dict, optional
         Additional options for interpolation.
-    
+
     Returns
     -------
     array-like
         Interpolated values of the gradient.
+
     """
     mc_kwargs = update_mc_kwargs(options, jax=True)
     eo = options.get("edge_order", 1) if options else 1
@@ -85,8 +85,7 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
 
 @jit
 def jax_get_coordinates(grids, args):
-    """
-    Takes input values and converts them to coordinates with respect to the specified grid.
+    """Takes input values and converts them to coordinates with respect to the specified grid.
 
     Parameters
     ----------
@@ -94,11 +93,12 @@ def jax_get_coordinates(grids, args):
         Grid points for each dimension.
     args : jnp.array
         Points at which to interpolate data.
-    
+
     Returns
     -------
     jnp.array
         Coordinates of the specified input points with respect to the grid.
+
     """
     grid_sizes = [jnp.arange(grid.size) for grid in grids]
     return jnp.array(
@@ -111,8 +111,7 @@ def jax_get_coordinates(grids, args):
 
 @functools.partial(jit, static_argnums=(2, 3, 4))
 def jax_map_coordinates(values, coords, order=None, mode=None, cval=None):
-    """
-    Run the map_coordinates function from the jax.scipy.ndimage module on the specified values.
+    """Run the map_coordinates function from the jax.scipy.ndimage module on the specified values.
 
     Parameters
     ----------
@@ -126,11 +125,12 @@ def jax_map_coordinates(values, coords, order=None, mode=None, cval=None):
         Method to handle extrapolation. See JAX documentation for options.
     cval : float, optional
         Value to use for extrapolation under 'constant' method.
-    
+
     Returns
     -------
     jnp.array
         Interpolated values at specified coordinates.
+
     """
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)

@@ -11,8 +11,7 @@ class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
     """Curvilinear interpolator that uses the PiecewiseAffineTransform from scikit-image."""
 
     def __init__(self, values, grids, options=None):
-        """
-        Initialize a PiecewiseAffineInterp object.
+        """Initialize a PiecewiseAffineInterp object.
 
         Parameters
         ----------
@@ -22,8 +21,8 @@ class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
             Coordinates of the points in the curvilinear grid.
         options : dict, optional
             Additional keyword arguments to pass to the map_coordinates backend.
-        """
 
+        """
         super().__init__(values, grids, backend="scipy")
         self.mc_kwargs = update_mc_kwargs(options)
 
@@ -41,7 +40,7 @@ class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
 
     def _get_coordinates(self, args):
         """Obtain the index coordinates for each of the arguments.
-        
+
         Parameters
         ----------
         args : np.ndarray
@@ -51,8 +50,8 @@ class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
         -------
         np.ndarray
             Index coordinates for each of the arguments.
-        """
 
+        """
         _input = args.reshape((self.ndim, -1)).T
         output = self.interpolator(_input).T.copy()
         return output.reshape(args.shape)
