@@ -568,8 +568,7 @@ class LBFGS(Optimizer):
                 if "closure" not in options:
                     msg = "closure option not specified."
                     raise (ValueError(msg))
-                else:
-                    closure = options["closure"]
+                closure = options["closure"]
 
                 gtd = g_Ok.dot(d) if "gtd" not in options else options["gtd"]
 
@@ -670,69 +669,68 @@ class LBFGS(Optimizer):
                     fail = True
                     break
 
+                # store current steplength
+                t_new = t
+
+                # compute new steplength
+
+                # if first step or not interpolating, then multiply by factor
+                if ls_step == 0 or not interpolate or not is_legal(F_new):
+                    t = t / eta
+
+                # if second step, use function value at new point along with
+                # gradient and function at current iterate
+                elif ls_step == 1 or not is_legal(F_prev):
+                    t = polyinterp(
+                        np.array(
+                            [
+                                [0, F_k.item(), gtd.item()],
+                                [t_new, F_new.item(), np.nan],
+                            ],
+                        ),
+                    )
+
+                # otherwise, use function values at new point, previous point,
+                # and gradient and function at current iterate
                 else:
-                    # store current steplength
-                    t_new = t
+                    t = polyinterp(
+                        np.array(
+                            [
+                                [0, F_k.item(), gtd.item()],
+                                [t_new, F_new.item(), np.nan],
+                                [t_prev, F_prev.item(), np.nan],
+                            ],
+                        ),
+                    )
 
-                    # compute new steplength
+                # if values are too extreme, adjust t
+                if interpolate:
+                    if t < 1e-3 * t_new:
+                        t = 1e-3 * t_new
+                    elif t > 0.6 * t_new:
+                        t = 0.6 * t_new
 
-                    # if first step or not interpolating, then multiply by factor
-                    if ls_step == 0 or not interpolate or not is_legal(F_new):
-                        t = t / eta
+                    # store old point
+                    F_prev = F_new
+                    t_prev = t_new
 
-                    # if second step, use function value at new point along with
-                    # gradient and function at current iterate
-                    elif ls_step == 1 or not is_legal(F_prev):
-                        t = polyinterp(
-                            np.array(
-                                [
-                                    [0, F_k.item(), gtd.item()],
-                                    [t_new, F_new.item(), np.nan],
-                                ],
-                            ),
-                        )
+                # update iterate and reevaluate
+                if inplace:
+                    self._add_update(t - t_new, d)
+                else:
+                    self._load_params(current_params)
+                    self._add_update(t, d)
 
-                    # otherwise, use function values at new point, previous point,
-                    # and gradient and function at current iterate
-                    else:
-                        t = polyinterp(
-                            np.array(
-                                [
-                                    [0, F_k.item(), gtd.item()],
-                                    [t_new, F_new.item(), np.nan],
-                                    [t_prev, F_prev.item(), np.nan],
-                                ],
-                            ),
-                        )
+                F_new = closure()
+                closure_eval += 1
+                ls_step += 1  # iterate
 
-                    # if values are too extreme, adjust t
-                    if interpolate:
-                        if t < 1e-3 * t_new:
-                            t = 1e-3 * t_new
-                        elif t > 0.6 * t_new:
-                            t = 0.6 * t_new
-
-                        # store old point
-                        F_prev = F_new
-                        t_prev = t_new
-
-                    # update iterate and reevaluate
-                    if inplace:
-                        self._add_update(t - t_new, d)
-                    else:
-                        self._load_params(current_params)
-                        self._add_update(t, d)
-
-                    F_new = closure()
-                    closure_eval += 1
-                    ls_step += 1  # iterate
-
-                    # print info if debugging
-                    if ls_debug:
-                        print(
-                            "LS Step: %d  t: %.8e  F(x+td):   %.8e  F-c1*t*g*d: %.8e  F(x): %.8e"
-                            % (ls_step, t, F_new, F_k + c1 * t * gtd, F_k),
-                        )
+                # print info if debugging
+                if ls_debug:
+                    print(
+                        "LS Step: %d  t: %.8e  F(x+td):   %.8e  F-c1*t*g*d: %.8e  F(x): %.8e"
+                        % (ls_step, t, F_new, F_k + c1 * t * gtd, F_k),
+                    )
 
             # store Bs
             if Bs is None:
@@ -756,14 +754,13 @@ class LBFGS(Optimizer):
             return F_new, t, ls_step, closure_eval, desc_dir, fail
 
         # perform weak Wolfe line search
-        elif line_search == "Wolfe":
+        if line_search == "Wolfe":
             # load options
             if options:
                 if "closure" not in options:
                     msg = "closure option not specified."
                     raise (ValueError(msg))
-                else:
-                    closure = options["closure"]
+                closure = options["closure"]
 
                 if "current_loss" not in options:
                     F_k = closure()
@@ -998,23 +995,22 @@ class LBFGS(Optimizer):
 
             return F_new, g_new, t, ls_step, closure_eval, grad_eval, desc_dir, fail
 
+        # perform update
+        self._add_update(t, d)
+
+        # store Bs
+        if Bs is None:
+            Bs = (g_Sk.mul(-t)).clone()
         else:
-            # perform update
-            self._add_update(t, d)
+            Bs.copy_(g_Sk.mul(-t))
 
-            # store Bs
-            if Bs is None:
-                Bs = (g_Sk.mul(-t)).clone()
-            else:
-                Bs.copy_(g_Sk.mul(-t))
+        state["d"] = d
+        state["prev_flat_grad"] = prev_flat_grad
+        state["t"] = t
+        state["Bs"] = Bs
+        state["fail"] = False
 
-            state["d"] = d
-            state["prev_flat_grad"] = prev_flat_grad
-            state["t"] = t
-            state["Bs"] = Bs
-            state["fail"] = False
-
-            return t
+        return t
 
     def step(self, p_k, g_Ok, g_Sk=None, options=None):
         if options is None:
