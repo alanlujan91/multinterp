@@ -25,7 +25,21 @@ def cupy_multinterp(grids, values, args, options=None):
     array-like
         Interpolated values of the function.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, cp.ndarray):
+        raise ValueError("values should be a cupy array.")
+    if not isinstance(args, cp.ndarray):
+        raise ValueError("args should be a cupy array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+
     mc_kwargs = update_mc_kwargs(options)
 
     args = cp.asarray(args)
@@ -57,7 +71,23 @@ def cupy_gradinterp(grids, values, args, axis=None, options=None):
     array-like
         Interpolated values of the gradient.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types or if the axis parameter is not an integer.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, cp.ndarray):
+        raise ValueError("values should be a cupy array.")
+    if not isinstance(args, cp.ndarray):
+        raise ValueError("args should be a cupy array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+    if axis is not None and not isinstance(axis, int):
+        raise ValueError("Axis should be an integer.")
+
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
 
@@ -68,9 +98,6 @@ def cupy_gradinterp(grids, values, args, axis=None, options=None):
     coords = cupy_get_coordinates(grids, args)
 
     if axis is not None:
-        if not isinstance(axis, int):
-            msg = "Axis should be an integer."
-            raise ValueError(msg)
         gradient = cp.gradient(values, grids[axis], axis=axis, edge_order=eo)
         return cupy_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = cp.gradient(values, *grids, edge_order=eo)
@@ -94,7 +121,17 @@ def cupy_get_coordinates(grids, args):
     cp.array
         Coordinates with respect to the grid.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(args, cp.ndarray):
+        raise ValueError("args should be a cupy array.")
+
     coords = cp.empty_like(args)
     for dim, grid in enumerate(grids):
         grid_size = cp.arange(grid.size)
