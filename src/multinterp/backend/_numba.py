@@ -26,7 +26,21 @@ def numba_multinterp(grids, values, args, options=None):
     array-like
         Interpolated values of the function.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, (list, typed.List)):
+        raise ValueError("grids should be a list or typed.List of arrays.")
+    if not isinstance(values, np.ndarray):
+        raise ValueError("values should be a numpy array.")
+    if not isinstance(args, np.ndarray):
+        raise ValueError("args should be a numpy array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+
     mc_kwargs = update_mc_kwargs(options)
 
     args = np.asarray(args)
@@ -91,7 +105,21 @@ def nb_interp_piecewise(args, grids, values, axis):
     np.ndarray
         Interpolated values on arguments.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(args, np.ndarray):
+        raise ValueError("args should be a numpy array.")
+    if not isinstance(grids, np.ndarray):
+        raise ValueError("grids should be a numpy array.")
+    if not isinstance(values, np.ndarray):
+        raise ValueError("values should be a numpy array.")
+    if not isinstance(axis, int):
+        raise ValueError("axis should be an integer.")
+
     shape = args[0].shape  # original shape of arguments
     size = args[0].size  # number of points in arguments
     shape_axis = values.shape[axis]  # number of points in axis
