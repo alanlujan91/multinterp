@@ -25,7 +25,21 @@ def scipy_multinterp(grids, values, args, options=None):
     array-like
         Interpolated values of the function.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, np.ndarray):
+        raise ValueError("values should be a numpy array.")
+    if not isinstance(args, np.ndarray):
+        raise ValueError("args should be a numpy array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+
     mc_kwargs = update_mc_kwargs(options)
 
     args = np.asarray(args)
@@ -57,7 +71,23 @@ def scipy_gradinterp(grids, values, args, axis=None, options=None):
     array-like
         Interpolated values of the gradient.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types or if the axis parameter is not an integer.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, np.ndarray):
+        raise ValueError("values should be a numpy array.")
+    if not isinstance(args, np.ndarray):
+        raise ValueError("args should be a numpy array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+    if axis is not None and not isinstance(axis, int):
+        raise ValueError("Axis should be an integer.")
+
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
 
@@ -68,9 +98,6 @@ def scipy_gradinterp(grids, values, args, axis=None, options=None):
     coords = scipy_get_coordinates(grids, args)
 
     if axis is not None:
-        if not isinstance(axis, int):
-            msg = "Axis should be an integer."
-            raise ValueError(msg)
         gradient = np.gradient(values, grids[axis], axis=axis, edge_order=eo)
         return scipy_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = np.gradient(values, *grids, edge_order=eo)
@@ -94,7 +121,17 @@ def scipy_get_coordinates(grids, args):
     np.array
         Coordinates with respect to the grid.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(args, np.ndarray):
+        raise ValueError("args should be a numpy array.")
+
     coords = np.empty_like(args)
     for dim, grid in enumerate(grids):
         grid_size = np.arange(grid.size)

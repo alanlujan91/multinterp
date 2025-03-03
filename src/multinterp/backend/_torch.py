@@ -9,7 +9,28 @@ import torch
 from multinterp.utilities import update_mc_kwargs
 
 
-def as_tensor(arrs, device="cpu"):
+def as_tensor(arrs: Sequence[np.ndarray | torch.Tensor | list], device: str = "cpu") -> torch.Tensor:
+    """
+    Convert input arrays to a PyTorch tensor on the specified device.
+
+    Parameters
+    ----------
+    arrs : Sequence[np.ndarray | torch.Tensor | list]
+        Input arrays to be converted.
+    device : str, optional
+        Target device for the tensor, by default "cpu".
+
+    Returns
+    -------
+    torch.Tensor
+        Converted tensor on the specified device.
+
+    Raises
+    ------
+    TypeError
+        If the input arrays are not of the expected types.
+
+    """
     target_device = torch.device(device)
 
     if isinstance(arrs, (torch.Tensor, np.ndarray)):
@@ -21,7 +42,27 @@ def as_tensor(arrs, device="cpu"):
     raise TypeError(msg)
 
 
-def torch_multinterp(grids, values, args, options=None):
+def torch_multinterp(grids: Sequence[np.ndarray], values: np.ndarray, args: np.ndarray, options: dict = None) -> torch.Tensor:
+    """
+    Perform multivariate interpolation using PyTorch.
+
+    Parameters
+    ----------
+    grids : Sequence[np.ndarray]
+        Grid points in the domain.
+    values : np.ndarray
+        Functional values at the grid points.
+    args : np.ndarray
+        Points at which to interpolate data.
+    options : dict, optional
+        Additional options for interpolation.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values of the function.
+
+    """
     mc_kwargs = update_mc_kwargs(options)
     target_device = options.get("device", "cpu") if options else "cpu"
 
@@ -33,7 +74,34 @@ def torch_multinterp(grids, values, args, options=None):
     return torch_map_coordinates(values, coords, **mc_kwargs)
 
 
-def torch_gradinterp(grids, values, args, axis=None, options=None):
+def torch_gradinterp(grids: Sequence[np.ndarray], values: np.ndarray, args: np.ndarray, axis: int = None, options: dict = None) -> torch.Tensor:
+    """
+    Computes the interpolated value of the gradient evaluated at specified points using PyTorch.
+
+    Parameters
+    ----------
+    grids : Sequence[np.ndarray]
+        Grid points in the domain.
+    values : np.ndarray
+        Functional values at the grid points.
+    args : np.ndarray
+        Points at which to interpolate data.
+    axis : int, optional
+        Axis along which to compute the gradient.
+    options : dict, optional
+        Additional options for interpolation.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values of the gradient.
+
+    Raises
+    ------
+    ValueError
+        If the axis parameter is not an integer.
+
+    """
     mc_kwargs = update_mc_kwargs(options)
     eo = options.get("edge_order", 1) if options else 1
 
@@ -55,7 +123,23 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
     )
 
 
-def torch_get_coordinates(grids, args):
+def torch_get_coordinates(grids: Sequence[torch.Tensor], args: torch.Tensor) -> torch.Tensor:
+    """
+    Takes input values and converts them to coordinates with respect to the specified grid.
+
+    Parameters
+    ----------
+    grids : Sequence[torch.Tensor]
+        Grid points for each dimension.
+    args : torch.Tensor
+        Points at which to interpolate data.
+
+    Returns
+    -------
+    torch.Tensor
+        Coordinates with respect to the grid.
+
+    """
     coords = torch.empty_like(args)
     for dim, grid in enumerate(grids):
         grid_size = torch.arange(grid.numel(), device=grid.device)
@@ -64,7 +148,23 @@ def torch_get_coordinates(grids, args):
     return coords
 
 
-def torch_map_coordinates(values, coords, **kwargs):
+def torch_map_coordinates(values: torch.Tensor, coords: torch.Tensor, **kwargs) -> torch.Tensor:
+    """
+    Run the map_coordinates function on the specified values.
+
+    Parameters
+    ----------
+    values : torch.Tensor
+        Functional values from which to interpolate.
+    coords : torch.Tensor
+        Coordinates at which to interpolate values.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values.
+
+    """
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)
     output = map_coordinates(values, coords, **kwargs)
@@ -178,22 +278,23 @@ def map_coordinates(
     return _map_coordinates(input, coordinates, order, mode, cval)
 
 
-def torch_interp(x, xp, fp):
-    """One-dimensional linear interpolation in PyTorch.
+def torch_interp(x: torch.Tensor, xp: torch.Tensor, fp: torch.Tensor) -> torch.Tensor:
+    """
+    One-dimensional linear interpolation in PyTorch.
 
     Parameters
     ----------
-        x: array_like
-            The x-coordinates of the interpolated values.
-        xp: 1-D sequence of floats
-            The x-coordinates of the data points.
-        fp: 1-D sequence of floats
-            The y-coordinates of the data points, same length as xp.
+    x : torch.Tensor
+        The x-coordinates of the interpolated values.
+    xp : torch.Tensor
+        The x-coordinates of the data points.
+    fp : torch.Tensor
+        The y-coordinates of the data points, same length as xp.
 
     Returns
     -------
-        array_like
-            The interpolated values, same shape as x.
+    torch.Tensor
+        The interpolated values, same shape as x.
 
     """
     # Sort and get sorted indices

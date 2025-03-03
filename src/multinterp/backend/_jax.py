@@ -29,7 +29,21 @@ def jax_multinterp(grids, values, args, options=None):
     array-like
         Interpolated values.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, jnp.ndarray):
+        raise ValueError("values should be a jax array.")
+    if not isinstance(args, jnp.ndarray):
+        raise ValueError("args should be a jax array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+
     mc_kwargs = update_mc_kwargs(options, jax=True)
 
     args = jnp.asarray(args)
@@ -61,7 +75,23 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
     array-like
         Interpolated values of the gradient.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types or if the axis parameter is not an integer.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(values, jnp.ndarray):
+        raise ValueError("values should be a jax array.")
+    if not isinstance(args, jnp.ndarray):
+        raise ValueError("args should be a jax array.")
+    if options is not None and not isinstance(options, dict):
+        raise ValueError("options should be a dictionary.")
+    if axis is not None and not isinstance(axis, int):
+        raise ValueError("Axis should be an integer.")
+
     mc_kwargs = update_mc_kwargs(options, jax=True)
     eo = options.get("edge_order", 1) if options else 1
 
@@ -72,9 +102,6 @@ def jax_gradinterp(grids, values, args, axis=None, options=None):
     coords = jax_get_coordinates(grids, args)
 
     if axis is not None:
-        if not isinstance(axis, int):
-            msg = "Axis should be an integer."
-            raise ValueError(msg)
         gradient = jnp.gradient(values, grids[axis], axis=axis, edge_order=eo)
         return jax_map_coordinates(gradient, coords, **mc_kwargs)
     gradient = jnp.gradient(values, *grids, edge_order=eo)
@@ -99,7 +126,17 @@ def jax_get_coordinates(grids, args):
     jnp.array
         Coordinates of the specified input points with respect to the grid.
 
+    Raises
+    ------
+    ValueError
+        If the input parameters are not of the expected types.
+
     """
+    if not isinstance(grids, list):
+        raise ValueError("grids should be a list of arrays.")
+    if not isinstance(args, jnp.ndarray):
+        raise ValueError("args should be a jax array.")
+
     grid_sizes = [jnp.arange(grid.size) for grid in grids]
     return jnp.array(
         [
@@ -132,6 +169,17 @@ def jax_map_coordinates(values, coords, order=None, mode=None, cval=None):
         Interpolated values at specified coordinates.
 
     """
+    if not isinstance(values, jnp.ndarray):
+        raise ValueError("values should be a jax array.")
+    if not isinstance(coords, jnp.ndarray):
+        raise ValueError("coords should be a jax array.")
+    if order is not None and not isinstance(order, int):
+        raise ValueError("order should be an integer.")
+    if mode is not None and not isinstance(mode, str):
+        raise ValueError("mode should be a string.")
+    if cval is not None and not isinstance(cval, (int, float)):
+        raise ValueError("cval should be a number.")
+
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)
     output = map_coordinates(values, coords, order, mode, cval)

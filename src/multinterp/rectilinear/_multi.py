@@ -13,29 +13,37 @@ class MultivariateInterp(_RegularGrid):
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
-    def __init__(self, values, grids, backend="scipy", options=None):
+    def __init__(self, values: np.ndarray, grids: list[np.ndarray], backend: str = "scipy", options: dict | None = None):
         """Initialize a multivariate interpolator.
 
         Parameters
         ----------
         values : np.ndarray
             Functional values on a regular grid.
-        grids : _type_
+        grids : list[np.ndarray]
             1D grids for each dimension.
         backend : str, optional
             One of "scipy", "numba", "cupy", or "jax". Determines
             hardware to use for interpolation.
+        options : dict, optional
+            Additional options for interpolation.
 
         """
         super().__init__(values, grids, backend=backend)
         self.mc_kwargs = update_mc_kwargs(options, jax=self.backend == "jax")
         self._gradient = {}
 
-    def compile(self):
+    def compile(self) -> None:
+        """Compile the interpolator by precomputing the coordinates."""
         self(*self.grids)
 
-    def __call__(self, *args):
+    def __call__(self, *args: np.ndarray) -> np.ndarray:
         """Interpolates arguments on the regular grid.
+
+        Parameters
+        ----------
+        args : np.ndarray
+            Arguments to be interpolated.
 
         Returns
         -------
@@ -57,7 +65,7 @@ class MultivariateInterp(_RegularGrid):
         coords = self._get_coordinates(args)
         return self._map_coordinates(coords)
 
-    def _get_coordinates(self, args):
+    def _get_coordinates(self, args: np.ndarray) -> np.ndarray:
         """For each argument, finds the index coordinates for interpolation.
 
         Parameters
@@ -73,13 +81,13 @@ class MultivariateInterp(_RegularGrid):
         """
         return get_coords(self.grids, args, backend=self.backend)
 
-    def _map_coordinates(self, coords):
+    def _map_coordinates(self, coords: np.ndarray) -> np.ndarray:
         """Uses coordinates to interpolate on the regular grid with
         `map_coordinates` from scipy or cupy, depending on backend.
 
         Parameters
         ----------
-        coordinates : np.ndarray
+        coords : np.ndarray
             Index coordinates for interpolation.
 
         Returns
@@ -90,7 +98,7 @@ class MultivariateInterp(_RegularGrid):
         """
         return map_coords(self.values, coords, **self.mc_kwargs, backend=self.backend)
 
-    def diff(self, axis=None, edge_order=1):
+    def diff(self, axis: int | None = None, edge_order: int = 1) -> MultivaluedInterp | MultivariateInterp:
         """Differentiates the interpolator along the specified axis. If axis is None, then returns a MultivaluedInterp object that approximates the partial derivative of the function across all axes. Otherwise, returns a MultivariateInterp object that approximates the partial derivative of the function along the specified axis.
 
         Parameters
@@ -98,18 +106,20 @@ class MultivariateInterp(_RegularGrid):
         axis : int, optional
             Axis along which to differentiate the function.
         edge_order : int, optional
-            TODO: Add description
+            Order of the finite difference approximation used to compute the gradient.
 
         Returns
         -------
         MultivaluedInterp or MultivariateInterp
             Interpolator object that approximates the partial derivative(s) of the function.
 
+        Raises
+        ------
+        ValueError
+            If the specified axis is not valid.
+
         """
-        # if axis is not an integer less than or equal to the number
-        # of dimensions of the input array, then a ValueError is raised.
         if axis is None:
-            # return MultivaluedInterp
             for ax in range(self.ndim):
                 if ax not in self._gradient:
                     self._gradient[ax] = get_grad(
@@ -154,29 +164,37 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
-    def __init__(self, values, grids, backend="scipy", options=None):
+    def __init__(self, values: np.ndarray, grids: list[np.ndarray], backend: str = "scipy", options: dict | None = None):
         """Initialize a multivariate interpolator.
 
         Parameters
         ----------
         values : np.ndarray
             Functional values on a regular grid.
-        grids : _type_
+        grids : list[np.ndarray]
             1D grids for each dimension.
         backend : str, optional
             One of "scipy", "numba", "cupy", or "jax". Determines
             hardware to use for interpolation.
+        options : dict, optional
+            Additional options for interpolation.
 
         """
         super().__init__(values, grids, backend=backend)
         self.mc_kwargs = update_mc_kwargs(options)
         self._gradient = {}
 
-    def compile(self):
+    def compile(self) -> None:
+        """Compile the interpolator by precomputing the coordinates."""
         self(*self.grids)
 
-    def __call__(self, *args):
+    def __call__(self, *args: np.ndarray) -> np.ndarray:
         """Interpolates arguments on the regular grid.
+
+        Parameters
+        ----------
+        args : np.ndarray
+            Arguments to be interpolated.
 
         Returns
         -------
@@ -198,7 +216,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         coords = self._get_coordinates(args)
         return self._map_coordinates(coords)
 
-    def _get_coordinates(self, args):
+    def _get_coordinates(self, args: np.ndarray) -> np.ndarray:
         """For each argument, finds the index coordinates for interpolation.
 
         Parameters
@@ -214,13 +232,13 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         """
         return get_coords(self.grids, args, self.backend)
 
-    def _map_coordinates(self, coords):
+    def _map_coordinates(self, coords: np.ndarray) -> np.ndarray:
         """Uses coordinates to interpolate on the regular grid with
         `map_coordinates` from scipy or cupy, depending on backend.
 
         Parameters
         ----------
-        coordinates : np.ndarray
+        coords : np.ndarray
             Index coordinates for interpolation.
 
         Returns
@@ -236,24 +254,29 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
 
         return asarray(fvals, backend=self.backend)
 
-    def diff(self, axis=None, argnum=None, edge_order=1):
+    def diff(self, axis: int | None = None, argnum: int | None = None, edge_order: int = 1) -> MultivaluedInterp | MultivariateInterp:
         """Differentiates the interpolator along the specified axis. If both axis and argnum are specified, then returns the partial derivative of the specified function argument along the specified axis. If axis is None, then returns a MultivaluedInterp object that approximates the partial derivatives of the specified function argument along each axis. If argnum is None, then returns a MultivaluedInterp object that approximates the partial derivatives of all arguments of the function along the specified axes.
 
         Parameters
         ----------
         axis : int, optional
             Axis along which to differentiate the function.
+        argnum : int, optional
+            Argument number to differentiate.
         edge_order : int, optional
-            TODO: Add description
+            Order of the finite difference approximation used to compute the gradient.
 
         Returns
         -------
         MultivaluedInterp or MultivariateInterp
             Interpolator object that approximates the partial derivative(s) of the function.
 
+        Raises
+        ------
+        ValueError
+            If the specified axis is not valid.
+
         """
-        # if axis is not an integer less than or equal to the number
-        # of dimensions of the input array, then a ValueError is raised.
         if axis is None:
             msg = "Must specify axis (function) to differentiate."
             raise ValueError(msg)
@@ -263,7 +286,6 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
             raise ValueError(msg)
 
         if argnum is None:
-            # return MultivaluedInterp
             for arg in range(self.ndim):
                 if (axis, arg) not in self._gradient:
                     self._gradient[(axis, arg)] = get_grad(
