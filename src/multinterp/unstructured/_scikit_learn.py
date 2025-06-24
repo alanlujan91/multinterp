@@ -18,7 +18,7 @@ from multinterp.grids import _UnstructuredGrid
 class PipelineUnstructuredInterp(_UnstructuredGrid):
     """Unstructured Interpolator using a pipeline of sklearn models."""
 
-    def __init__(self, values, grids, pipeline):
+    def __init__(self, values, grids, pipeline) -> None:
         """Initialize a PipelineUnstructuredInterp object.
 
         Parameters
@@ -62,7 +62,7 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
         pipeline,
         std=False,
         options=None,
-    ):
+    ) -> None:
         """Initialize a _PreprocessingUnstructuredInterp object. Preprocessing options
         includes standardization, polynomial features, and spline features.
 
@@ -127,7 +127,7 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
         std=False,
         pp_options=None,
         mod_options=None,
-    ):
+    ) -> None:
         """Initialize a GeneralizedRegressionUnstructuredInterp object.
         The model determines the regression used.
 
@@ -175,7 +175,7 @@ class RegressionUnstructuredInterp(_PreprocessingUnstructuredInterp):
 
 
 class GPRUnstructuredInterp(_PreprocessingUnstructuredInterp):
-    def __init__(self, values, grids, pp_options, mod_options):
+    def __init__(self, values, grids, pp_options, mod_options) -> None:
         self.model = "gaussian-process"
         self.mod_options = mod_options
 

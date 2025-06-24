@@ -111,7 +111,7 @@ class Warped2DInterp(_CurvilinearGrid):
         """
         return nb_interp_piecewise(args, self.grids, self.values, axis)
 
-    def warmup(self):
+    def warmup(self) -> None:
         """Warms up the JIT compiler."""
         self(*self.grids)
 
@@ -133,11 +133,11 @@ class Curvilinear2DInterp(_CurvilinearGrid):
 
     """
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         super().__init__(values, grids, backend=backend)
         self.update_polarity()
 
-    def update_polarity(self):
+    def update_polarity(self) -> None:
         """Fills in the polarity attribute of the interpolation, determining whether
         the "plus" (True) or "minus" (False) solution of the system of equations
         should be used for each sector.  Needs to be called in __init__.

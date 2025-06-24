@@ -9,7 +9,7 @@ import torch
 from torch.optim import Optimizer
 
 
-def is_legal(v):
+def is_legal(v) -> bool:
     """Checks that tensor is not NaN or Inf.
 
     Inputs:
@@ -235,7 +235,7 @@ class LBFGS(Optimizer):
         line_search="Wolfe",
         dtype=torch.float,
         debug=False,
-    ):
+    ) -> None:
         # ensure inputs are valid
         if lr < 0.0:
             msg = f"Invalid learning rate: {lr}"
@@ -294,7 +294,7 @@ class LBFGS(Optimizer):
             views.append(view)
         return torch.cat(views, 0)
 
-    def _add_update(self, step_size, update):
+    def _add_update(self, step_size, update) -> None:
         offset = 0
         for p in self._params:
             numel = p.numel()
@@ -309,11 +309,11 @@ class LBFGS(Optimizer):
     def _copy_params(self):
         return [deepcopy(param.data) for param in self._params]
 
-    def _load_params(self, current_params):
+    def _load_params(self, current_params) -> None:
         for i, param in enumerate(self._params):
             param.data[:] = current_params[i]
 
-    def line_search(self, line_search):
+    def line_search(self, line_search) -> None:
         """Switches line search option.
 
         Inputs:
@@ -371,7 +371,7 @@ class LBFGS(Optimizer):
 
         return r
 
-    def curvature_update(self, flat_grad, eps=1e-2, damping=False):
+    def curvature_update(self, flat_grad, eps=1e-2, damping=False) -> None:
         """Performs curvature update.
 
         Inputs:
@@ -416,7 +416,7 @@ class LBFGS(Optimizer):
                 # perform Powell damping
                 if damping is True and ys < eps * sBs:
                     if debug:
-                        print("Applying Powell damping...")
+                        pass
                     theta = ((1 - eps) * sBs) / (sBs - ys)
                     y = theta * y + (1 - theta) * Bs
 
@@ -441,13 +441,13 @@ class LBFGS(Optimizer):
                 # save skip
                 state["curv_skips"] += 1
                 if debug:
-                    print("Curvature pair skipped due to failed criterion")
+                    pass
 
         else:
             # save skip
             state["fail_skips"] += 1
             if debug:
-                print("Line search failed; curvature pair update skipped")
+                pass
 
     def _step(self, p_k, g_Ok, g_Sk=None, options=None):
         """Performs a single optimization step.
@@ -625,16 +625,13 @@ class LBFGS(Optimizer):
 
             # begin print for debug mode
             if ls_debug:
-                print(
-                    "==================================== Begin Armijo line search ===================================",
-                )
-                print(f"F(x): {F_k:.8e}  g*d: {gtd:.8e}")
+                pass
 
             # check if search direction is descent direction
             if gtd >= 0:
                 desc_dir = False
                 if debug:
-                    print("Not a descent direction!")
+                    pass
             else:
                 desc_dir = True
 
@@ -649,10 +646,7 @@ class LBFGS(Optimizer):
 
             # print info if debugging
             if ls_debug:
-                print(
-                    "LS Step: %d  t: %.8e  F(x+td): %.8e  F-c1*t*g*d: %.8e  F(x): %.8e"
-                    % (ls_step, t, F_new, F_k + c1 * t * gtd, F_k),
-                )
+                pass
 
             # check Armijo condition
             while F_new > F_k + c1 * t * gtd or not is_legal(F_new):
@@ -727,10 +721,7 @@ class LBFGS(Optimizer):
 
                 # print info if debugging
                 if ls_debug:
-                    print(
-                        "LS Step: %d  t: %.8e  F(x+td):   %.8e  F-c1*t*g*d: %.8e  F(x): %.8e"
-                        % (ls_step, t, F_new, F_k + c1 * t * gtd, F_k),
-                    )
+                    pass
 
             # store Bs
             if Bs is None:
@@ -740,10 +731,7 @@ class LBFGS(Optimizer):
 
             # print final steplength
             if ls_debug:
-                print("Final Steplength:", t)
-                print(
-                    "===================================== End Armijo line search ====================================",
-                )
+                pass
 
             state["d"] = d
             state["prev_flat_grad"] = prev_flat_grad
@@ -839,16 +827,13 @@ class LBFGS(Optimizer):
 
             # begin print for debug mode
             if ls_debug:
-                print(
-                    "==================================== Begin Wolfe line search ====================================",
-                )
-                print(f"F(x): {F_k:.8e}  g*d: {gtd:.8e}")
+                pass
 
             # check if search direction is descent direction
             if gtd >= 0:
                 desc_dir = False
                 if debug:
-                    print("Not a descent direction!")
+                    pass
             else:
                 desc_dir = True
 
@@ -881,13 +866,7 @@ class LBFGS(Optimizer):
 
                 # print info if debugging
                 if ls_debug:
-                    print(
-                        "LS Step: %d  t: %.8e  alpha: %.8e  beta: %.8e"
-                        % (ls_step, t, alpha, beta),
-                    )
-                    print(
-                        f"Armijo:  F(x+td): {F_new:.8e}  F-c1*t*g*d: {F_k + c1 * t * gtd:.8e}  F(x): {F_k:.8e}",
-                    )
+                    pass
 
                 # check Armijo condition
                 if F_new > F_k + c1 * t * gtd:
@@ -912,9 +891,7 @@ class LBFGS(Optimizer):
 
                     # print info if debugging
                     if ls_debug:
-                        print(
-                            f"Wolfe: g(x+td)*d: {gtd_new:.8e}  c2*g*d: {c2 * gtd:.8e}  gtd: {gtd:.8e}",
-                        )
+                        pass
 
                     # check curvature condition
                     if gtd_new < c2 * gtd:
@@ -982,10 +959,7 @@ class LBFGS(Optimizer):
 
             # print final steplength
             if ls_debug:
-                print("Final Steplength:", t)
-                print(
-                    "===================================== End Wolfe line search =====================================",
-                )
+                pass
 
             state["d"] = d
             state["prev_flat_grad"] = prev_flat_grad
@@ -1056,7 +1030,7 @@ class FullBatchLBFGS(LBFGS):
         line_search="Wolfe",
         dtype=torch.float,
         debug=False,
-    ):
+    ) -> None:
         super().__init__(params, lr, history_size, line_search, dtype, debug)
 
     def step(self, options=None):
@@ -1133,9 +1107,9 @@ class FullBatchLBFGS(LBFGS):
         # load options for damping and eps
         if options is None:
             options = {}
-        damping = False if "damping" not in options else options["damping"]
+        damping = options.get("damping", False)
 
-        eps = 0.01 if "eps" not in options else options["eps"]
+        eps = options.get("eps", 0.01)
 
         # gather gradient
         grad = self._gather_flat_grad()

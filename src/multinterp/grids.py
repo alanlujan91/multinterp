@@ -4,7 +4,7 @@ from multinterp.utilities import asarray, aslist
 
 
 class _AbstractGrid:
-    def __init__(self, values, backend="scipy"):
+    def __init__(self, values, backend="scipy") -> None:
         """Initialize a regular grid interpolator.
 
         Parameters
@@ -35,7 +35,7 @@ class _AbstractGrid:
 class _StructuredGrid(_AbstractGrid):
     """Abstract class for interpolating on a structured grid. Serves as a base class for regular and abstract unstructured grid interpolators."""
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         super().__init__(values, backend=backend)
 
         self.grids = aslist(grids, backend=backend)
@@ -47,7 +47,7 @@ class _RegularGrid(_StructuredGrid):
     Takes in arguments to be used by `map_coordinates`.
     """
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         """Initialize a multivariate interpolator.
 
         Parameters
@@ -75,7 +75,7 @@ class _RegularGrid(_StructuredGrid):
 class _CurvilinearGrid(_AbstractGrid):
     """Abstract class for interpolating on a curvilinear grid."""
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         """Initialize a curvilinear grid interpolator.
 
         Parameters
@@ -102,7 +102,7 @@ class _CurvilinearGrid(_AbstractGrid):
 class _UnstructuredGrid(_StructuredGrid):
     """Abstract class for interpolation on unstructured grids."""
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         """Initialize interpolation on unstructured grids.
 
         Parameters
@@ -125,7 +125,7 @@ class _UnstructuredGrid(_StructuredGrid):
 
 
 class _MultivaluedGrid(_AbstractGrid):
-    def __init__(self, values, backend="scipy"):
+    def __init__(self, values, backend="scipy") -> None:
         """Initialize a regular grid interpolator.
 
         Parameters
@@ -159,7 +159,7 @@ class _MultivaluedRegularGrid(_MultivaluedGrid):
     Takes in arguments to be used by `map_coordinates`.
     """
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy") -> None:
         """Initialize a multivariate interpolator.
 
         Parameters

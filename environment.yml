@@ -1,4 +1,4 @@
-name: multinterp-dev
+name: multinterp
 channels:
   - pytorch
   - nvidia

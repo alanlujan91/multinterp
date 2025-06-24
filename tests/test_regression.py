@@ -7,27 +7,27 @@ from multinterp import RegressionUnstructuredInterp
 
 
 def sum_first_axis(*args):
-    """
-    Sum the first axis of meshgrid arrays.
+    """Sum the first axis of meshgrid arrays.
 
     Args:
         *args: Input arrays for meshgrid.
 
     Returns:
         numpy.ndarray: Sum of meshgrid arrays along the first axis.
+
     """
     mats = np.meshgrid(*args, indexing="ij")
 
     return np.sum(mats, axis=0)
 
 
-@pytest.fixture()
+@pytest.fixture
 def setup_data():
-    """
-    Fixture to set up test data for regression interpolation.
+    """Fixture to set up test data for regression interpolation.
 
     Returns:
         tuple: grids, args
+
     """
     # create test data
 
@@ -46,9 +46,8 @@ def setup_data():
     return grids, args
 
 
-def test_interpolation_values(setup_data):
-    """
-    Test regression interpolation values for 2D and 3D cases.
+def test_interpolation_values(setup_data) -> None:
+    """Test regression interpolation values for 2D and 3D cases.
 
     Compares interpolated values with expected values using
     RegressionUnstructuredInterp.

@@ -44,7 +44,7 @@ class UnstructuredInterp(_UnstructuredGrid):
         grids,
         method="linear",
         options=None,
-    ):
+    ) -> None:
         """Initialize an Unstructured Grid Interpolator.
 
         Parameters

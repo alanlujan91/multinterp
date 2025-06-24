@@ -8,9 +8,9 @@ from ._scikit_learn import (
 from ._warped import Curvilinear2DInterp, Warped2DInterp
 
 __all__ = [
+    "Curvilinear2DInterp",
     "PiecewiseAffineInterp",
-    "Warped2DInterp",
     "PipelineCurvilinearInterp",
     "RegressionCurvilinearInterp",
-    "Curvilinear2DInterp",
+    "Warped2DInterp",
 ]
