@@ -13,7 +13,7 @@ class MultivariateInterp(_RegularGrid):
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
-    def __init__(self, values, grids, backend="scipy", options=None):
+    def __init__(self, values, grids, backend="scipy", options=None) -> None:
         """Initialize a multivariate interpolator.
 
         Parameters
@@ -31,7 +31,7 @@ class MultivariateInterp(_RegularGrid):
         self.mc_kwargs = update_mc_kwargs(options, jax=self.backend == "jax")
         self._gradient = {}
 
-    def compile(self):
+    def compile(self) -> None:
         self(*self.grids)
 
     def __call__(self, *args):
@@ -154,7 +154,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
     to index coordinates and uses `map_coordinates` from scipy, cupy, or jax.
     """
 
-    def __init__(self, values, grids, backend="scipy", options=None):
+    def __init__(self, values, grids, backend="scipy", options=None) -> None:
         """Initialize a multivariate interpolator.
 
         Parameters
@@ -172,7 +172,7 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
         self.mc_kwargs = update_mc_kwargs(options)
         self._gradient = {}
 
-    def compile(self):
+    def compile(self) -> None:
         self(*self.grids)
 
     def __call__(self, *args):

@@ -10,7 +10,7 @@ from multinterp.utilities import mgrid, update_mc_kwargs
 class PiecewiseAffineInterp(_CurvilinearGrid, MultivariateInterp):
     """Curvilinear interpolator that uses the PiecewiseAffineTransform from scikit-image."""
 
-    def __init__(self, values, grids, options=None):
+    def __init__(self, values, grids, options=None) -> None:
         """Initialize a PiecewiseAffineInterp object.
 
         Parameters

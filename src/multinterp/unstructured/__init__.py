@@ -8,8 +8,8 @@ from ._scikit_learn import (
 from ._scipy import UnstructuredInterp
 
 __all__ = [
-    "UnstructuredInterp",
+    "GPRUnstructuredInterp",
     "PipelineUnstructuredInterp",
     "RegressionUnstructuredInterp",
-    "GPRUnstructuredInterp",
+    "UnstructuredInterp",
 ]

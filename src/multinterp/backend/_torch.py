@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import itertools
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import torch
 
 from multinterp.utilities import update_mc_kwargs
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def as_tensor(arrs, device="cpu"):
@@ -130,7 +133,7 @@ def _map_coordinates(
 
     else:
 
-        def is_valid(index, size):
+        def is_valid(index, size) -> bool:
             return True
 
     if order == 0:

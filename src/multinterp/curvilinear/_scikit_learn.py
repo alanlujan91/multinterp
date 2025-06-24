@@ -16,7 +16,7 @@ from multinterp.utilities import update_mc_kwargs
 class PipelineCurvilinearInterp(_CurvilinearGrid, MultivariateInterp):
     """Curvilinear Interpolator using a pipeline of sklearn models."""
 
-    def __init__(self, values, grids, pipeline, options=None):
+    def __init__(self, values, grids, pipeline, options=None) -> None:
         """Initialize a PipelineCurvilinearInterp object.
 
         Parameters
@@ -71,7 +71,7 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
         std=False,
         mc_options=None,
         pp_options=None,
-    ):
+    ) -> None:
         """Initialize a _PreprocessingCurvilinearInterp object. Preprocessing options
         includes standardization, polynomial features, and spline features.
 
@@ -142,7 +142,7 @@ class RegressionCurvilinearInterp(_PreprocessingCurvilinearInterp):
         mc_options=None,
         pp_options=None,
         mod_options=None,
-    ):
+    ) -> None:
         """Initialize a GeneralizedRegressionCurvilinearInterp object.
         The model determines the regression used for each dimension.
 

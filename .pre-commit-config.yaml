@@ -2,15 +2,17 @@ ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
 
+exclude: ^.cruft.json|.copier-answers.yml$
+
 repos:
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.18.0"
+    rev: "1.19.1"
     hooks:
       - id: blacken-docs
         additional_dependencies: [black==24.*]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.6.0"
+    rev: "v5.0.0"
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -32,19 +34,35 @@ repos:
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v4.0.0-alpha.8"
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: "v3.5.3"
     hooks:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
         args: [--prose-wrap=always]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.5.1"
+    rev: "v0.11.13"
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: ["--fix", "--show-fixes"]
       - id: ruff-format
+
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: "v1.16.0"
+  #   hooks:
+  #     - id: mypy
+  #       files: src|tests
+  #       args: []
+  #       additional_dependencies:
+  #         - pytest
+
+  # - repo: https://github.com/codespell-project/codespell
+  #   rev: "v2.4.1"
+  #   hooks:
+  #     - id: codespell
+  #       additional_dependencies:
+  #         - tomli; python_version<'3.11'
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: "v0.10.0.1"
@@ -60,13 +78,13 @@ repos:
         exclude: .pre-commit-config.yaml
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: "v0.18"
+    rev: "v0.24.1"
     hooks:
       - id: validate-pyproject
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: "0.28.6"
+    rev: "0.33.0"
     hooks:
       - id: check-dependabot
       - id: check-github-workflows

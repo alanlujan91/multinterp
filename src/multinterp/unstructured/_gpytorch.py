@@ -24,7 +24,7 @@ class _SimpleExactGPModel(ExactGP):
         train_x: torch.Tensor,
         train_y: torch.Tensor,
         likelihood,
-    ):
+    ) -> None:
         """Initialize the GP model.
 
         Args:
@@ -66,7 +66,7 @@ class _PipelineExactGPModel(ExactGP):
         mean_module=None,
         covar_module=None,
         distribution=None,
-    ):
+    ) -> None:
         """Initialize the GP model.
 
         Args:
@@ -112,15 +112,15 @@ class _PipelineGPUExactGPModel(ExactGP):
         distribution=None,
         n_devices=DEVICE_COUNT,
         output_device=None,
-    ):
+    ) -> None:
         super().__init__(train_x, train_y, likelihood)
         self.mean_module = mean_module or ConstantMean()
         base_covar_module = covar_module or ScaleKernel(RBFKernel())
         self.distribution = distribution or MultivariateNormal
 
-        assert (
-            0 < n_devices <= DEVICE_COUNT
-        ), f"n_devices must be between 1 and {DEVICE_COUNT}"
+        assert 0 < n_devices <= DEVICE_COUNT, (
+            f"n_devices must be between 1 and {DEVICE_COUNT}"
+        )
 
         if n_devices == 1:
             self.covar_module = base_covar_module
@@ -138,7 +138,7 @@ class _PipelineGPUExactGPModel(ExactGP):
 
 
 class GaussianProcessRegression(_UnstructuredGrid):
-    def __init__(self, values, grids):
+    def __init__(self, values, grids) -> None:
         super().__init__(values, grids, backend="torch")
 
         self.grids = self.grids.T
@@ -154,13 +154,13 @@ class GaussianProcessRegression(_UnstructuredGrid):
         self._to_cuda()
         self._train()
 
-    def _to_cuda(self):
+    def _to_cuda(self) -> None:
         self.grids = self.grids.cuda()
         self.values = self.values.cuda()
         self._model = self._model.cuda()
         self._likelihood = self._likelihood.cuda()
 
-    def _train(self, training_iter=50, preconditioner_size=100):
+    def _train(self, training_iter=50, preconditioner_size=100) -> None:
         _train_lbfgs(
             self._model,
             self._likelihood,
@@ -194,7 +194,7 @@ def _train_simple(
     training_iter=50,
     verbose=False,
     n_skip=10,
-):
+) -> None:
     # Find optimal model hyperparameters
     model.train()
     likelihood.train()
@@ -219,10 +219,6 @@ def _train_simple(
             _loss = loss.item()
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
-            print(
-                f"""Iter {i+1}/{training_iter} - Loss: {_loss:.3f}
-                lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}""",
-            )
 
         optimizer.step()
 
@@ -246,7 +242,7 @@ def _train_lbfgs(
     training_iter=50,
     verbose=False,
     n_skip=10,
-):
+) -> None:
     model.train()
     likelihood.train()
 
@@ -273,13 +269,10 @@ def _train_lbfgs(
                 _loss = loss.item()
                 _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
                 _noise = model.likelihood.noise.item()
-                print(
-                    f"Iter {i+1}/{training_iter} - Loss: {loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
-                )
 
             if fail:
                 if verbose:
-                    print("Convergence reached!")
+                    pass
                 break
 
 
@@ -293,7 +286,7 @@ def _train_pipeline(
     training_iter=50,
     verbose=False,
     n_skip=10,
-):
+) -> None:
     # Find optimal model hyperparameters
     model.train()
     likelihood.train()
@@ -311,8 +304,5 @@ def _train_pipeline(
             _loss = loss.item()
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
-            print(
-                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
-            )
 
         optimizer.step()

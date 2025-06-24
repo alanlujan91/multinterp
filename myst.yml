@@ -1,6 +1,7 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
+  id: 571049e8-271e-4ff9-b9a3-d17459e8dfab
   title: Multivariate Interpolation
   # description:
   keywords: [interpolation, multivariate, unstructured]
@@ -17,14 +18,9 @@ project:
           url: https://econ-ark.org/
       github: alanlujan91
   github: https://github.com/alanlujan91/multinterp
-  # bibliography: []
+  # To autogenerate a Table of Contents, run "myst init --write-toc"
 site:
   template: book-theme
-  title: Multivariate Interpolation
-  # logo:
-  nav: []
-  actions:
-    - title: Learn More
-      url: https://mystmd.org/guide
-  domains:
-    - alanlujan91.curve.space
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
