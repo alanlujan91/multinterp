@@ -160,7 +160,7 @@ class GaussianProcessRegression(_UnstructuredGrid):
         self._model = self._model.cuda()
         self._likelihood = self._likelihood.cuda()
 
-    def _train(self, training_iter=50, preconditioner_size=100) -> None:
+    def _train(self, training_iter=50, preconditioner_size=100) -> None:  # noqa: ARG002
         _train_lbfgs(
             self._model,
             self._likelihood,

@@ -29,7 +29,14 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = ["numpy", "scipy", "scikit-learn", "scikit-image"]
+dependencies = [
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "scikit-image",
+    "numba",
+    "tbb>=2021.12",
+]
 
 [project.urls]
 Homepage = "https://github.com/alanlujan91/multinterp"
@@ -42,6 +49,7 @@ Changelog = "https://github.com/alanlujan91/multinterp/releases"
 test = [
   "pytest >=6",
   "pytest-cov >=3",
+  "cupy-cuda11x>=13.4.1", "torch", "jax"
 ]
 dev = [
   { include-group = "test" },
