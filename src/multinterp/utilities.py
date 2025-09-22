@@ -43,7 +43,23 @@ LONG_MC_KWARGS = {
 }
 
 
-def update_mc_kwargs(options=None, jax=False):
+def update_mc_kwargs(options: dict | None = None, jax: bool = False) -> dict:
+    """
+    Update the keyword arguments for the map_coordinates function based on the provided options.
+
+    Parameters
+    ----------
+    options : dict, optional
+        Additional options for interpolation.
+    jax : bool, optional
+        Flag indicating whether to use JAX-specific options.
+
+    Returns
+    -------
+    dict
+        Updated keyword arguments for the map_coordinates function.
+
+    """
     mc_kwargs = SHORT_MC_KWARGS if jax else LONG_MC_KWARGS
     if options:
         mc_kwargs = SHORT_MC_KWARGS.copy() if jax else LONG_MC_KWARGS.copy()
@@ -52,7 +68,28 @@ def update_mc_kwargs(options=None, jax=False):
     return mc_kwargs
 
 
-def asarray(values, backend):
+def asarray(values: np.ndarray, backend: str) -> np.ndarray:
+    """
+    Convert the input values to an array using the specified backend.
+
+    Parameters
+    ----------
+    values : np.ndarray
+        Input values to be converted.
+    backend : str
+        Backend to use for conversion. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        Converted array.
+
+    Raises
+    ------
+    ValueError
+        If the specified backend is not valid.
+
+    """
     if backend not in BACKENDS:
         msg = f"Invalid backend. Must be one of: {BACKENDS}"
         raise ValueError(msg)
@@ -60,7 +97,23 @@ def asarray(values, backend):
     return MODULES[backend].asarray(values)
 
 
-def aslist(grids, backend):
+def aslist(grids: list[np.ndarray], backend: str) -> list[np.ndarray]:
+    """
+    Convert the input grids to a list of arrays using the specified backend.
+
+    Parameters
+    ----------
+    grids : list of np.ndarray
+        Input grids to be converted.
+    backend : str
+        Backend to use for conversion. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    list of np.ndarray
+        Converted list of arrays.
+
+    """
     if backend == "numba":
         grids = typed.List([np.asarray(grid) for grid in grids])
     else:
@@ -69,21 +122,109 @@ def aslist(grids, backend):
     return grids
 
 
-def empty(shape, backend):
+def empty(shape: tuple[int, ...], backend: str) -> np.ndarray:
+    """
+    Create an empty array with the specified shape using the specified backend.
+
+    Parameters
+    ----------
+    shape : tuple of int
+        Shape of the empty array.
+    backend : str
+        Backend to use for creating the array. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        Empty array with the specified shape.
+
+    """
     return MODULES[backend].empty(shape)
 
 
-def empty_like(values, backend):
+def empty_like(values: np.ndarray, backend: str) -> np.ndarray:
+    """
+    Create an empty array with the same shape and type as the input values using the specified backend.
+
+    Parameters
+    ----------
+    values : np.ndarray
+        Input values to determine the shape and type of the empty array.
+    backend : str
+        Backend to use for creating the array. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        Empty array with the same shape and type as the input values.
+
+    """
     return MODULES[backend].empty_like(values)
 
 
-def interp(x, y, z, backend):
+def interp(x: np.ndarray, y: np.ndarray, z: np.ndarray, backend: str) -> np.ndarray:
+    """
+    Perform one-dimensional linear interpolation using the specified backend.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        The x-coordinates of the interpolated values.
+    y : np.ndarray
+        The x-coordinates of the data points.
+    z : np.ndarray
+        The y-coordinates of the data points, same length as y.
+    backend : str
+        Backend to use for interpolation. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        The interpolated values, same shape as x.
+
+    """
     return MODULES[backend].interp(x, y, z)
 
 
-def take(arr, indices, axis, backend):
+def take(arr: np.ndarray, indices: int, axis: int, backend: str) -> np.ndarray:
+    """
+    Take elements from an array along an axis using the specified backend.
+
+    Parameters
+    ----------
+    arr : np.ndarray
+        Input array from which to take elements.
+    indices : int
+        Indices of elements to take.
+    axis : int
+        Axis along which to take elements.
+    backend : str
+        Backend to use for taking elements. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        Array of taken elements.
+
+    """
     return MODULES[backend].take(arr, indices, axis=axis)
 
 
-def mgrid(args, backend):
+def mgrid(args: tuple[slice, ...], backend: str) -> np.ndarray:
+    """
+    Return coordinate matrices from coordinate vectors using the specified backend.
+
+    Parameters
+    ----------
+    args : tuple of slice
+        Coordinate vectors.
+    backend : str
+        Backend to use for creating coordinate matrices. Must be one of "scipy", "numba", "cupy", "jax", or "torch".
+
+    Returns
+    -------
+    np.ndarray
+        Coordinate matrices.
+
+    """
     return MODULES[backend].mgrid[args]

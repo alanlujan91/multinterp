@@ -137,3 +137,40 @@ def test_torch_3d(setup_data_3d):
     grids, values, args, true_values = setup_data_3d
     result_multinterp = torch_multinterp(grids, values, args)
     assert np.allclose(true_values, result_multinterp.cpu(), atol=1e-05)
+
+
+def test_scipy_multinterp_invalid_grids():
+    """Test scipy_multinterp with invalid grids parameter."""
+    grids = "invalid_grids"
+    values = np.array([1, 2, 3])
+    args = np.array([1, 2, 3])
+    with pytest.raises(ValueError, match="grids should be a list of arrays."):
+        scipy_multinterp(grids, values, args)
+
+
+def test_scipy_multinterp_invalid_values():
+    """Test scipy_multinterp with invalid values parameter."""
+    grids = [np.array([1, 2, 3])]
+    values = "invalid_values"
+    args = np.array([1, 2, 3])
+    with pytest.raises(ValueError, match="values should be a numpy array."):
+        scipy_multinterp(grids, values, args)
+
+
+def test_scipy_multinterp_invalid_args():
+    """Test scipy_multinterp with invalid args parameter."""
+    grids = [np.array([1, 2, 3])]
+    values = np.array([1, 2, 3])
+    args = "invalid_args"
+    with pytest.raises(ValueError, match="args should be a numpy array."):
+        scipy_multinterp(grids, values, args)
+
+
+def test_scipy_multinterp_invalid_options():
+    """Test scipy_multinterp with invalid options parameter."""
+    grids = [np.array([1, 2, 3])]
+    values = np.array([1, 2, 3])
+    args = np.array([1, 2, 3])
+    options = "invalid_options"
+    with pytest.raises(ValueError, match="options should be a dictionary."):
+        scipy_multinterp(grids, values, args, options)
