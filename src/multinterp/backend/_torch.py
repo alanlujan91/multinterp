@@ -307,10 +307,15 @@ def torch_interp(x, xp, fp):
     xp = xp[sort_idx]
     fp = fp[sort_idx]
 
-    # Find bin indices and clip within range
-    bin_indices = torch.clamp(torch.searchsorted(xp, x, right=False), 0, len(xp) - 2)
+    # Find bin indices: searchsorted returns insertion point, subtract 1 for left boundary
+    # Then clamp to valid range [0, len(xp) - 2] for interpolation between idx and idx+1
+    bin_indices = torch.clamp(torch.searchsorted(xp, x, right=True) - 1, 0, len(xp) - 2)
 
     # Compute weights and interpolate
     bin_diff = xp[bin_indices + 1] - xp[bin_indices]
     w2 = (x - xp[bin_indices]) / bin_diff
+
+    # Clip weights to [0, 1] to match np.interp behavior (no extrapolation)
+    w2 = torch.clamp(w2, 0.0, 1.0)
+
     return (1 - w2) * fp[bin_indices] + w2 * fp[bin_indices + 1]
