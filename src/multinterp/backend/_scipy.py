@@ -113,18 +113,25 @@ def scipy_get_coordinates(grids, args):
 
 
 def scipy_map_coordinates(values, coords, **kwargs):
-    """Run the map_coordinates function from the scipy.ndimage module on the specified values.
+    """Run the map_coordinates function from scipy.ndimage.
 
     Parameters
     ----------
-    values : np.array
+    values : np.ndarray
         Functional values from which to interpolate.
-    coords : np.array
+    coords : np.ndarray
         Coordinates at which to interpolate values.
+    **kwargs : dict
+        Additional keyword arguments passed to scipy.ndimage.map_coordinates:
+        - order : int (0-5, default 1)
+        - mode : str ('constant', 'nearest', 'wrap', 'mirror', 'reflect')
+        - cval : float (default 0.0)
+        - output : array or dtype (optional)
+        - prefilter : bool (default True for order > 1)
 
     Returns
     -------
-    np.array
+    np.ndarray
         Interpolated values of the function.
 
     """

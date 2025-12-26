@@ -104,18 +104,25 @@ def cupy_get_coordinates(grids, args):
 
 
 def cupy_map_coordinates(values, coords, **kwargs):
-    """Run the map_coordinates function from the cupyx.scipy.ndimage module on the specified values.
+    """Run the map_coordinates function from cupyx.scipy.ndimage.
 
     Parameters
     ----------
-    values : cp.array
+    values : cupy.ndarray
         Functional values from which to interpolate.
-    coords : cp.array
+    coords : cupy.ndarray
         Coordinates at which to interpolate values.
+    **kwargs : dict
+        Additional keyword arguments passed to cupyx.scipy.ndimage.map_coordinates:
+        - order : int (0-5, default 1)
+        - mode : str ('constant', 'nearest', 'wrap', 'mirror', 'reflect')
+        - cval : float (default 0.0)
+        - output : array or dtype (optional)
+        - prefilter : bool (default True for order > 1)
 
     Returns
     -------
-    cp.array
+    cupy.ndarray
         Interpolated values.
 
     """

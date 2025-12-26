@@ -49,23 +49,44 @@ try:
 except ImportError:
     pass
 
-SHORT_MC_KWARGS = {
+SHORT_MC_KWARGS: dict[str, object] = {
     "order": 1,  # order of interpolation, default to linear
     "mode": "nearest",  # how to handle extrapolation
     "cval": 0.0,  # value to use for extrapolation
 }
 
-LONG_MC_KWARGS = {
+LONG_MC_KWARGS: dict[str, object] = {
     **SHORT_MC_KWARGS,
     "output": None,  # output array or dtype
-    "prefilter": False,  # whether to prefilter input
+    "prefilter": True,  # whether to prefilter input (scipy default for order > 1)
 }
 
 
-def update_mc_kwargs(options=None, jax=False):
-    mc_kwargs = SHORT_MC_KWARGS if jax else LONG_MC_KWARGS
+def update_mc_kwargs(
+    options: dict[str, object] | None = None,
+    jax: bool = False,
+) -> dict[str, object]:
+    """Create map_coordinates kwargs from user options.
+
+    Parameters
+    ----------
+    options : dict, optional
+        User-provided options to override defaults.
+    jax : bool, optional
+        If True, use SHORT_MC_KWARGS (JAX doesn't support output/prefilter).
+        Default is False.
+
+    Returns
+    -------
+    dict
+        Merged kwargs for map_coordinates. Always returns a new dict copy.
+
+    """
+    defaults = SHORT_MC_KWARGS if jax else LONG_MC_KWARGS
+    # Always return a copy to avoid mutating global defaults
+    mc_kwargs = defaults.copy()
     if options:
-        mc_kwargs = SHORT_MC_KWARGS.copy() if jax else LONG_MC_KWARGS.copy()
+        # Only update keys that exist in defaults
         intersection = mc_kwargs.keys() & options.keys()
         mc_kwargs.update({key: options[key] for key in intersection})
     return mc_kwargs

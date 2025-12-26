@@ -111,25 +111,30 @@ def jax_get_coordinates(grids, args):
 
 @functools.partial(jit, static_argnums=(2, 3, 4))
 def jax_map_coordinates(values, coords, order=None, mode=None, cval=None):
-    """Run the map_coordinates function from the jax.scipy.ndimage module on the specified values.
+    """Run the map_coordinates function from jax.scipy.ndimage.
 
     Parameters
     ----------
-    values : jnp.array
-        The functional values from which to interpolate.
-    coords : jnp.array
-        The coordinates at which to interpolate the values.
+    values : jax.Array
+        Functional values from which to interpolate.
+    coords : jax.Array
+        Coordinates at which to interpolate values.
     order : int, optional
-        The order of interpolation, 0 for Nearest-Neighbour, 1 for Linear.
+        Order of interpolation (0=nearest, 1=linear). Default 1.
     mode : str, optional
-        Method to handle extrapolation. See JAX documentation for options.
+        Boundary mode: 'constant', 'nearest', 'wrap', 'mirror', 'reflect'.
+        Default 'nearest'.
     cval : float, optional
-        Value to use for extrapolation under 'constant' method.
+        Value for points outside boundaries when mode='constant'. Default 0.0.
 
     Returns
     -------
-    jnp.array
+    jax.Array
         Interpolated values at specified coordinates.
+
+    Note
+    ----
+    Arguments order, mode, and cval are JIT-static and must be compile-time constants.
 
     """
     original_shape = coords[0].shape

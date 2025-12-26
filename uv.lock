@@ -818,6 +818,11 @@ dependencies = [
 cupy = [
     { name = "cupy" },
 ]
+dev = [
+    { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "jax", version = "0.8.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "torch" },
+]
 jax = [
     { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "jax", version = "0.8.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -852,6 +857,7 @@ test = [
 requires-dist = [
     { name = "cupy", marker = "extra == 'cupy'" },
     { name = "gpytorch", marker = "extra == 'torch'" },
+    { name = "jax", marker = "extra == 'dev'", specifier = ">=0.6.2" },
     { name = "jax", marker = "extra == 'jax'" },
     { name = "jaxlib", marker = "extra == 'jax'" },
     { name = "mystmd", specifier = ">=1.7.1" },
@@ -860,9 +866,10 @@ requires-dist = [
     { name = "scikit-image" },
     { name = "scikit-learn" },
     { name = "scipy" },
+    { name = "torch", marker = "extra == 'dev'", specifier = ">=2.9.1" },
     { name = "torch", marker = "extra == 'torch'" },
 ]
-provides-extras = ["cupy", "jax", "torch"]
+provides-extras = ["cupy", "dev", "jax", "torch"]
 
 [package.metadata.requires-dev]
 dev = [

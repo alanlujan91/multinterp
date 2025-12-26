@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import warnings
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -25,6 +26,25 @@ def as_tensor(arrs, device="cpu"):
 
 
 def torch_multinterp(grids, values, args, options=None):
+    """Perform multivariate interpolation using PyTorch.
+
+    Parameters
+    ----------
+    grids : list of array-like
+        Grid points in the domain.
+    values : array-like
+        Functional values at the grid points.
+    args : array-like
+        Points at which to interpolate data.
+    options : dict, optional
+        Additional options for interpolation. Supports 'device' for GPU placement.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values of the function.
+
+    """
     mc_kwargs = update_mc_kwargs(options)
     target_device = options.get("device", "cpu") if options else "cpu"
 
@@ -37,12 +57,33 @@ def torch_multinterp(grids, values, args, options=None):
 
 
 def torch_gradinterp(grids, values, args, axis=None, options=None):
-    mc_kwargs = update_mc_kwargs(options)
-    eo = options.get("edge_order", 1) if options else 1
+    """Computes the interpolated value of the gradient using PyTorch.
 
-    args = as_tensor(args)
-    values = as_tensor(values)
-    grids = [as_tensor(grid) for grid in grids]
+    Parameters
+    ----------
+    grids : list of array-like
+        Grid points in the domain.
+    values : array-like
+        Functional values at the grid points.
+    args : array-like
+        Points at which to interpolate data.
+    axis : int, optional
+        Axis along which to compute the gradient.
+    options : dict, optional
+        Additional options for interpolation. Supports 'device' for GPU placement.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values of the gradient.
+
+    """
+    mc_kwargs = update_mc_kwargs(options)
+    target_device = options.get("device", "cpu") if options else "cpu"
+
+    args = as_tensor(args, device=target_device)
+    values = as_tensor(values, device=target_device)
+    grids = [as_tensor(grid, device=target_device) for grid in grids]
 
     coords = torch_get_coordinates(grids, args)
 
@@ -50,10 +91,10 @@ def torch_gradinterp(grids, values, args, axis=None, options=None):
         if not isinstance(axis, int):
             msg = "Axis should be an integer."
             raise ValueError(msg)
-        gradient = torch.gradient(values, grids[axis], axis=axis, edge_order=eo)
+        gradient = torch.gradient(values, spacing=(grids[axis],), dim=axis)[0]
         return torch_map_coordinates(gradient, coords, **mc_kwargs)
-    gradient = torch.gradient(values, *grids, edge_order=eo)
-    return torch.asarray(
+    gradient = torch.gradient(values, spacing=tuple(grids))
+    return torch.stack(
         [torch_map_coordinates(grad, coords, **mc_kwargs) for grad in gradient],
     )
 
@@ -68,9 +109,45 @@ def torch_get_coordinates(grids, args):
 
 
 def torch_map_coordinates(values, coords, **kwargs):
+    """Run map_coordinates using PyTorch tensors.
+
+    Parameters
+    ----------
+    values : torch.Tensor
+        Functional values from which to interpolate.
+    coords : torch.Tensor
+        Coordinates at which to interpolate values.
+    **kwargs : dict
+        Additional keyword arguments:
+        - order : int (0 or 1, default 1)
+        - mode : str ('constant', 'nearest', 'wrap', 'mirror', 'reflect')
+        - cval : float (default 0.0)
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values of the function.
+
+    Note
+    ----
+    The 'output' and 'prefilter' kwargs from scipy are accepted but ignored.
+
+    """
     original_shape = coords[0].shape
     coords = coords.reshape(len(values.shape), -1)
-    output = map_coordinates(values, coords, **kwargs)
+    # Filter to only supported kwargs for torch map_coordinates
+    supported_kwargs = {"order", "mode", "cval"}
+    ignored_kwargs = {"output", "prefilter"}
+    filtered_kwargs = {k: v for k, v in kwargs.items() if k in supported_kwargs}
+    # Warn about truly unsupported kwargs (not just ignored ones)
+    unsupported = set(kwargs.keys()) - supported_kwargs - ignored_kwargs
+    if unsupported:
+        warnings.warn(
+            f"Unsupported kwargs for torch backend: {unsupported}. "
+            f"Supported: {supported_kwargs}",
+            stacklevel=2,
+        )
+    output = map_coordinates(values, coords, **filtered_kwargs)
     return output.reshape(original_shape)
 
 
@@ -173,11 +250,37 @@ def map_coordinates(
     input: torch.Tensor,
     coordinates: Sequence[torch.Tensor],
     order: int,
-    mode: str = "constant",
+    mode: str = "nearest",
     cval: float = 0.0,
     _output=None,
     _prefilter=None,
 ) -> torch.Tensor:
+    """Map coordinates using PyTorch tensors.
+
+    Parameters
+    ----------
+    input : torch.Tensor
+        Input array from which to interpolate.
+    coordinates : Sequence[torch.Tensor]
+        Coordinates at which to evaluate the input.
+    order : int
+        Order of interpolation (0=nearest, 1=linear).
+    mode : str, optional
+        Boundary mode: 'constant', 'nearest', 'wrap', 'mirror', 'reflect'.
+        Default is 'nearest'.
+    cval : float, optional
+        Value for points outside boundaries when mode='constant'. Default 0.0.
+    _output : None
+        Unused, for API compatibility with scipy.
+    _prefilter : None
+        Unused, for API compatibility with scipy.
+
+    Returns
+    -------
+    torch.Tensor
+        Interpolated values.
+
+    """
     return _map_coordinates(input, coordinates, order, mode, cval)
 
 
