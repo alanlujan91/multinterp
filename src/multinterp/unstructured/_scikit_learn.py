@@ -99,16 +99,20 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
 
         if feature and isinstance(feature, str):
             degree = options.get("degree", 3)
-            assert isinstance(degree, int), "Degree must be an integer."
+            if not isinstance(degree, int):
+                msg = "Degree must be an integer."
+                raise TypeError(msg)
             if feature.startswith("pol"):
                 pipeline.insert(0, PolynomialFeatures(degree))
             elif feature.startswith("spl"):
                 n_knots = options.get("n_knots", 5)
-                assert isinstance(n_knots, int), "n_knots must be an integer."
+                if not isinstance(n_knots, int):
+                    msg = "n_knots must be an integer."
+                    raise TypeError(msg)
                 pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
             else:
-                msg = f"Feature {feature} not recognized."
-                raise AttributeError(msg)
+                msg = f"Feature {feature!r} not recognized. Use 'pol' or 'spl'."
+                raise ValueError(msg)
 
         if std:
             pipeline.insert(0, StandardScaler())

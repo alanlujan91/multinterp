@@ -280,15 +280,16 @@ class MultivaluedInterp(_MultivaluedRegularGrid):
                 options=self.mc_kwargs,
             )
 
-        grad = self._gradient.get((axis, arg))
+        grad = self._gradient.get((axis, argnum))
         if grad is None:
-            self._gradient[(axis, arg)] = get_grad(
+            self._gradient[(axis, argnum)] = get_grad(
                 self.values,
-                self.grids[axis],
-                axis=axis,
+                self.grids[argnum],
+                axis=argnum,
                 edge_order=edge_order,
                 backend=self.backend,
             )
+            grad = self._gradient[(axis, argnum)]
 
         return MultivariateInterp(
             grad,

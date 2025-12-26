@@ -106,21 +106,26 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
 
         feature = pp_options.get("feature", None)
 
-        if feature and isinstance(feature, str):
-            degree = pp_options.get("degree", 3)
-            assert isinstance(degree, int), "Degree must be an integer."
-            if feature.startswith("pol"):
-                pipeline.insert(0, PolynomialFeatures(degree))
-            elif feature.startswith("spl"):
-                n_knots = pp_options.get("n_knots", 5)
-                assert isinstance(n_knots, int), "n_knots must be an integer."
-                pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
-            else:
-                msg = f"Feature {feature} not recognized."
-                raise AttributeError(msg)
+        if not feature or not isinstance(feature, str):
+            msg = f"Feature must be a string ('pol' or 'spl'), got {feature!r}."
+            raise ValueError(msg)
+
+        degree = pp_options.get("degree", 3)
+        if not isinstance(degree, int):
+            msg = "Degree must be an integer."
+            raise TypeError(msg)
+
+        if feature.startswith("pol"):
+            pipeline.insert(0, PolynomialFeatures(degree))
+        elif feature.startswith("spl"):
+            n_knots = pp_options.get("n_knots", 5)
+            if not isinstance(n_knots, int):
+                msg = "n_knots must be an integer."
+                raise TypeError(msg)
+            pipeline.insert(0, SplineTransformer(n_knots=n_knots, degree=degree))
         else:
-            msg = f"Feature {feature} not recognized."
-            raise AttributeError(msg)
+            msg = f"Feature {feature!r} not recognized. Use 'pol' or 'spl'."
+            raise ValueError(msg)
 
         if std:
             pipeline.insert(0, StandardScaler())

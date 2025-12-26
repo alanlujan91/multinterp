@@ -41,6 +41,9 @@ class Warped2DInterp(_CurvilinearGrid):
             output = self._interp_piecewise(args, axis)
         elif self.backend == "numba":
             output = self._backend_numba(args, axis)
+        else:
+            msg = f"Backend {self.backend!r} not supported for Warped2DInterp."
+            raise NotImplementedError(msg)
 
         return output
 

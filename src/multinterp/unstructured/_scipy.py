@@ -96,10 +96,9 @@ class UnstructuredInterp(_UnstructuredGrid):
             msg = f"Unknown interpolation method {method} for {self.ndim} dimensional data."
             raise ValueError(msg)
 
-        self.interp_kwargs = interp_kwargs
+        self.interp_kwargs = interp_kwargs.copy()
         if options:
-            self.interp_kwargs.copy()
-            intersection = interp_kwargs.keys() & options.keys()
+            intersection = self.interp_kwargs.keys() & options.keys()
             self.interp_kwargs.update({key: options[key] for key in intersection})
 
         self.interpolator = interpolator_class(
