@@ -98,8 +98,7 @@ def test_warped2d_cupy(setup_warped_2d):
 
 def test_warped2d_jax(setup_warped_2d):
     """Test jax backend for Warped2DInterp."""
-    jax = pytest.importorskip("jax")
-    import jax.numpy as jnp
+    pytest.importorskip("jax")
 
     from multinterp.curvilinear import Warped2DInterp
 
@@ -120,7 +119,7 @@ def test_warped2d_torch(setup_warped_2d):
     """Test torch backend for Warped2DInterp."""
     import warnings
 
-    torch = pytest.importorskip("torch")
+    pytest.importorskip("torch")
     from multinterp.curvilinear import Warped2DInterp
 
     grids, values, test_args = setup_warped_2d
@@ -243,3 +242,93 @@ def test_warped2d_axis_parameter(setup_warped_2d):
     # Both should return finite values
     assert np.all(np.isfinite(result_axis0))
     assert np.all(np.isfinite(result_axis1))
+
+
+@pytest.mark.filterwarnings("ignore:divide by zero:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:invalid value:RuntimeWarning")
+def test_curvilinear2d_numba(setup_curvilinear_2d):
+    """Test numba backend for Curvilinear2DInterp."""
+    from multinterp.curvilinear import Curvilinear2DInterp
+
+    grids, values, test_x, test_y = setup_curvilinear_2d
+
+    # Scipy result as reference
+    scipy_interp = Curvilinear2DInterp(values, grids, backend="scipy")
+    scipy_result = scipy_interp(test_x, test_y)
+
+    # Numba result
+    numba_interp = Curvilinear2DInterp(values, grids, backend="numba")
+    numba_result = numba_interp(test_x, test_y)
+
+    assert np.allclose(scipy_result, numba_result, rtol=1e-10)
+
+
+@pytest.mark.filterwarnings("ignore:divide by zero:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:invalid value:RuntimeWarning")
+def test_curvilinear2d_cupy(setup_curvilinear_2d):
+    """Test cupy backend for Curvilinear2DInterp."""
+    cp = pytest.importorskip("cupy")
+    from multinterp.curvilinear import Curvilinear2DInterp
+
+    grids, values, test_x, test_y = setup_curvilinear_2d
+
+    # Scipy result as reference
+    scipy_interp = Curvilinear2DInterp(values, grids, backend="scipy")
+    scipy_result = scipy_interp(test_x, test_y)
+
+    # CuPy result
+    cupy_interp = Curvilinear2DInterp(values, grids, backend="cupy")
+    cupy_result = cupy_interp(test_x, test_y)
+
+    assert np.allclose(scipy_result, cp.asnumpy(cupy_result), rtol=1e-10)
+
+
+@pytest.mark.filterwarnings("ignore:divide by zero:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:invalid value:RuntimeWarning")
+def test_curvilinear2d_jax(setup_curvilinear_2d):
+    """Test jax backend for Curvilinear2DInterp."""
+    pytest.importorskip("jax")
+    from multinterp.curvilinear import Curvilinear2DInterp
+
+    grids, values, test_x, test_y = setup_curvilinear_2d
+
+    # Scipy result as reference
+    scipy_interp = Curvilinear2DInterp(values, grids, backend="scipy")
+    scipy_result = scipy_interp(test_x, test_y)
+
+    # JAX result
+    jax_interp = Curvilinear2DInterp(values, grids, backend="jax")
+    jax_result = jax_interp(test_x, test_y)
+
+    assert np.allclose(scipy_result, np.asarray(jax_result), rtol=1e-5)
+
+
+@pytest.mark.filterwarnings("ignore:divide by zero:RuntimeWarning")
+@pytest.mark.filterwarnings("ignore:invalid value:RuntimeWarning")
+def test_curvilinear2d_torch(setup_curvilinear_2d):
+    """Test torch backend for Curvilinear2DInterp."""
+    pytest.importorskip("torch")
+    from multinterp.curvilinear import Curvilinear2DInterp
+
+    grids, values, test_x, test_y = setup_curvilinear_2d
+
+    # Scipy result as reference
+    scipy_interp = Curvilinear2DInterp(values, grids, backend="scipy")
+    scipy_result = scipy_interp(test_x, test_y)
+
+    # Torch result
+    torch_interp = Curvilinear2DInterp(values, grids, backend="torch")
+    torch_result = torch_interp(test_x, test_y)
+
+    assert np.allclose(scipy_result, torch_result.cpu().numpy(), rtol=1e-5)
+
+
+def test_curvilinear2d_invalid_backend():
+    """Test that invalid backend raises error for Curvilinear2DInterp."""
+    from multinterp.curvilinear import Curvilinear2DInterp
+
+    grids = np.random.rand(2, 5, 5)
+    values = np.random.rand(5, 5)
+
+    with pytest.raises(NotImplementedError, match="not supported"):
+        Curvilinear2DInterp(values, grids, backend="invalid")

@@ -7,8 +7,8 @@ import contextlib
 import numpy as np
 
 __all__ = [
-    "interp_piecewise",
     "INTERP_PIECEWISE",
+    "interp_piecewise",
 ]
 
 
@@ -216,7 +216,7 @@ with contextlib.suppress(ImportError):
             Interpolated values on arguments.
 
         """
-        from multinterp.backend._torch import torch_interp
+        from multinterp.backend._torch import torch_interp  # noqa: PLC0415
 
         shape = args[0].shape
         size = args[0].numel()

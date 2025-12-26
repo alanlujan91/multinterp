@@ -5,7 +5,8 @@ from __future__ import annotations
 import numpy as np
 
 from multinterp.grids import _CurvilinearGrid
-from multinterp.utilities import asarray
+from multinterp.rectilinear._utils import MAP_COORDS, map_coords
+from multinterp.utilities import asarray, update_mc_kwargs
 
 from ._utils import INTERP_PIECEWISE, interp_piecewise
 
@@ -84,7 +85,9 @@ class Curvilinear2DInterp(_CurvilinearGrid):
     endogenous states solved with the endogenous grid method.
 
     This interpolator uses bilinear interpolation within quadrilateral sectors,
-    with automatic sector identification and polarity tracking.
+    with automatic sector identification and polarity tracking. After finding
+    the fractional index coordinates, it uses `map_coordinates` for interpolation,
+    enabling multi-backend support.
 
     Parameters
     ----------
@@ -95,8 +98,10 @@ class Curvilinear2DInterp(_CurvilinearGrid):
         Shape (2, n, m) array where grids[0] contains x-coordinates
         and grids[1] contains y-coordinates.
     backend : str, optional
-        Backend to use. Currently only 'scipy' is fully supported for
-        this interpolator. Default is 'scipy'.
+        Backend to use for interpolation. One of 'scipy', 'numba', 'cupy',
+        'jax', 'torch'. Default is 'scipy'.
+    options : dict, optional
+        Additional options for map_coordinates (e.g., order, mode, cval).
 
     Attributes
     ----------
@@ -109,9 +114,19 @@ class Curvilinear2DInterp(_CurvilinearGrid):
 
     """
 
-    def __init__(self, values, grids, backend="scipy"):
+    def __init__(self, values, grids, backend="scipy", options=None):
         """Initialize a Curvilinear2DInterp object."""
+        if backend not in MAP_COORDS:
+            available = list(MAP_COORDS.keys())
+            msg = f"Backend {backend!r} not supported for Curvilinear2DInterp. Available: {available}"
+            raise NotImplementedError(msg)
+        # Store grids as numpy for internal coordinate finding algorithms
+        # The parent class will convert values to the backend type
         super().__init__(values, grids, backend=backend)
+        # Keep numpy copy of grids for internal use
+        self._grids_np = np.asarray(grids)
+        # Use short kwargs for JAX (doesn't support output/prefilter)
+        self.mc_kwargs = update_mc_kwargs(options, jax=(backend == "jax"))
         self._update_polarity()
 
     def _update_polarity(self):
@@ -124,8 +139,8 @@ class Curvilinear2DInterp(_CurvilinearGrid):
         and checking if the resulting (alpha, beta) coordinates fall within
         the unit square [0, 1] x [0, 1].
         """
-        g0 = self.grids[0]
-        g1 = self.grids[1]
+        g0 = self._grids_np[0]
+        g1 = self._grids_np[1]
         s0m1 = self.shape[0] - 1
         s1m1 = self.shape[1] - 1
         size = s0m1 * s1m1
@@ -181,11 +196,11 @@ class Curvilinear2DInterp(_CurvilinearGrid):
             # Get vertex coordinates: A(0,0), B(1,0), C(0,1), D(1,1)
             offsets = [(0, 0), (1, 0), (0, 1), (1, 1)]
             x_coords = [
-                self.grids[0][x_pos_guess[these] + dx, y_pos_guess[these] + dy]
+                self._grids_np[0][x_pos_guess[these] + dx, y_pos_guess[these] + dy]
                 for dx, dy in offsets
             ]
             y_coords = [
-                self.grids[1][x_pos_guess[these] + dx, y_pos_guess[these] + dy]
+                self._grids_np[1][x_pos_guess[these] + dx, y_pos_guess[these] + dy]
                 for dx, dy in offsets
             ]
 
@@ -257,8 +272,8 @@ class Curvilinear2DInterp(_CurvilinearGrid):
         """
         # Get vertex coordinates
         offsets = [(0, 0), (1, 0), (0, 1), (1, 1)]
-        x_coords = [self.grids[0][x_pos + dx, y_pos + dy] for dx, dy in offsets]
-        y_coords = [self.grids[1][x_pos + dx, y_pos + dy] for dx, dy in offsets]
+        x_coords = [self._grids_np[0][x_pos + dx, y_pos + dy] for dx, dy in offsets]
+        y_coords = [self._grids_np[1][x_pos + dx, y_pos + dy] for dx, dy in offsets]
 
         polarity = 2.0 * self.polarity[x_pos, y_pos] - 1.0
 
@@ -285,30 +300,42 @@ class Curvilinear2DInterp(_CurvilinearGrid):
         )
         beta = mu * alpha + tau
 
-        # Handle nearly-regular sectors (parallel iso-beta lines)
-        z = np.isnan(alpha) | np.isnan(beta)
-        if np.any(z):
-            slope_ratio = f / b
-            slope_cd = (y_coords[3] - y_coords[2]) / (x_coords[3] - x_coords[2])
-            these = np.isclose(slope_ratio, slope_cd)
+        # Handle degenerate sectors where the quadratic solution fails
+        # This happens when:
+        # 1. denom ≈ 0 (degenerate quadrilateral)
+        # 2. Negative discriminant (shouldn't happen for valid interior points)
+        # 3. theta ≈ 0 (parallel iso-beta lines, need linear solve instead)
+        nan_mask = np.isnan(alpha) | np.isnan(beta)
+        if np.any(nan_mask):
+            # Check for parallel iso-beta lines (same slope on AB and CD edges)
+            # Only apply fallback to NaN results that have this property
+            with np.errstate(divide="ignore", invalid="ignore"):
+                slope_ab = f / b  # slope of edge AB
+                slope_cd = (y_coords[3] - y_coords[2]) / (x_coords[3] - x_coords[2])
+            parallel_mask = nan_mask & np.isclose(slope_ab, slope_cd, equal_nan=True)
 
-            if np.any(these):
-                kappa = f[these] / b[these]
-                int_bot = y_coords[0][these] - kappa * x_coords[0][these]
-                int_top = y_coords[2][these] - kappa * x_coords[2][these]
-                int_these = y[these] - kappa * x[these]
-                beta_temp = (int_these - int_bot) / (int_top - int_bot)
+            if np.any(parallel_mask):
+                # For parallel edges, use linear interpolation along iso-β lines
+                kappa = f[parallel_mask] / b[parallel_mask]
+                # y-intercepts of bottom (AB) and top (CD) edges
+                int_bot = y_coords[0][parallel_mask] - kappa * x_coords[0][parallel_mask]
+                int_top = y_coords[2][parallel_mask] - kappa * x_coords[2][parallel_mask]
+                int_query = y[parallel_mask] - kappa * x[parallel_mask]
+                # β from linear interpolation between edge intercepts
+                beta_temp = (int_query - int_bot) / (int_top - int_bot)
+                # x-coordinates of left and right boundaries at this β
                 x_left = (
-                    beta_temp * x_coords[2][these]
-                    + (1.0 - beta_temp) * x_coords[0][these]
+                    beta_temp * x_coords[2][parallel_mask]
+                    + (1.0 - beta_temp) * x_coords[0][parallel_mask]
                 )
                 x_right = (
-                    beta_temp * x_coords[3][these]
-                    + (1.0 - beta_temp) * x_coords[1][these]
+                    beta_temp * x_coords[3][parallel_mask]
+                    + (1.0 - beta_temp) * x_coords[1][parallel_mask]
                 )
-                alpha_temp = (x[these] - x_left) / (x_right - x_left)
-                beta[these] = beta_temp
-                alpha[these] = alpha_temp
+                # alpha from linear interpolation between left and right boundaries
+                alpha_temp = (x[parallel_mask] - x_left) / (x_right - x_left)
+                beta[parallel_mask] = beta_temp
+                alpha[parallel_mask] = alpha_temp
 
         return alpha, beta
 
@@ -329,20 +356,27 @@ class Curvilinear2DInterp(_CurvilinearGrid):
             Shape matches the broadcast shape of x and y.
 
         """
+        original_shape = np.asarray(x).shape
         xa = np.asarray(x).flatten()
         ya = np.asarray(y).flatten()
 
         x_pos, y_pos = self._find_sector(xa, ya)
         alpha, beta = self._find_coords(xa, ya, x_pos, y_pos)
 
-        # Bilinear interpolation
-        f = (
-            (1 - alpha) * (1 - beta) * self.values[x_pos, y_pos]
-            + (1 - alpha) * beta * self.values[x_pos, y_pos + 1]
-            + alpha * (1 - beta) * self.values[x_pos + 1, y_pos]
-            + alpha * beta * self.values[x_pos + 1, y_pos + 1]
+        # Convert to fractional index coordinates for map_coordinates
+        # The bilinear formula f(a,b) = sum(w_ij * f[i,j]) is equivalent to
+        # map_coordinates with order=1 at coordinates (x_pos + a, y_pos + b)
+        coords = np.array([x_pos + alpha, y_pos + beta])
+
+        # Convert coords to backend-specific array type
+        coords = asarray(coords, backend=self.backend)
+
+        # Use map_coordinates for backend-agnostic bilinear interpolation
+        result = map_coords(
+            self.values, coords, backend=self.backend, **self.mc_kwargs
         )
-        return f.reshape(np.asarray(x).shape)
+
+        return result.reshape(original_shape)
 
 
 def _violation_check(x, y, x1, y1, x2, y2):

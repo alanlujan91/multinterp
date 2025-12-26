@@ -41,6 +41,15 @@ with contextlib.suppress(ImportError):
     MAP_COORDS["jax"] = jax_map_coordinates
     GET_GRAD["jax"] = jnp.gradient
 
+with contextlib.suppress(ImportError):
+    import torch
+
+    from multinterp.backend._torch import torch_get_coordinates, torch_map_coordinates
+
+    GET_COORDS["torch"] = torch_get_coordinates
+    MAP_COORDS["torch"] = torch_map_coordinates
+    GET_GRAD["torch"] = torch.gradient
+
 
 def get_coords(grids, args, backend="scipy"):
     """Wrapper function for the get_coordinates function from the chosen backend."""
