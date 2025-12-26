@@ -95,7 +95,7 @@ class _PreprocessingUnstructuredInterp(PipelineUnstructuredInterp):
 
         self.options = options
 
-        feature = options.get("feature", None)
+        feature = options.get("feature")
 
         if feature and isinstance(feature, str):
             degree = options.get("degree", 3)

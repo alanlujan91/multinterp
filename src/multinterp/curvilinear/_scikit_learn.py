@@ -104,7 +104,7 @@ class _PreprocessingCurvilinearInterp(PipelineCurvilinearInterp):
 
         self.pp_options = pp_options
 
-        feature = pp_options.get("feature", None)
+        feature = pp_options.get("feature")
 
         if not feature or not isinstance(feature, str):
             msg = f"Feature must be a string ('pol' or 'spl'), got {feature!r}."

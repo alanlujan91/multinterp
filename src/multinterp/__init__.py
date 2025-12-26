@@ -21,13 +21,13 @@ from .unstructured import (
 )
 
 __all__ = [
-    "__version__",
     "MultivariateInterp",
-    "Warped2DInterp",
     "PiecewiseAffineInterp",
-    "UnstructuredInterp",
     "PipelineCurvilinearInterp",
     "PipelineUnstructuredInterp",
     "RegressionCurvilinearInterp",
     "RegressionUnstructuredInterp",
+    "UnstructuredInterp",
+    "Warped2DInterp",
+    "__version__",
 ]

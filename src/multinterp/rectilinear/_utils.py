@@ -1,3 +1,5 @@
+"""Utility functions for rectilinear grid interpolation."""
+
 from __future__ import annotations
 
 import contextlib
@@ -6,6 +8,8 @@ import numpy as np
 
 from multinterp.backend._numba import numba_get_coordinates, numba_map_coordinates
 from multinterp.backend._scipy import scipy_get_coordinates, scipy_map_coordinates
+
+__all__ = ["get_coords", "get_grad", "map_coords"]
 
 GET_COORDS = {
     "scipy": scipy_get_coordinates,

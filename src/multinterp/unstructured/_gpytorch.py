@@ -160,7 +160,7 @@ class GaussianProcessRegression(_UnstructuredGrid):
         self._model = self._model.cuda()
         self._likelihood = self._likelihood.cuda()
 
-    def _train(self, training_iter=50, preconditioner_size=100):
+    def _train(self, training_iter=50, _preconditioner_size=100):
         _train_lbfgs(
             self._model,
             self._likelihood,
@@ -219,10 +219,6 @@ def _train_simple(
             _loss = loss.item()
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
-            print(
-                f"""Iter {i+1}/{training_iter} - Loss: {_loss:.3f}
-                lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}""",
-            )
 
         optimizer.step()
 
@@ -273,13 +269,10 @@ def _train_lbfgs(
                 _loss = loss.item()
                 _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
                 _noise = model.likelihood.noise.item()
-                print(
-                    f"Iter {i+1}/{training_iter} - Loss: {loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
-                )
 
             if fail:
                 if verbose:
-                    print("Convergence reached!")
+                    pass
                 break
 
 
@@ -311,8 +304,5 @@ def _train_pipeline(
             _loss = loss.item()
             _lengthscale = model.covar_module.module.base_kernel.lengthscale.item()
             _noise = model.likelihood.noise.item()
-            print(
-                f"Iter {i+1}/{training_iter} - Loss: {_loss:.3f}   lengthscale: {_lengthscale:.3f}   noise: {_noise:.3f}",
-            )
 
         optimizer.step()

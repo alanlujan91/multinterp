@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import itertools
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import torch
 
 from multinterp.utilities import update_mc_kwargs
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def as_tensor(arrs, device="cpu"):
@@ -81,7 +84,7 @@ def _reflect_index_fixer(index: torch.Tensor, size: int) -> torch.Tensor:
 
 
 _INDEX_FIXERS = {
-    "constant": lambda index, size: index,
+    "constant": lambda index, _size: index,
     "nearest": lambda index, size: torch.clip(index, 0, size - 1),
     "wrap": lambda index, size: index % size,
     "mirror": _mirror_index_fixer,
@@ -130,7 +133,7 @@ def _map_coordinates(
 
     else:
 
-        def is_valid(index, size):
+        def is_valid(_index, _size):
             return True
 
     if order == 0:
@@ -142,7 +145,7 @@ def _map_coordinates(
         raise NotImplementedError(msg)
 
     valid_1d_interpolations = []
-    for coordinate, size in zip(coordinates, input.shape):
+    for coordinate, size in zip(coordinates, input.shape, strict=False):
         interp_nodes = interp_fun(coordinate)
         valid_interp = []
         for index, weight in interp_nodes:
@@ -153,7 +156,7 @@ def _map_coordinates(
 
     outputs = []
     for items in itertools.product(*valid_1d_interpolations):
-        indices, validities, weights = zip(*items)
+        indices, validities, weights = zip(*items, strict=False)
         if all(valid is True for valid in validities):
             contribution = input[indices]
         else:
@@ -172,8 +175,8 @@ def map_coordinates(
     order: int,
     mode: str = "constant",
     cval: float = 0.0,
-    output=None,
-    prefilter=None,
+    _output=None,
+    _prefilter=None,
 ) -> torch.Tensor:
     return _map_coordinates(input, coordinates, order, mode, cval)
 

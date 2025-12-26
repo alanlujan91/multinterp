@@ -1,11 +1,30 @@
+"""Utility functions and backend management for multinterp."""
+
 from __future__ import annotations
 
 import numpy as np
 from numba import typed
 
-BACKENDS = ["scipy", "numba"]
-MODULES = {"scipy": np, "numba": np}
+__all__ = [
+    "BACKENDS",
+    "LONG_MC_KWARGS",
+    "MODULES",
+    "SHORT_MC_KWARGS",
+    "asarray",
+    "aslist",
+    "empty",
+    "empty_like",
+    "interp",
+    "mgrid",
+    "take",
+    "update_mc_kwargs",
+]
 
+# Backend registry - scipy and numba are always available
+BACKENDS: list[str] = ["scipy", "numba"]
+MODULES: dict[str, object] = {"scipy": np, "numba": np}
+
+# Optional backend imports
 try:
     import cupy as cp
 

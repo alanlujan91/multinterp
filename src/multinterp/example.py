@@ -1,4 +1,5 @@
 """Behold, module level docstring."""
+from __future__ import annotations
 
 
 class Example:

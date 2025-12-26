@@ -1,3 +1,5 @@
+"""Numba JIT-compiled backend for multinterp."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -5,6 +7,13 @@ from numba import njit, prange, typed
 from scipy.ndimage import map_coordinates
 
 from multinterp.utilities import update_mc_kwargs
+
+__all__ = [
+    "nb_interp_piecewise",
+    "numba_get_coordinates",
+    "numba_map_coordinates",
+    "numba_multinterp",
+]
 
 
 def numba_multinterp(grids, values, args, options=None):

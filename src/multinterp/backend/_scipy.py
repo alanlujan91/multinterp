@@ -1,9 +1,18 @@
+"""SciPy backend for multinterp."""
+
 from __future__ import annotations
 
 import numpy as np
 from scipy.ndimage import map_coordinates
 
 from multinterp.utilities import update_mc_kwargs
+
+__all__ = [
+    "scipy_get_coordinates",
+    "scipy_gradinterp",
+    "scipy_map_coordinates",
+    "scipy_multinterp",
+]
 
 
 def scipy_multinterp(grids, values, args, options=None):

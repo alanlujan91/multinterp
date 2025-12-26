@@ -17,7 +17,7 @@ def f_3d(x, y, z):
     return 2 * x**3 + 3 * y**2 - z
 
 
-@pytest.fixture()
+@pytest.fixture
 def setup_data_2d():
     """
     Fixture to set up 2D test data for interpolation.
@@ -95,7 +95,7 @@ def test_torch_2d(setup_data_2d):
     assert np.allclose(true_values, result_multinterp.cpu(), atol=1e-05)
 
 
-@pytest.fixture()
+@pytest.fixture
 def setup_data_3d():
     """
     Fixture to set up 3D test data for interpolation.

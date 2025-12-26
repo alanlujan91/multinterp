@@ -21,7 +21,7 @@ def sum_first_axis(*args):
     return np.sum(mats, axis=0)
 
 
-@pytest.fixture()
+@pytest.fixture
 def setup_data():
     """
     Fixture to set up test data for regular interpolation.

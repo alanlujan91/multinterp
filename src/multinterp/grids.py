@@ -1,6 +1,18 @@
+"""Grid base classes for multinterp interpolators."""
+
 from __future__ import annotations
 
 from multinterp.utilities import asarray, aslist
+
+__all__ = [
+    "_AbstractGrid",
+    "_CurvilinearGrid",
+    "_MultivaluedGrid",
+    "_MultivaluedRegularGrid",
+    "_RegularGrid",
+    "_StructuredGrid",
+    "_UnstructuredGrid",
+]
 
 
 class _AbstractGrid:

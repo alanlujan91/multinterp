@@ -104,7 +104,7 @@ def jax_get_coordinates(grids, args):
     return jnp.array(
         [
             jnp.interp(arg, grid, grid_size)
-            for arg, grid, grid_size in zip(args, grids, grid_sizes)
+            for arg, grid, grid_size in zip(args, grids, grid_sizes, strict=False)
         ],
     )
 
