@@ -1,7 +1,8 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 2024.04.23
+_commit: 2025.11.21-19-ga6609ab
 _src_path: gh:scientific-python/cookie
 backend: hatch
+docs: sphinx
 email: alanlujan91@gmail.com
 full_name: Alan Lujan
 license: MIT

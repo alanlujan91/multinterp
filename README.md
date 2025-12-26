@@ -1,13 +1,14 @@
 # multinterp
 
 [![Actions Status][actions-badge]][actions-link]
-[![Documentation Status][rtd-badge]][rtd-link]
 
 [![PyPI version][pypi-version]][pypi-link]
 [![Conda-Forge][conda-badge]][conda-link]
 [![PyPI platforms][pypi-platforms]][pypi-link]
 
 [![GitHub Discussion][github-discussions-badge]][github-discussions-link]
+
+[![Coverage][coverage-badge]][coverage-link]
 
 <!-- SPHINX-START -->
 
@@ -21,13 +22,13 @@
 [pypi-link]:                https://pypi.org/project/multinterp/
 [pypi-platforms]:           https://img.shields.io/pypi/pyversions/multinterp
 [pypi-version]:             https://img.shields.io/pypi/v/multinterp
-[rtd-badge]:                https://readthedocs.org/projects/multinterp/badge/?version=latest
-[rtd-link]:                 https://multinterp.readthedocs.io/en/latest/?badge=latest
+[coverage-badge]:           https://codecov.io/github/alanlujan91/multinterp/branch/main/graph/badge.svg
+[coverage-link]:            https://codecov.io/github/alanlujan91/multinterp
 
 <!-- prettier-ignore-end -->
 
-# To Install
+## Installation
 
-```
-pip install git+https://github.com/alanlujan91/multinterp
+```bash
+pip install multinterp
 ```

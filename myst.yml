@@ -1,6 +1,7 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
+  id: 21875ce7-b348-40c9-9e11-46e819e8335e
   title: Multivariate Interpolation
   # description:
   keywords: [interpolation, multivariate, unstructured]
@@ -11,20 +12,16 @@ project:
       email: alanlujan91@gmail.com
       affiliations:
         - institution: Johns Hopkins University
-          department: Department of Economics
-          url: https://econ.jhu.edu/
+          department: Krieger School of Arts and Sciences
+          url: https://krieger.jhu.edu/
         - institution: Econ-ARK
           url: https://econ-ark.org/
       github: alanlujan91
   github: https://github.com/alanlujan91/multinterp
-  # bibliography: []
+  # To autogenerate a Table of Contents, run "myst init --write-toc"
 site:
   template: book-theme
   title: Multivariate Interpolation
-  # logo:
-  nav: []
-  actions:
-    - title: Learn More
-      url: https://mystmd.org/guide
-  domains:
-    - alanlujan91.curve.space
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
